@@ -1,7 +1,7 @@
 {
   "name": "@cramkle/hipocampo",
   "version": "0.3.1",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "main": "dist/index.js",
   "repository": "https://github.com/cramkle/hipocampo.git",
