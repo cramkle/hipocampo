@@ -1,5 +1,7 @@
 # Hipocampo
 
+![CI](https://github.com/cramkle/hipocampo/workflows/CI/badge.svg)
+
 Hipocampo is the [GraphQL](https://graphql.org) API for the [Cramkle](https://cramkle.com/) project.
 
 ## Getting started
