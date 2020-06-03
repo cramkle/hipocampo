@@ -1,6 +1,6 @@
 # Hipocampo
 
-![CI](https://github.com/cramkle/hipocampo/workflows/CI/badge.svg)
+![CI](https://github.com/cramkle/hipocampo/workflows/CI/badge.svg?branch=master)
 
 Hipocampo is the [GraphQL](https://graphql.org) API for the [Cramkle](https://cramkle.com/) project.
 
