@@ -1,10 +1,10 @@
 {
-  "name": "@cramkle/api",
+  "name": "@cramkle/hipocampo",
   "version": "0.3.1",
   "license": "UNLICENSED",
   "private": true,
   "main": "dist/index.js",
-  "repository": "https://github.com/lucasecdb/cramkle.git",
+  "repository": "https://github.com/cramkle/hipocampo.git",
   "scripts": {
     "build": "tsc",
     "lint": "tsc --noEmit --pretty",
@@ -39,6 +39,7 @@
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
+    "@lucasecdb/eslint-config": "^0.9.1",
     "@shelf/jest-mongodb": "^1.1.5",
     "@types/bcrypt": "^3.0.0",
     "@types/body-parser": "^1.19.0",
@@ -59,8 +60,28 @@
     "@types/passport-local": "^1.0.33",
     "@types/shortid": "^0.0.29",
     "babel-jest": "^26.0.1",
+    "eslint": "^6.8.0",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
+    "lint-staged": "^10.1.6",
+    "prettier": "^2.0.4",
     "tsc-watch": "^4.1.0",
     "typescript": "^3.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{json,graphql,gql}": [
+      "prettier --write"
+    ],
+    "*.{scss,css}": [
+      "stylelint"
+    ]
   }
 }
