@@ -7,7 +7,8 @@
   "repository": "https://github.com/cramkle/hipocampo.git",
   "scripts": {
     "build": "tsc",
-    "lint": "tsc --noEmit --pretty",
+    "lint": "eslint --ext ts,js .",
+    "lint:ts": "tsc --noEmit --pretty",
     "start": "node dist/index.js",
     "dev": "tsc-watch --onSuccess \"node ./dist/index.js\"",
     "test": "jest"
