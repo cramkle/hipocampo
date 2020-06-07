@@ -1,6 +1,6 @@
 import mongoose, { Mongoose } from 'mongoose'
 
-const MONGO_URI = process.env.MONGO_URI ?? 'mongodb://localhost:27017/cramkle'
+import config from '../config'
 
 let connection: Mongoose | null = null
 
@@ -11,7 +11,7 @@ export const getConnection = async () => {
 
   try {
     // eslint-disable-next-line require-atomic-updates
-    connection = await mongoose.connect(MONGO_URI, {
+    connection = await mongoose.connect(config.MONGO_URI, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,
