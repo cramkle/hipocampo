@@ -2,6 +2,7 @@ import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
+import config from './config'
 import authMiddleware from './middlewares/auth'
 import graphqlMiddleware from './middlewares/graphql'
 import ioMiddleware from './middlewares/io'
@@ -9,8 +10,6 @@ import { getConnection } from './mongo/connection'
 import authRouter from './routes/auth'
 
 const app = express()
-
-const PORT = process.env.PORT ?? 5000
 
 app.use(helmet())
 app.use(morgan('dev'))
@@ -23,9 +22,9 @@ app.use('/auth', authRouter)
 
 getConnection()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(config.PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`App listening on https://localhost:${PORT}`)
+      console.log(`App listening on https://localhost:${config.PORT}`)
     })
   })
   .catch(() => {

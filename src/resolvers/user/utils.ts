@@ -1,5 +1,6 @@
 import { createHmac } from 'crypto'
 
+import config from '../../config'
 import { UserDocument } from '../../mongo/User'
 
 const createResetPasswordHashValue = ({
@@ -28,10 +29,7 @@ export const createHashWithTimestamp = (
   timestamp: number,
   user: UserDocument
 ) => {
-  const hashString = createHmac(
-    'sha256',
-    process.env.RESET_PASSWORD_TOKEN ?? '__development__'
-  )
+  const hashString = createHmac('sha256', config.RESET_PASSWORD_TOKEN)
     .update(
       createResetPasswordHashValue({
         userId: user._id.toString(),

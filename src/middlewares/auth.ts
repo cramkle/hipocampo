@@ -5,6 +5,7 @@ import passport from 'passport'
 import { Strategy } from 'passport-local'
 import redis from 'redis'
 
+import config from '../config'
 import UserModel, { UserDocument } from '../mongo/User'
 
 const RedisStore = createStore(session)
@@ -59,14 +60,14 @@ export default {
       maxAge: 365 * 24 * 60 * 60 * 1000,
     }
 
-    if (process.env.NODE_ENV === 'production') {
+    if (config.NODE_ENV === 'production') {
       app.set('trust proxy', 1)
       cookieOpts.secure = true
     }
 
     const client = redis.createClient({
-      host: process.env.REDIS_HOST ?? 'localhost',
-      port: Number(process.env.REDIS_PORT) || 6379,
+      host: config.REDIS_HOST,
+      port: config.REDIS_PORT,
       db: 1,
     })
 
@@ -78,7 +79,7 @@ export default {
         name: 'sessid',
         store: new RedisStore({ client }),
         cookie: cookieOpts,
-        secret: process.env.SESSION_SECRET ?? '__development__',
+        secret: config.SESSION_SECRET,
         resave: false,
         saveUninitialized: true,
       })
