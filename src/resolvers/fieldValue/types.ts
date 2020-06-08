@@ -1,6 +1,5 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from 'graphql'
 
-import { FieldModel } from '../../mongo'
 import { FieldValueDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ContentStateInputType, ContentStateType } from '../contentState/types'
@@ -23,7 +22,7 @@ Contained by the note.
     field: {
       type: FieldType,
       description: 'Associated field',
-      resolve: (root) => FieldModel.findById(root.fieldId),
+      resolve: (root, _, ctx) => ctx.fieldLoader.load(root.fieldId),
     },
     data: {
       type: ContentStateType,

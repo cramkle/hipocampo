@@ -22,6 +22,7 @@ export interface Loaders {
   modelLoader: DataLoader<Types.ObjectId | string, ModelDocument>
   templateLoader: DataLoader<Types.ObjectId, TemplateDocument>
   templatesByModelLoader: DataLoader<Types.ObjectId, TemplateDocument[]>
+  fieldLoader: DataLoader<Types.ObjectId, FieldDocument>
   fieldsByModelLoader: DataLoader<Types.ObjectId, FieldDocument[]>
   noteLoader: DataLoader<Types.ObjectId, NoteDocument>
   notesByModelLoader: DataLoader<Types.ObjectId, NoteDocument[]>
@@ -44,6 +45,9 @@ export function createLoaders(user?: Express.User): Loaders {
         slug: { $in: Array.from(slugs) },
         ownerId: user?._id,
       })
+    }),
+    fieldLoader: new DataLoader((fieldIds) => {
+      return FieldModel.find({ _id: { $in: Array.from(fieldIds) } })
     }),
     fieldsByModelLoader: new DataLoader(
       async (modelIds) => {
