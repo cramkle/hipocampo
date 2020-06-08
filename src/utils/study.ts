@@ -1,6 +1,6 @@
 import { compareAsc, endOfToday, isBefore, startOfToday } from 'date-fns'
 
-import { NoteModel, RevisionLogModel } from '../mongo'
+import { RevisionLogModel } from '../mongo'
 import { FlashCardDocument, FlashCardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
 import { MINIMUM_ANSWER_QUALITY } from './scheduler'
@@ -26,7 +26,7 @@ const STUDY_LIMIT_BY_STATUS = {
   [FlashCardStatus.REVIEW]: MAX_REVIEW_FLASHCARDS_PER_DAY,
 }
 
-export const studyFlashCardsByDeck = async (deckId: string) => {
+export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
   const todayLogs = await RevisionLogModel.find({
     deckId,
     date: { $gte: startOfToday(), $lte: endOfToday() },
@@ -53,7 +53,7 @@ export const studyFlashCardsByDeck = async (deckId: string) => {
     [FlashCardStatus.REVIEW]: numOfReview,
   }
 
-  const flashCards = (await NoteModel.find({ deckId }))
+  const flashCards = (await ctx.notesByDeckLoader.load(deckId))
     .flatMap<FlashCardDocument>((note) => note.flashCards)
     .filter(
       (flashCard) =>

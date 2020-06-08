@@ -12,6 +12,7 @@ const FieldSchema = new Schema<FieldDocument>({
   modelId: {
     type: Schema.Types.ObjectId,
     ref: 'Model',
+    index: true,
   },
 })
 

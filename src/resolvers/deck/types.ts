@@ -6,9 +6,9 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql'
-import { connectionFromArray } from 'graphql-relay'
+import { connectionFromArraySlice } from 'graphql-relay'
 
-import { DeckModel, ModelModel, NoteModel, UserModel } from '../../mongo'
+import { NoteModel, UserModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
 import { FlashCardStatus, NoteDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
@@ -43,12 +43,12 @@ on the number of templates.
     deck: {
       type: DeckType,
       description: 'Deck containing this note',
-      resolve: (root) => DeckModel.findById(root.deckId),
+      resolve: (root, _, ctx) => ctx.deckLoader.load(root.deckId),
     },
     model: {
       type: ModelType,
       description: 'Model of this note',
-      resolve: (root) => ModelModel.findById(root.modelId),
+      resolve: (root, _, ctx) => ctx.modelLoader.load(root.modelId),
     },
     values: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FieldValueType))),
@@ -61,7 +61,7 @@ on the number of templates.
     text: {
       type: GraphQLString,
       description: 'Note text representation',
-      resolve: (root) => getNoteIdentifier(root),
+      resolve: (root, _, ctx) => getNoteIdentifier(root, ctx),
     },
   }),
 })
@@ -123,8 +123,8 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
     studySessionDetails: {
       type: GraphQLNonNull(StudySessionDetailsType),
       description: 'Details of current study session',
-      resolve: async (root) => {
-        const studyFlashCards = await studyFlashCardsByDeck(root._id)
+      resolve: async (root, _, ctx) => {
+        const studyFlashCards = await studyFlashCardsByDeck(root._id, ctx)
 
         return studyFlashCards.reduce<StudySessionDetailsObject>(
           (detailsObject, flashCard) => ({
@@ -160,15 +160,29 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
             .sort({ score: { $meta: 'textScore' } })
         }
 
-        const notes = await notesQuery.exec()
+        const paginationStart = (args.page - 1) * args.size
 
-        const totalCount = notes.length
+        const notes = await notesQuery
+          .skip(paginationStart)
+          .limit(args.size)
+          .exec()
+
+        const totalCount = await NoteModel.find({
+          deckId: root._id,
+        }).countDocuments()
 
         const cursor = pageToCursor(args.page, args.size)
-        const connection = connectionFromArray(notes, {
-          after: cursor,
-          first: args.size,
-        })
+        const connection = connectionFromArraySlice(
+          notes,
+          {
+            after: cursor,
+            first: args.size,
+          },
+          {
+            sliceStart: paginationStart,
+            arrayLength: totalCount,
+          }
+        )
 
         return Object.assign(
           {},
@@ -186,14 +200,15 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
     totalNotes: {
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of notes in this deck',
-      resolve: (root) => NoteModel.find({ deckId: root._id }).count(),
+      resolve: (root, _, ctx) =>
+        ctx.notesByDeckLoader.load(root._id).then((notes) => notes.length),
     },
     totalFlashcards: {
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of flashCards in this deck',
-      resolve: (root) =>
-        NoteModel.find({ deckId: root._id })
-          .exec()
+      resolve: (root, _, ctx) =>
+        ctx.notesByDeckLoader
+          .load(root._id)
           .then((notes) =>
             notes.reduce((total, note) => total + note.flashCards.length, 0)
           ),

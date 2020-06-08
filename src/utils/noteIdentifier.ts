@@ -1,15 +1,15 @@
 import { convertFromRaw } from 'draft-js'
 
-import { ModelModel } from '../mongo'
 import { NoteDocument } from '../mongo/Note'
 import { getModelPrimaryField } from './modelPrimaryField'
 
 export const getNoteIdentifier = async (
-  note: NoteDocument
+  note: NoteDocument,
+  context: Context
 ): Promise<string> => {
-  const noteModel = await ModelModel.findById(note.modelId)
+  const noteModel = await context.modelLoader.load(note.modelId)
 
-  const modelPrimaryField = await getModelPrimaryField(noteModel!)
+  const modelPrimaryField = await getModelPrimaryField(noteModel!, context)
 
   const primaryFieldValue = note.values.find((value) =>
     value.fieldId.equals(modelPrimaryField?._id)
