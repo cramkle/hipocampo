@@ -1,6 +1,7 @@
 import { Application, Request } from 'express'
 import graphqlHTTP from 'express-graphql'
 
+import { createLoaders } from '../loaders/createLoaders'
 import schema from '../schema'
 
 export default {
@@ -8,12 +9,15 @@ export default {
     app.use(
       '/graphql',
       graphqlHTTP((request) => {
+        const user = (request as Request).user
+
         return {
           schema,
           graphiql: true,
           context: {
-            user: (request as Request).user,
-          },
+            ...createLoaders(user),
+            user,
+          } as Context,
         }
       })
     )

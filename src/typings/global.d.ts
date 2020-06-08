@@ -1,7 +1,8 @@
 import type { UserDocument } from '../mongo/User'
+import type { Loaders } from '../loaders/createLoaders'
 
 declare global {
-  interface Context {
+  interface Context extends Loaders {
     user?: UserDocument
   }
 

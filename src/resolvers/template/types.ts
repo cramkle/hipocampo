@@ -34,7 +34,7 @@ of each card with values provided by the note
       description: 'Back side template',
     },
     model: {
-      type: ModelType,
+      type: GraphQLNonNull(ModelType),
       description: 'Associated model',
       resolve: (root: TemplateDocument) => ModelModel.findById(root.modelId),
     },

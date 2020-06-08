@@ -78,6 +78,7 @@ export interface NoteDocument extends Note, Document {}
 const NoteSchema = new Schema<NoteDocument>({
   deckId: {
     type: Schema.Types.ObjectId,
+    index: true,
     ref: 'Deck',
   },
   modelId: {

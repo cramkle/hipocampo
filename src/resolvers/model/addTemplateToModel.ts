@@ -28,13 +28,20 @@ export const addTemplateToModel: GraphQLFieldConfig<
   outputFields: {
     template: { type: TemplateType },
   },
-  mutateAndGetPayload: async (args: AddTemplateInput, { user }: Context) => {
+  mutateAndGetPayload: async (
+    args: AddTemplateInput,
+    { user, modelLoader }: Context
+  ) => {
     const { id: modelId } = fromGlobalId(args.modelId)
+
+    const model = await modelLoader.load(modelId)
 
     const template = await TemplateModel.create({
       name: args.name,
-      modelId,
+      modelId: model._id,
       ownerId: user?._id,
+      frontSide: null,
+      backSide: null,
     })
 
     const modelNotes = await NoteModel.find({ modelId })

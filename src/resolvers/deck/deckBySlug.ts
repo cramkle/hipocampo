@@ -1,6 +1,5 @@
 import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql'
 
-import { DeckModel } from '../../mongo'
 import { DeckType } from './types'
 
 interface DeckArgs {
@@ -13,7 +12,7 @@ export const deck: GraphQLFieldConfig<void, Context, DeckArgs> = {
   args: {
     slug: { type: GraphQLNonNull(GraphQLString) },
   },
-  resolve: async (_, { slug }, { user }) => {
-    return await DeckModel.findOne({ slug, ownerId: user?._id })
+  resolve: async (_, { slug }, ctx) => {
+    return ctx.deckBySlugLoader.load(slug)
   },
 }

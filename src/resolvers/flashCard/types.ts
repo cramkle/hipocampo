@@ -7,7 +7,6 @@ import {
   GraphQLObjectType,
 } from 'graphql'
 
-import { NoteModel, TemplateModel } from '../../mongo'
 import { FlashCardDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { NoteType } from '../deck/types'
@@ -44,12 +43,12 @@ number of templates.
     note: {
       type: NoteType,
       description: 'Parent note of the flashcard.',
-      resolve: (root) => NoteModel.findById(root.noteId),
+      resolve: (root, _, ctx) => ctx.noteLoader.load(root.noteId),
     },
     template: {
       type: TemplateType,
       description: 'Template associated with this flashcard.',
-      resolve: (root) => TemplateModel.findById(root.templateId),
+      resolve: (root, _, ctx) => ctx.templateLoader.load(root.templateId),
     },
     status: {
       type: FlashCardStatusEnumType,

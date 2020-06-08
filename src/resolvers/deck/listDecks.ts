@@ -23,14 +23,14 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
       defaultValue: false,
     },
   },
-  resolve: async (_, { studyOnly }, { user }) => {
-    let decks = await DeckModel.find({ ownerId: user?._id })
+  resolve: async (_, { studyOnly }, ctx) => {
+    let decks = await DeckModel.find({ ownerId: ctx.user?._id })
 
     if (studyOnly) {
       // eslint-disable-next-line require-atomic-updates
       decks = await Promise.all(
         decks.map((deck) =>
-          studyFlashCardsByDeck(deck._id).then(
+          studyFlashCardsByDeck(deck._id, ctx).then(
             (flashCards) => flashCards.length > 0
           )
         )

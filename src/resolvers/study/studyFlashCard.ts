@@ -1,6 +1,5 @@
 import { GraphQLFieldConfig, GraphQLString } from 'graphql'
 
-import { DeckModel } from '../../mongo'
 import { studyFlashCardsByDeck } from '../../utils/study'
 import { FlashCardType } from '../flashCard/types'
 
@@ -16,16 +15,13 @@ export const studyFlashCard: GraphQLFieldConfig<
     deckSlug: { type: GraphQLString },
   },
   resolve: async (_, { deckSlug }, ctx) => {
-    const deck = await DeckModel.findOne({
-      slug: deckSlug,
-      ownerId: ctx.user!._id,
-    })
+    const deck = await ctx.deckBySlugLoader.load(deckSlug)
 
     if (!deck) {
       throw new Error('Deck not found')
     }
 
-    const flashCards = await studyFlashCardsByDeck(deck._id)
+    const flashCards = await studyFlashCardsByDeck(deck._id, ctx)
 
     return flashCards[0]
   },

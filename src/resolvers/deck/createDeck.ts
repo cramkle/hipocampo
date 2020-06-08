@@ -19,6 +19,8 @@ export const createDeck = mutationWithClientMutationId({
       title,
       description,
       ownerId: user?._id,
+      slug: '',
+      published: false,
     })
 
     return { deck }

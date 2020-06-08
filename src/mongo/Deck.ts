@@ -20,6 +20,7 @@ const DeckSchema = new Schema<DeckDocument>({
   slug: {
     type: String,
     unique: true,
+    index: true,
   },
   ownerId: {
     type: Schema.Types.ObjectId,

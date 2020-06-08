@@ -5,7 +5,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { FieldModel, NoteModel, TemplateModel, UserModel } from '../../mongo'
+import { UserModel } from '../../mongo'
 import { ModelDocument } from '../../mongo/Model'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { getModelPrimaryField } from '../../utils/modelPrimaryField'
@@ -38,22 +38,22 @@ export const ModelType: GraphQLObjectType<
       type: FieldType,
       description:
         'Primary field that should represent each individual note of this model.',
-      resolve: (root) => getModelPrimaryField(root),
+      resolve: (root, _, ctx) => getModelPrimaryField(root, ctx),
     },
     templates: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(TemplateType))),
       description: 'Templates associated with this model',
-      resolve: (root) => TemplateModel.find({ modelId: root._id }),
+      resolve: (root, _, ctx) => ctx.templatesByModelLoader.load(root._id),
     },
     fields: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FieldType))),
       description: 'Fields associated with this model',
-      resolve: (root) => FieldModel.find({ modelId: root._id }),
+      resolve: (root, _, ctx) => ctx.fieldsByModelLoader.load(root._id),
     },
     notes: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(NoteType))),
       description: 'Notes associated with this model',
-      resolve: (root) => NoteModel.find({ modelId: root._id }),
+      resolve: (root, _, ctx) => ctx.notesByModelLoader.load(root._id),
     },
   }),
 })

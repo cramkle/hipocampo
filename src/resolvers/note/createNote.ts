@@ -52,8 +52,8 @@ export const createNote = mutationWithClientMutationId({
     const modelFields = await FieldModel.find({ modelId: model._id })
 
     const note = await NoteModel.create({
-      modelId,
-      deckId,
+      modelId: model._id,
+      deckId: deck._id,
       ownerId: user!._id,
       values: fieldValues
         .map((fieldValue) => {
@@ -71,6 +71,7 @@ export const createNote = mutationWithClientMutationId({
             ) !== undefined
           )
         }),
+      flashCards: [],
     })
 
     const modelTemplates = await TemplateModel.find({ modelId: model._id })
