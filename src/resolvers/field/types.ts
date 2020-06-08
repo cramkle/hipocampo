@@ -6,7 +6,6 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { ModelModel } from '../../mongo'
 import { FieldDocument } from '../../mongo/Field'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ModelType } from '../model/types'
@@ -27,7 +26,7 @@ export const FieldType: GraphQLObjectType<
     model: {
       type: ModelType,
       description: 'Associated model',
-      resolve: (root) => ModelModel.findById(root.modelId),
+      resolve: (root, _, ctx) => ctx.modelLoader.load(root.modelId),
     },
   },
 })

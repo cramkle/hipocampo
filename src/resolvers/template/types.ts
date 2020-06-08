@@ -5,7 +5,6 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { ModelModel } from '../../mongo'
 import { TemplateDocument } from '../../mongo/Template'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ContentStateType } from '../contentState/types'
@@ -36,7 +35,7 @@ of each card with values provided by the note
     model: {
       type: GraphQLNonNull(ModelType),
       description: 'Associated model',
-      resolve: (root: TemplateDocument) => ModelModel.findById(root.modelId),
+      resolve: (root, _, ctx) => ctx.modelLoader.load(root.modelId),
     },
   }),
 })
