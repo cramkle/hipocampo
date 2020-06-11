@@ -66,22 +66,25 @@ on the number of templates.
   }),
 })
 
-type StudySessionDetailsObject = { [status in FlashCardStatus]: number }
+type StudySessionDetailsObject = Map<FlashCardStatus, number>
 
 export const StudySessionDetailsType = new GraphQLObjectType({
   name: 'StudySessionDetails',
   fields: {
     newCount: {
       type: GraphQLNonNull(GraphQLInt),
-      resolve: (root: StudySessionDetailsObject) => root.NEW,
+      resolve: (root: StudySessionDetailsObject) =>
+        root.get(FlashCardStatus.NEW) ?? 0,
     },
     learningCount: {
       type: GraphQLNonNull(GraphQLInt),
-      resolve: (root: StudySessionDetailsObject) => root.LEARNING,
+      resolve: (root: StudySessionDetailsObject) =>
+        root.get(FlashCardStatus.LEARNING) ?? 0,
     },
     reviewCount: {
       type: GraphQLNonNull(GraphQLInt),
-      resolve: (root: StudySessionDetailsObject) => root.REVIEW,
+      resolve: (root: StudySessionDetailsObject) =>
+        root.get(FlashCardStatus.REVIEW) ?? 0,
     },
   },
 })
@@ -126,17 +129,16 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       resolve: async (root, _, ctx) => {
         const studyFlashCards = await studyFlashCardsByDeck(root._id, ctx)
 
-        return studyFlashCards.reduce<StudySessionDetailsObject>(
-          (detailsObject, flashCard) => ({
-            ...detailsObject,
-            [flashCard.status]: detailsObject[flashCard.status] + 1,
-          }),
-          {
-            NEW: 0,
-            LEARNING: 0,
-            REVIEW: 0,
-          }
-        )
+        const detailsObject: StudySessionDetailsObject = new Map()
+
+        studyFlashCards.forEach((flashCard) => {
+          detailsObject.set(
+            flashCard.status,
+            (detailsObject.get(flashCard.status) ?? 0) + 1
+          )
+        })
+
+        return detailsObject
       },
     },
     notes: {
