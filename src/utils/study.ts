@@ -76,10 +76,10 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
 
       const maxPerDay = STUDY_LIMIT_BY_STATUS[flashCard.status]
 
-      if (totalOfStudiedUntilNow < maxPerDay) {
-        cardCounts[flashCard.status]++
+      if (isUnfinished) {
         return true
-      } else if (isUnfinished) {
+      } else if (totalOfStudiedUntilNow < maxPerDay) {
+        cardCounts[flashCard.status]++
         return true
       }
 
