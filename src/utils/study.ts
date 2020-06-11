@@ -1,4 +1,4 @@
-import { compareAsc, endOfToday, isBefore, startOfToday } from 'date-fns'
+import { compareAsc, endOfToday, isAfter, startOfToday } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
 import { FlashCardDocument, FlashCardStatus } from '../mongo/Note'
@@ -61,7 +61,8 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
       )
 
       if (
-        !(flashCard.due && isBefore(flashCard.due, endOfToday())) &&
+        flashCard.due &&
+        isAfter(flashCard.due, endOfToday()) &&
         !isUnfinished
       ) {
         return false
