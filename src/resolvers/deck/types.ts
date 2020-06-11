@@ -153,25 +153,26 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
         root: DeckDocument,
         args: PageConnectionArgs & { search?: string }
       ) => {
-        const notesQuery = NoteModel.find({ deckId: root._id })
+        const query = {
+          deckId: root._id,
+          ...(args.search && { $text: { $search: args.search } }),
+        }
+        const notesQuery = NoteModel.find(query)
 
         if (args.search) {
           notesQuery
-            .find({ $text: { $search: args.search } })
             .select({ score: { $meta: 'textScore' } })
             .sort({ score: { $meta: 'textScore' } })
         }
 
         const paginationStart = (args.page - 1) * args.size
 
-        const notes = await notesQuery
-          .skip(paginationStart)
-          .limit(args.size)
-          .exec()
+        const countQuery = NoteModel.countDocuments(query)
 
-        const totalCount = await NoteModel.find({
-          deckId: root._id,
-        }).countDocuments()
+        const [notes, totalCount] = await Promise.all([
+          notesQuery.skip(paginationStart).limit(args.size).exec(),
+          countQuery.countDocuments(),
+        ] as const)
 
         const cursor = pageToCursor(args.page, args.size)
         const connection = connectionFromArraySlice(
