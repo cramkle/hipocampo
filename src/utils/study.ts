@@ -55,14 +55,35 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
 
   const flashCards = (await ctx.notesByDeckLoader.load(deckId))
     .flatMap<FlashCardDocument>((note) => note.flashCards)
-    .filter(
-      (flashCard) =>
-        !flashCard.due ||
-        isBefore(flashCard.due, endOfToday()) ||
-        !!unfinishedFlashCards.find(({ flashCardId }) =>
-          flashCardId.equals(flashCard._id)
-        )
-    )
+    .filter((flashCard) => {
+      const isUnfinished = !!unfinishedFlashCards.find(({ flashCardId }) =>
+        flashCardId.equals(flashCard._id)
+      )
+
+      if (
+        !(flashCard.due && isBefore(flashCard.due, endOfToday())) &&
+        !isUnfinished
+      ) {
+        return false
+      }
+
+      const totalOfStudiedUntilNow = cardCounts[flashCard.status]
+
+      if (totalOfStudiedUntilNow == undefined) {
+        return false
+      }
+
+      const maxPerDay = STUDY_LIMIT_BY_STATUS[flashCard.status]
+
+      if (totalOfStudiedUntilNow < maxPerDay) {
+        cardCounts[flashCard.status]++
+        return true
+      } else if (isUnfinished) {
+        return true
+      }
+
+      return false
+    })
     .sort((a, b) => {
       if (!a.due && !b.due) {
         return 0
@@ -77,22 +98,6 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
       }
 
       return compareAsc(a.due, b.due)
-    })
-    .filter((flashCard) => {
-      const totalOfStudiedUntilNow = cardCounts[flashCard.status]
-
-      if (totalOfStudiedUntilNow == undefined) {
-        return false
-      }
-
-      const maxPerDay = STUDY_LIMIT_BY_STATUS[flashCard.status]
-
-      if (totalOfStudiedUntilNow < maxPerDay) {
-        cardCounts[flashCard.status]++
-        return true
-      }
-
-      return false
     })
 
   return flashCards
