@@ -39,6 +39,7 @@ jobs:
         run: yarn
       - name: Test
         run: |
+          cp .env.example .env
           yarn test
         env:
           CI: true
