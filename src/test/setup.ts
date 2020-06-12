@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+process.env.MONGO_URI = process.env.MONGO_URL
+
 beforeAll(async () => {
   ;(global as any).mongoose = await mongoose.connect(
     process.env.MONGO_URL as string,

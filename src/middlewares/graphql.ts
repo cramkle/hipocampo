@@ -1,6 +1,7 @@
 import { Application, Request } from 'express'
 import graphqlHTTP from 'express-graphql'
 
+import config from '../config'
 import { createLoaders } from '../loaders/createLoaders'
 import schema from '../schema'
 
@@ -13,7 +14,7 @@ export default {
 
         return {
           schema,
-          graphiql: true,
+          graphiql: config.NODE_ENV !== 'production',
           context: {
             ...createLoaders(user),
             user,
