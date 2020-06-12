@@ -15,6 +15,7 @@ import { ModelDocument } from '../mongo/Model'
 import { NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
+import { normalizeResults } from './normalizeResults'
 
 export interface Loaders {
   deckLoader: DataLoader<Types.ObjectId, DeckDocument>
@@ -33,21 +34,35 @@ export function createLoaders(user?: Express.User): Loaders {
   return {
     deckLoader: new DataLoader(
       (deckIds) => {
-        return DeckModel.find({
-          _id: { $in: Array.from(deckIds) },
-          ownerId: user?._id,
-        })
+        return normalizeResults(
+          deckIds,
+          DeckModel.find({
+            _id: { $in: Array.from(deckIds) },
+            ownerId: user?._id,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
     deckBySlugLoader: new DataLoader((slugs) => {
-      return DeckModel.find({
-        slug: { $in: Array.from(slugs) },
-        ownerId: user?._id,
-      })
+      return normalizeResults(
+        slugs,
+        DeckModel.find({
+          slug: { $in: Array.from(slugs) },
+          ownerId: user?._id,
+        }),
+        'slug'
+      )
     }),
     fieldLoader: new DataLoader((fieldIds) => {
-      return FieldModel.find({ _id: { $in: Array.from(fieldIds) } })
+      return normalizeResults(
+        fieldIds,
+        FieldModel.find({ _id: { $in: Array.from(fieldIds) } }),
+        '_id',
+        mongoIdCacheKeyFn
+      )
     }),
     fieldsByModelLoader: new DataLoader(
       async (modelIds) => {
@@ -65,10 +80,15 @@ export function createLoaders(user?: Express.User): Loaders {
     ),
     modelLoader: new DataLoader(
       (modelIds) => {
-        return ModelModel.find({
-          _id: { $in: Array.from(modelIds) },
-          ownerId: user?._id,
-        })
+        return normalizeResults(
+          modelIds,
+          ModelModel.find({
+            _id: { $in: Array.from(modelIds) },
+            ownerId: user?._id,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
@@ -89,19 +109,29 @@ export function createLoaders(user?: Express.User): Loaders {
     ),
     templateLoader: new DataLoader(
       (templateIds) => {
-        return TemplateModel.find({
-          _id: { $in: Array.from(templateIds) },
-          ownerId: user?._id,
-        })
+        return normalizeResults(
+          templateIds,
+          TemplateModel.find({
+            _id: { $in: Array.from(templateIds) },
+            ownerId: user?._id,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
     noteLoader: new DataLoader(
       (noteIds) => {
-        return NoteModel.find({
-          _id: { $in: Array.from(noteIds) },
-          ownerId: user?._id,
-        })
+        return normalizeResults(
+          noteIds,
+          NoteModel.find({
+            _id: { $in: Array.from(noteIds) },
+            ownerId: user?._id,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
