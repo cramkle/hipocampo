@@ -12,7 +12,7 @@ import {
 import { DeckDocument } from '../mongo/Deck'
 import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
-import { NoteDocument } from '../mongo/Note'
+import { FlashCardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
@@ -28,6 +28,10 @@ export interface Loaders {
   noteLoader: DataLoader<Types.ObjectId, NoteDocument>
   notesByModelLoader: DataLoader<Types.ObjectId, NoteDocument[]>
   notesByDeckLoader: DataLoader<Types.ObjectId | string, NoteDocument[]>
+  flashCardsByDeckLoader: DataLoader<
+    Types.ObjectId | string,
+    FlashCardDocument[]
+  >
 }
 
 export function createLoaders(user?: Express.User): Loaders {
@@ -56,14 +60,17 @@ export function createLoaders(user?: Express.User): Loaders {
         'slug'
       )
     }),
-    fieldLoader: new DataLoader((fieldIds) => {
-      return normalizeResults(
-        fieldIds,
-        FieldModel.find({ _id: { $in: Array.from(fieldIds) } }),
-        '_id',
-        mongoIdCacheKeyFn
-      )
-    }),
+    fieldLoader: new DataLoader(
+      (fieldIds) => {
+        return normalizeResults(
+          fieldIds,
+          FieldModel.find({ _id: { $in: Array.from(fieldIds) } }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
+      },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
     fieldsByModelLoader: new DataLoader(
       async (modelIds) => {
         const fields = await FieldModel.find({
@@ -158,6 +165,34 @@ export function createLoaders(user?: Express.User): Loaders {
         const notesByDeck = _.groupBy(notes, 'deckId')
 
         return deckIds.map((deckId) => notesByDeck[deckId.toString()] || [])
+      },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
+    flashCardsByDeckLoader: new DataLoader(
+      async (deckIds) => {
+        const flashCardsAggregationResult = await NoteModel.aggregate([
+          {
+            $match: {
+              deckId: { $in: Array.from(deckIds) },
+              ownerId: user?._id,
+            },
+          },
+          { $unwind: '$flashCards' },
+          { $group: { _id: '$deckId', flashCards: { $push: '$flashCards' } } },
+        ])
+
+        const flashCardsByDeck = new Map()
+
+        flashCardsAggregationResult.forEach((flashCardsResult) => {
+          flashCardsByDeck.set(
+            flashCardsResult._id.toString(),
+            flashCardsResult.flashCards
+          )
+        })
+
+        return deckIds.map(
+          (deckId) => flashCardsByDeck.get(deckId.toString()) ?? []
+        )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),

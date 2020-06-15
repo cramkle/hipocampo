@@ -1,7 +1,7 @@
 import { compareAsc, endOfToday, isAfter, startOfToday } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
-import { FlashCardDocument, FlashCardStatus } from '../mongo/Note'
+import { FlashCardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
 import { MINIMUM_ANSWER_QUALITY } from './scheduler'
 
@@ -32,16 +32,37 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
     date: { $gte: startOfToday(), $lte: endOfToday() },
   })
 
-  const finishedFlashCards = todayLogs.filter(
-    ({ answerQuality }) => answerQuality >= MINIMUM_ANSWER_QUALITY
-  )
+  const finishedFlashCardLogByFlashCardId = new Map<
+    string,
+    RevisionLogDocument
+  >()
+
+  todayLogs.forEach((revisionLog) => {
+    if (revisionLog.answerQuality >= MINIMUM_ANSWER_QUALITY) {
+      finishedFlashCardLogByFlashCardId.set(
+        revisionLog.flashCardId.toString(),
+        revisionLog
+      )
+    }
+  })
+
   const unfinishedFlashCards = todayLogs.filter(
     (log) =>
       log.answerQuality < MINIMUM_ANSWER_QUALITY &&
-      !finishedFlashCards.find((finishedFlashCardLog) =>
-        finishedFlashCardLog.flashCardId.equals(log.flashCardId)
-      )
+      !finishedFlashCardLogByFlashCardId.has(log.flashCardId.toString())
   )
+
+  const unfinishedFlashCardLogByFlashCardId = new Map<
+    string,
+    RevisionLogDocument
+  >()
+
+  unfinishedFlashCards.forEach((unfinishedFlashCardLog) => {
+    unfinishedFlashCardLogByFlashCardId.set(
+      unfinishedFlashCardLog.flashCardId.toString(),
+      unfinishedFlashCardLog
+    )
+  })
 
   const numOfNew = sumByStatus(todayLogs, FlashCardStatus.NEW)
   const numOfLearning = sumByStatus(todayLogs, FlashCardStatus.LEARNING)
@@ -53,11 +74,10 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
     [FlashCardStatus.REVIEW]: numOfReview,
   }
 
-  const flashCards = (await ctx.notesByDeckLoader.load(deckId))
-    .flatMap<FlashCardDocument>((note) => note.flashCards)
+  const flashCards = (await ctx.flashCardsByDeckLoader.load(deckId))
     .filter((flashCard) => {
-      const isUnfinished = !!unfinishedFlashCards.find(({ flashCardId }) =>
-        flashCardId.equals(flashCard._id)
+      const isUnfinished = unfinishedFlashCardLogByFlashCardId.has(
+        flashCard._id.toString()
       )
 
       if (
