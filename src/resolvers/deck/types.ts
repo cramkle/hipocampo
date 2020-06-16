@@ -210,11 +210,9 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of flashCards in this deck',
       resolve: (root, _, ctx) =>
-        ctx.notesByDeckLoader
+        ctx.flashCardsByDeckLoader
           .load(root._id)
-          .then((notes) =>
-            notes.reduce((total, note) => total + note.flashCards.length, 0)
-          ),
+          .then((flashCards) => flashCards.length),
     },
   }),
 })
