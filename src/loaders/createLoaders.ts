@@ -14,6 +14,8 @@ import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
 import { FlashCardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
+import { countFlashCardsByProperty } from './countFlashCardsByProperty'
+import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
@@ -32,6 +34,10 @@ export interface Loaders {
     Types.ObjectId | string,
     FlashCardDocument[]
   >
+  countFlashCardsByModelLoader: DataLoader<Types.ObjectId | string, number>
+  countFlashCardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
+  countNotesByDeckLoader: DataLoader<Types.ObjectId | string, number>
+  countNotesByModelLoader: DataLoader<Types.ObjectId | string, number>
 }
 
 export function createLoaders(user?: Express.User): Loaders {
@@ -181,7 +187,7 @@ export function createLoaders(user?: Express.User): Loaders {
           { $group: { _id: '$deckId', flashCards: { $push: '$flashCards' } } },
         ])
 
-        const flashCardsByDeck = new Map()
+        const flashCardsByDeck = new Map<string, FlashCardDocument[]>()
 
         flashCardsAggregationResult.forEach((flashCardsResult) => {
           flashCardsByDeck.set(
@@ -194,6 +200,20 @@ export function createLoaders(user?: Express.User): Loaders {
           (deckId) => flashCardsByDeck.get(deckId.toString()) ?? []
         )
       },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
+    countNotesByDeckLoader: new DataLoader(countNotesByProperty('deckId'), {
+      cacheKeyFn: mongoIdCacheKeyFn,
+    }),
+    countNotesByModelLoader: new DataLoader(countNotesByProperty('modelId'), {
+      cacheKeyFn: mongoIdCacheKeyFn,
+    }),
+    countFlashCardsByDeckLoader: new DataLoader(
+      countFlashCardsByProperty('deckId'),
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
+    countFlashCardsByModelLoader: new DataLoader(
+      countFlashCardsByProperty('modelId'),
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
   }

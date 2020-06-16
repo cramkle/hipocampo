@@ -1,9 +1,7 @@
-import { Document } from 'mongoose'
-
 // Adapted from https://github.com/entria/graphql-mongoose-loader/blob/master/src/MongooseLoader.ts
 // which is MIT licensed
 
-function indexResults<T extends Document, K extends keyof T>(
+function indexResults<T, K extends keyof T>(
   results: T[],
   indexField: K,
   cacheKeyFn: (value: T[K]) => string
@@ -15,7 +13,7 @@ function indexResults<T extends Document, K extends keyof T>(
   return indexedResults
 }
 
-export async function normalizeResults<T extends Document, K extends keyof T>(
+export async function normalizeResults<T, K extends keyof T>(
   keys: ReadonlyArray<T[K]>,
   resultsPromise: T[] | PromiseLike<T[]>,
   indexField: K,
