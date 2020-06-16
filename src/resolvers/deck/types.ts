@@ -151,7 +151,8 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       },
       resolve: (async (
         root: DeckDocument,
-        args: PageConnectionArgs & { search?: string }
+        args: PageConnectionArgs & { search?: string },
+        ctx: Context
       ) => {
         const query = {
           deckId: root._id,
@@ -167,11 +168,9 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
 
         const paginationStart = (args.page - 1) * args.size
 
-        const countQuery = NoteModel.countDocuments(query)
-
         const [notes, totalCount] = await Promise.all([
           notesQuery.skip(paginationStart).limit(args.size).exec(),
-          countQuery.countDocuments(),
+          ctx.countNotesByDeckLoader.load(root._id),
         ] as const)
 
         const cursor = pageToCursor(args.page, args.size)
@@ -203,16 +202,12 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
     totalNotes: {
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of notes in this deck',
-      resolve: (root, _, ctx) =>
-        ctx.notesByDeckLoader.load(root._id).then((notes) => notes.length),
+      resolve: (root, _, ctx) => ctx.countNotesByDeckLoader.load(root._id),
     },
     totalFlashcards: {
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of flashcards in this deck',
-      resolve: (root, _, ctx) =>
-        ctx.flashCardsByDeckLoader
-          .load(root._id)
-          .then((flashCards) => flashCards.length),
+      resolve: (root, _, ctx) => ctx.countFlashCardsByDeckLoader.load(root._id),
     },
   }),
 })

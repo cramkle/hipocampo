@@ -14,6 +14,8 @@ import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
 import { FlashCardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
+import { countFlashCardsByProperty } from './countFlashCardsByProperty'
+import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
@@ -32,10 +34,10 @@ export interface Loaders {
     Types.ObjectId | string,
     FlashCardDocument[]
   >
-  flashCardsByModelLoader: DataLoader<
-    Types.ObjectId | string,
-    FlashCardDocument[]
-  >
+  countFlashCardsByModelLoader: DataLoader<Types.ObjectId | string, number>
+  countFlashCardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
+  countNotesByDeckLoader: DataLoader<Types.ObjectId | string, number>
+  countNotesByModelLoader: DataLoader<Types.ObjectId | string, number>
 }
 
 export function createLoaders(user?: Express.User): Loaders {
@@ -200,32 +202,18 @@ export function createLoaders(user?: Express.User): Loaders {
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
-    flashCardsByModelLoader: new DataLoader(
-      async (modelIds) => {
-        const flashCardsAggregationResult = await NoteModel.aggregate([
-          {
-            $match: {
-              modelId: { $in: Array.from(modelIds) },
-              ownerId: user?._id,
-            },
-          },
-          { $unwind: '$flashCards' },
-          { $group: { _id: '$modelId', flashCards: { $push: '$flashCards' } } },
-        ])
-
-        const flashCardsByDeck = new Map<string, FlashCardDocument[]>()
-
-        flashCardsAggregationResult.forEach((flashCardsResult) => {
-          flashCardsByDeck.set(
-            flashCardsResult._id.toString(),
-            flashCardsResult.flashCards
-          )
-        })
-
-        return modelIds.map(
-          (modelId) => flashCardsByDeck.get(modelId.toString()) ?? []
-        )
-      },
+    countNotesByDeckLoader: new DataLoader(countNotesByProperty('deckId'), {
+      cacheKeyFn: mongoIdCacheKeyFn,
+    }),
+    countNotesByModelLoader: new DataLoader(countNotesByProperty('modelId'), {
+      cacheKeyFn: mongoIdCacheKeyFn,
+    }),
+    countFlashCardsByDeckLoader: new DataLoader(
+      countFlashCardsByProperty('deckId'),
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
+    countFlashCardsByModelLoader: new DataLoader(
+      countFlashCardsByProperty('modelId'),
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
   }
