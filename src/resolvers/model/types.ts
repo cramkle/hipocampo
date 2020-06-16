@@ -1,4 +1,5 @@
 import {
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -54,6 +55,20 @@ export const ModelType: GraphQLObjectType<
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(NoteType))),
       description: 'Notes associated with this model',
       resolve: (root, _, ctx) => ctx.notesByModelLoader.load(root._id),
+    },
+    totalNotes: {
+      type: GraphQLNonNull(GraphQLInt),
+      description: 'Total number of notes associated with this model',
+      resolve: (root, _, ctx) =>
+        ctx.notesByModelLoader.load(root._id).then((notes) => notes.length),
+    },
+    totalFlashcards: {
+      type: GraphQLNonNull(GraphQLInt),
+      description: 'Total number of flashcards associated with this model',
+      resolve: (root, _, ctx) =>
+        ctx.flashCardsByModelLoader
+          .load(root._id)
+          .then((flashCards) => flashCards.length),
     },
   }),
 })

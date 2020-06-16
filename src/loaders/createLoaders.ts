@@ -32,6 +32,10 @@ export interface Loaders {
     Types.ObjectId | string,
     FlashCardDocument[]
   >
+  flashCardsByModelLoader: DataLoader<
+    Types.ObjectId | string,
+    FlashCardDocument[]
+  >
 }
 
 export function createLoaders(user?: Express.User): Loaders {
@@ -181,7 +185,7 @@ export function createLoaders(user?: Express.User): Loaders {
           { $group: { _id: '$deckId', flashCards: { $push: '$flashCards' } } },
         ])
 
-        const flashCardsByDeck = new Map()
+        const flashCardsByDeck = new Map<string, FlashCardDocument[]>()
 
         flashCardsAggregationResult.forEach((flashCardsResult) => {
           flashCardsByDeck.set(
@@ -192,6 +196,34 @@ export function createLoaders(user?: Express.User): Loaders {
 
         return deckIds.map(
           (deckId) => flashCardsByDeck.get(deckId.toString()) ?? []
+        )
+      },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
+    flashCardsByModelLoader: new DataLoader(
+      async (modelIds) => {
+        const flashCardsAggregationResult = await NoteModel.aggregate([
+          {
+            $match: {
+              modelId: { $in: Array.from(modelIds) },
+              ownerId: user?._id,
+            },
+          },
+          { $unwind: '$flashCards' },
+          { $group: { _id: '$modelId', flashCards: { $push: '$flashCards' } } },
+        ])
+
+        const flashCardsByDeck = new Map<string, FlashCardDocument[]>()
+
+        flashCardsAggregationResult.forEach((flashCardsResult) => {
+          flashCardsByDeck.set(
+            flashCardsResult._id.toString(),
+            flashCardsResult.flashCards
+          )
+        })
+
+        return modelIds.map(
+          (modelId) => flashCardsByDeck.get(modelId.toString()) ?? []
         )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
