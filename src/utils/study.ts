@@ -107,7 +107,7 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
     })
     .sort((a, b) => {
       if (!a.due && !b.due) {
-        return 0
+        return a.flashcardIndex - b.flashcardIndex
       }
 
       if (!a.due) {
