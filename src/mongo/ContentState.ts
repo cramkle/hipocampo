@@ -5,6 +5,8 @@ interface CharacterBlock {
   entity: string
 }
 
+type BlockData = Record<string, unknown>
+
 export interface ContentState {
   blocks: {
     key: string
@@ -21,13 +23,13 @@ export interface ContentState {
       length: number
       offset: number
     }[]
-    data: object
+    data: BlockData
   }[]
   entityMap: {
     [key: string]: {
       type: string
       mutability: string
-      data: object
+      data: BlockData
     }
   }
 }
