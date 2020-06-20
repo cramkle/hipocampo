@@ -32,7 +32,7 @@ export interface Loaders {
   notesByDeckLoader: DataLoader<Types.ObjectId | string, NoteDocument[]>
   flashCardsByDeckLoader: DataLoader<
     Types.ObjectId | string,
-    FlashCardDocument[]
+    (FlashCardDocument & { flashcardIndex: number })[]
   >
   countFlashCardsByModelLoader: DataLoader<Types.ObjectId | string, number>
   countFlashCardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
@@ -176,18 +176,29 @@ export function createLoaders(user?: Express.User): Loaders {
     ),
     flashCardsByDeckLoader: new DataLoader(
       async (deckIds) => {
-        const flashCardsAggregationResult = await NoteModel.aggregate([
+        const flashCardsAggregationResult = await NoteModel.aggregate<{
+          _id: Types.ObjectId
+          flashCards: (FlashCardDocument & { flashcardIndex: number })[]
+        }>([
           {
             $match: {
               deckId: { $in: Array.from(deckIds) },
               ownerId: user?._id,
             },
           },
-          { $unwind: '$flashCards' },
+          {
+            $unwind: {
+              path: '$flashCards',
+              includeArrayIndex: 'flashCards.flashcardIndex',
+            },
+          },
           { $group: { _id: '$deckId', flashCards: { $push: '$flashCards' } } },
         ])
 
-        const flashCardsByDeck = new Map<string, FlashCardDocument[]>()
+        const flashCardsByDeck = new Map<
+          string,
+          (FlashCardDocument & { flashcardIndex: number })[]
+        >()
 
         flashCardsAggregationResult.forEach((flashCardsResult) => {
           flashCardsByDeck.set(
