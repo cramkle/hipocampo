@@ -21,7 +21,7 @@
     "dataloader": "^2.0.0",
     "date-fns": "^2.12.0",
     "dotenv": "^8.2.0",
-    "draft-js": "^0.11.5",
+    "draft-js": "^0.11.6",
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
     "express-session": "^1.17.0",
