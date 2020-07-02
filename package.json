@@ -70,7 +70,7 @@
     "jest": "^26.0.1",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.4",
-    "tsc-watch": "^4.1.0",
+    "tsc-watch": "^4.2.9",
     "typescript": "^3.9.5"
   },
   "resolutions": {
