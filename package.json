@@ -29,7 +29,7 @@
     "graphql-relay": "^0.6.0",
     "graphql-type-json": "^0.3.2",
     "helmet": "^3.23.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mongoose": "^5.9.22",
     "morgan": "^1.9.1",
     "passport": "^0.4.1",
