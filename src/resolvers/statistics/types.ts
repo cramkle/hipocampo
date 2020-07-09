@@ -170,6 +170,13 @@ export const DeckStatisticsType = new GraphQLObjectType<
           },
           {
             $group: {
+              _id: '$flashCardId',
+              status: { $first: '$status' },
+              date: { $first: '$date' },
+            },
+          },
+          {
+            $group: {
               _id: {
                 ...(dateGroupBy <= DateGroupBy.DAY
                   ? {
