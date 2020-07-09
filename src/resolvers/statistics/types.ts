@@ -170,14 +170,8 @@ export const DeckStatisticsType = new GraphQLObjectType<
           },
           {
             $group: {
-              _id: '$flashCardId',
-              status: { $first: '$status' },
-              date: { $first: '$date' },
-            },
-          },
-          {
-            $group: {
               _id: {
+                flashCardId: '$flashCardId',
                 ...(dateGroupBy <= DateGroupBy.DAY
                   ? {
                       day: {
@@ -196,11 +190,29 @@ export const DeckStatisticsType = new GraphQLObjectType<
                   $year: '$date',
                 },
               },
+              flashcard: { $first: '$$ROOT' },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                ...(dateGroupBy <= DateGroupBy.DAY
+                  ? {
+                      day: '$_id.day',
+                    }
+                  : null),
+                ...(dateGroupBy <= DateGroupBy.MONTH
+                  ? {
+                      month: '$_id.month',
+                    }
+                  : null),
+                year: '$_id.year',
+              },
               learning: {
                 $sum: {
                   $cond: {
                     if: {
-                      $eq: ['$status', 'LEARNING'],
+                      $eq: ['$flashcard.status', 'LEARNING'],
                     },
                     then: 1,
                     else: 0,
@@ -211,7 +223,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
                 $sum: {
                   $cond: {
                     if: {
-                      $eq: ['$status', 'NEW'],
+                      $eq: ['$flashcard.status', 'NEW'],
                     },
                     then: 1,
                     else: 0,
@@ -256,7 +268,6 @@ export const DeckStatisticsType = new GraphQLObjectType<
                           if: { $ne: ['$$dateIndex', -1] },
                           then: { $arrayElemAt: ['$stats', '$$dateIndex'] },
                           else: {
-                            _id: '$$date',
                             date: '$$date',
                             learning: 0,
                             new: 0,
