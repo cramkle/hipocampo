@@ -11,7 +11,8 @@
     "lint:ts": "tsc --noEmit --pretty",
     "start": "node dist/index.js",
     "dev": "tsc-watch --onSuccess \"node ./dist/index.js\"",
-    "test": "jest"
+    "test": "jest",
+    "release": "release-it"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -70,6 +71,7 @@
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.4",
+    "release-it": "^13.6.5",
     "tsc-watch": "^4.2.9",
     "typescript": "^3.9.6"
   },
