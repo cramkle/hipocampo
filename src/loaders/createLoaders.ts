@@ -20,7 +20,7 @@ import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
 export interface Loaders {
-  deckLoader: DataLoader<Types.ObjectId, DeckDocument>
+  deckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckBySlugLoader: DataLoader<string, DeckDocument>
   modelLoader: DataLoader<Types.ObjectId | string, ModelDocument>
   templateLoader: DataLoader<Types.ObjectId, TemplateDocument>
