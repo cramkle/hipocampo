@@ -1,0 +1,7 @@
+git:
+  tagName: 'v${version}'
+  tagAnnotation: 'Release v${version}'
+  commitMessage: 'Release v${version}'
+  pushArgs: ['--follow-tags', '--force']
+npm:
+  publish: false
