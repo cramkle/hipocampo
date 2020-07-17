@@ -73,7 +73,7 @@
     "prettier": "^2.0.4",
     "release-it": "^13.6.5",
     "tsc-watch": "^4.2.9",
-    "typescript": "^3.9.6"
+    "typescript": "^3.9.7"
   },
   "resolutions": {
     "graphql": "^15.1.0"
