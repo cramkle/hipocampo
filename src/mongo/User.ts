@@ -8,12 +8,26 @@ export interface User {
   roles: string[]
   lastLogin: Date
   createdAt: Date
+  preferences?: UserPreferences
+}
+
+export interface UserPreferences {
+  zoneInfo: string
 }
 
 export interface UserDocument extends User, Document {
   hashifyAndSave(): Promise<void>
   comparePassword(candidate: string): Promise<boolean>
 }
+
+export interface UserPreferencesDocument extends UserPreferences, Document {}
+
+const UserPreferencesSchema = new Schema<UserPreferencesDocument>({
+  zoneInfo: {
+    type: String,
+    default: 'UTC',
+  },
+})
 
 const UserSchema = new Schema<UserDocument>(
   {
@@ -38,6 +52,7 @@ const UserSchema = new Schema<UserDocument>(
     lastLogin: {
       type: Date,
     },
+    preferences: UserPreferencesSchema,
   },
   { timestamps: { createdAt: true } }
 )

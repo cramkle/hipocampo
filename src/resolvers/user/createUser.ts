@@ -8,6 +8,7 @@ interface CreateUserArgs {
   username: string
   email: string
   password: string
+  zoneInfo: string
 }
 
 export const createUser = mutationWithClientMutationId({
@@ -23,14 +24,25 @@ export const createUser = mutationWithClientMutationId({
       type: GraphQLNonNull(GraphQLString),
       description: "User's password",
     },
+    zoneInfo: {
+      type: GraphQLString,
+      description: 'User timezone',
+      defaultValue: 'UTC',
+    },
   },
   outputFields: { user: { type: UserType, description: 'Created user' } },
   mutateAndGetPayload: async ({
     username,
     email,
     password,
+    zoneInfo,
   }: CreateUserArgs) => {
-    const user = new UserModel({ username, email, password })
+    const user = new UserModel({
+      username,
+      email,
+      password,
+      preferences: { zoneInfo },
+    })
 
     const validation = user?.validateSync()
 

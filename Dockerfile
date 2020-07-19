@@ -19,5 +19,7 @@ COPY --from=build-env /usr/src/app/ .
 
 RUN yarn --prod
 
+ENV TZ UTC
+
 EXPOSE 5000
 CMD ["yarn", "start"]

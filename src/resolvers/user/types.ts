@@ -6,6 +6,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
+import { UserDocument, UserPreferencesDocument } from '../../mongo/User'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { nodeInterface } from '../node/types'
 
@@ -17,7 +18,21 @@ export const UserRolesEnumType = new GraphQLEnumType({
   },
 })
 
-export const UserType = new GraphQLObjectType({
+export const UserPreferencesType = new GraphQLObjectType<
+  UserPreferencesDocument
+>({
+  name: 'UserPreferences',
+  description: 'Preferences associated with user account',
+  fields: {
+    zoneInfo: {
+      type: GraphQLNonNull(GraphQLString),
+      description: 'User prefered timezone',
+      resolve: (preferences) => preferences.zoneInfo ?? 'UTC',
+    },
+  },
+})
+
+export const UserType = new GraphQLObjectType<UserDocument>({
   name: 'User',
   description: 'User entity',
   interfaces: [nodeInterface],
@@ -33,6 +48,10 @@ export const UserType = new GraphQLObjectType({
     },
     roles: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(UserRolesEnumType))),
+    },
+    preferences: {
+      type: GraphQLNonNull(UserPreferencesType),
+      resolve: (user) => user.preferences ?? {},
     },
   },
 })
