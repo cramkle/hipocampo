@@ -4,7 +4,6 @@ import {
   eachMonthOfInterval,
   eachYearOfInterval,
   parseISO,
-  subMinutes,
 } from 'date-fns'
 import {
   GraphQLFloat,
@@ -17,6 +16,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
+import { toUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -135,9 +135,19 @@ export const DeckStatisticsType = new GraphQLObjectType<
           description: 'End interval date in ISO format',
         },
       },
-      resolve: (async (root: DeckStatistics, args: StudyFrequencyArgs) => {
-        const startDate = parseISO(args.startDate)
-        const endDate = parseISO(args.endDate)
+      resolve: (async (
+        root: DeckStatistics,
+        args: StudyFrequencyArgs,
+        ctx: Context
+      ) => {
+        const startDate = toUserDate(
+          parseISO(args.startDate),
+          ctx.user?.preferences?.zoneInfo
+        )
+        const endDate = toUserDate(
+          parseISO(args.endDate),
+          ctx.user?.preferences?.zoneInfo
+        )
 
         const daysInterval = differenceInDays(endDate, startDate)
 
@@ -148,14 +158,12 @@ export const DeckStatisticsType = new GraphQLObjectType<
             ? DateGroupBy.MONTH
             : DateGroupBy.YEAR
 
-        const interval = (dateGroupBy === DateGroupBy.DAY
-          ? eachDayOfInterval({ start: startDate, end: endDate })
-          : dateGroupBy === DateGroupBy.MONTH
-          ? eachMonthOfInterval({ start: startDate, end: endDate })
-          : eachYearOfInterval({ start: startDate, end: endDate })
-        ).map((date) => {
-          return subMinutes(date, date.getTimezoneOffset())
-        })
+        const interval =
+          dateGroupBy === DateGroupBy.DAY
+            ? eachDayOfInterval({ start: startDate, end: endDate })
+            : dateGroupBy === DateGroupBy.MONTH
+            ? eachMonthOfInterval({ start: startDate, end: endDate })
+            : eachYearOfInterval({ start: startDate, end: endDate })
 
         const studyFrequency = await RevisionLogModel.aggregate<{
           date: Date
