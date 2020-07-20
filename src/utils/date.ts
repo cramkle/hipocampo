@@ -1,9 +1,9 @@
-import { utcToZonedTime } from 'date-fns-tz'
+import { zonedTimeToUtc } from 'date-fns-tz'
 
 export const toUserDate = (date: Date, userTimeZone = 'UTC') => {
-  const utcDate = new Date(date.toISOString())
+  const zonedDate = new Date(date.toISOString())
 
-  const zonedDate = utcToZonedTime(utcDate, userTimeZone)
+  const utcDate = zonedTimeToUtc(zonedDate, userTimeZone)
 
-  return zonedDate
+  return utcDate
 }
