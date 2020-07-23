@@ -16,7 +16,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { toUserDate } from '../../utils/date'
+import { fromUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -140,11 +140,11 @@ export const DeckStatisticsType = new GraphQLObjectType<
         args: StudyFrequencyArgs,
         ctx: Context
       ) => {
-        const startDate = toUserDate(
+        const startDate = fromUserDate(
           parseISO(args.startDate),
           ctx.user?.preferences?.zoneInfo
         )
-        const endDate = toUserDate(
+        const endDate = fromUserDate(
           parseISO(args.endDate),
           ctx.user?.preferences?.zoneInfo
         )
