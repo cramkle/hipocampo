@@ -3,7 +3,9 @@ import {
   eachDayOfInterval,
   eachMonthOfInterval,
   eachYearOfInterval,
+  endOfDay,
   parseISO,
+  startOfDay,
 } from 'date-fns'
 import {
   GraphQLFloat,
@@ -16,7 +18,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { fromUserDate } from '../../utils/date'
+import { fromUserDate, toUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -141,12 +143,17 @@ export const DeckStatisticsType = new GraphQLObjectType<
         ctx: Context
       ) => {
         const startDate = fromUserDate(
-          parseISO(args.startDate),
-          ctx.user?.preferences?.zoneInfo
+          startOfDay(
+            toUserDate(
+              parseISO(args.startDate),
+              ctx.user?.preferences?.zoneInfo
+            )
+          )
         )
         const endDate = fromUserDate(
-          parseISO(args.endDate),
-          ctx.user?.preferences?.zoneInfo
+          endOfDay(
+            toUserDate(parseISO(args.endDate), ctx.user?.preferences?.zoneInfo)
+          )
         )
 
         const daysInterval = differenceInDays(endDate, startDate)
