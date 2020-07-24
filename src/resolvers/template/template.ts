@@ -1,6 +1,7 @@
 import { GraphQLFieldConfig, GraphQLID } from 'graphql'
 
 import { TemplateModel } from '../../mongo'
+import { checkAuthAndResolve } from '../../utils/auth'
 import { TemplateType } from './types'
 
 export const template: GraphQLFieldConfig<void, Context, { id: string }> = {
@@ -9,9 +10,9 @@ export const template: GraphQLFieldConfig<void, Context, { id: string }> = {
   args: {
     id: { type: GraphQLID },
   },
-  resolve: async (_, { id }) => {
+  resolve: checkAuthAndResolve(async (_, { id }) => {
     const template = await TemplateModel.findById(id)
 
     return template
-  },
+  }),
 }

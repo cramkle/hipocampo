@@ -1,11 +1,16 @@
 import bcrypt from 'bcrypt'
 import { Document, Schema, model } from 'mongoose'
 
+export enum UserRoles {
+  REGULAR = 'REGULAR',
+  ADMIN = 'ADMIN',
+}
+
 export interface User {
   username: string
   password: string
   email: string
-  roles: string[]
+  roles: UserRoles[]
   lastLogin: Date
   createdAt: Date
   preferences?: UserPreferences
@@ -47,7 +52,8 @@ const UserSchema = new Schema<UserDocument>(
     },
     roles: {
       type: [{ type: String }],
-      default: ['REGULAR'],
+      enum: Object.values(UserRoles),
+      default: [UserRoles.REGULAR],
     },
     lastLogin: {
       type: Date,

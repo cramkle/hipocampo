@@ -6,6 +6,7 @@ import {
 } from 'graphql'
 
 import { DeckModel } from '../../mongo'
+import { checkAuthAndResolve } from '../../utils/auth'
 import { studyFlashCardsByDeck } from '../../utils/study'
 import { DeckType } from './types'
 
@@ -23,8 +24,8 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
       defaultValue: false,
     },
   },
-  resolve: async (_, { studyOnly }, ctx) => {
-    let decks = await DeckModel.find({ ownerId: ctx.user?._id })
+  resolve: checkAuthAndResolve(async (_, { studyOnly }, ctx) => {
+    let decks = await DeckModel.find({ ownerId: ctx.user._id })
 
     if (studyOnly) {
       // eslint-disable-next-line require-atomic-updates
@@ -38,5 +39,5 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
     }
 
     return decks
-  },
+  }),
 }

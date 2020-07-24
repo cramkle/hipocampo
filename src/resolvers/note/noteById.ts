@@ -2,13 +2,14 @@ import { GraphQLFieldConfig, GraphQLID, GraphQLNonNull } from 'graphql'
 import { fromGlobalId } from 'graphql-relay'
 
 import { DeckModel, NoteModel } from '../../mongo'
+import { checkAuthAndResolve } from '../../utils/auth'
 import { NoteType } from '../deck/types'
 
 export const note: GraphQLFieldConfig<void, Context, { id: string }> = {
   type: NoteType,
   description: "Get single note by it's id",
   args: { id: { type: GraphQLNonNull(GraphQLID) } },
-  resolve: async (_, args, { user }) => {
+  resolve: checkAuthAndResolve(async (_, args, { user }) => {
     const { id: noteId } = fromGlobalId(args.id)
     const userDecks = await DeckModel.find({ ownerId: user?._id })
 
@@ -24,5 +25,5 @@ export const note: GraphQLFieldConfig<void, Context, { id: string }> = {
     }
 
     return note
-  },
+  }),
 }

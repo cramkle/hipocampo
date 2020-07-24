@@ -1,5 +1,6 @@
 import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql'
 
+import { checkAuthAndResolve } from '../../utils/auth'
 import { DeckType } from './types'
 
 interface DeckArgs {
@@ -12,7 +13,7 @@ export const deck: GraphQLFieldConfig<void, Context, DeckArgs> = {
   args: {
     slug: { type: GraphQLNonNull(GraphQLString) },
   },
-  resolve: async (_, { slug }, ctx) => {
+  resolve: checkAuthAndResolve(async (_, { slug }, ctx) => {
     return ctx.deckBySlugLoader.load(slug)
-  },
+  }),
 }
