@@ -50,9 +50,11 @@ const UserSchema = new Schema<UserDocument>(
       default: ['REGULAR'],
     },
     lastLogin: {
-      type: Date,
+      type: Schema.Types.Date,
     },
     preferences: UserPreferencesSchema,
+    createdAt: { type: Schema.Types.Date },
+    updatedAt: { type: Schema.Types.Date },
   },
   { timestamps: { createdAt: true } }
 )

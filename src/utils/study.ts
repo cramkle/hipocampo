@@ -1,9 +1,9 @@
-import { compareAsc, endOfToday, isAfter, startOfToday } from 'date-fns'
+import { compareAsc, endOfDay, isAfter, startOfDay } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
 import { FlashCardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
-import { fromUserDate } from './date'
+import { fromUserDate, toUserDate } from './date'
 import { MINIMUM_ANSWER_QUALITY } from './scheduler'
 
 const sumByStatus = (logs: RevisionLogDocument[], status: FlashCardStatus) => {
@@ -28,8 +28,12 @@ const STUDY_LIMIT_BY_STATUS = {
 }
 
 export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
-  const [startDate, endDate] = [startOfToday(), endOfToday()].map((date) =>
-    fromUserDate(date, ctx.user?.preferences?.zoneInfo)
+  const userTimeZone = ctx.user?.preferences?.zoneInfo
+
+  const now = toUserDate(new Date(), userTimeZone)
+
+  const [startDate, endDate] = [startOfDay(now), endOfDay(now)].map((date) =>
+    fromUserDate(date, userTimeZone)
   )
 
   const todayLogs = await RevisionLogModel.find({
