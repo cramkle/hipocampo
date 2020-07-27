@@ -73,7 +73,7 @@
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.4",
-    "release-it": "^13.6.5",
+    "release-it": "^13.6.6",
     "tsc-watch": "^4.2.9",
     "typescript": "^3.9.7"
   },
