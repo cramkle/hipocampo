@@ -70,7 +70,7 @@
     "babel-jest": "^26.1.0",
     "eslint": "^7.5.0",
     "husky": "^4.2.5",
-    "jest": "^26.1.0",
+    "jest": "^26.2.1",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.4",
     "release-it": "^13.6.6",
