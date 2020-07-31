@@ -43,7 +43,7 @@
     "shortid": "^2.2.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
+    "@babel/core": "^7.11.0",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-typescript": "^7.10.4",
     "@lucasecdb/eslint-config": "^0.10.2",
