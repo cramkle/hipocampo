@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-env": "^7.11.0",
     "@babel/preset-typescript": "^7.10.4",
     "@lucasecdb/eslint-config": "^0.10.2",
     "@shelf/jest-mongodb": "^1.2.1",
