@@ -14,6 +14,9 @@ cd hipocampo
 
 # Install dependencies
 yarn
+
+# Copy example env file to .env
+cp .env.example .env
 ```
 
 This project also depends on [MongoDB](https://www.mongodb.com/) (for persistent storage) and [Redis](https://redis.io/)
@@ -22,6 +25,7 @@ the following commands to install them:
 
 ```sh
 brew update
+brew tap mongodb/brew
 brew install mongodb-community redis
 ```
 
