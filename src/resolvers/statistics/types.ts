@@ -148,12 +148,14 @@ export const DeckStatisticsType = new GraphQLObjectType<
               parseISO(args.startDate),
               ctx.user?.preferences?.zoneInfo
             )
-          )
+          ),
+          ctx.user?.preferences?.zoneInfo
         )
         const endDate = fromUserDate(
           endOfDay(
             toUserDate(parseISO(args.endDate), ctx.user?.preferences?.zoneInfo)
-          )
+          ),
+          ctx.user?.preferences?.zoneInfo
         )
 
         const daysInterval = differenceInDays(endDate, startDate)
