@@ -55,22 +55,22 @@ export const createNote = mutationWithClientMutationId({
       modelId: model._id,
       deckId: deck._id,
       ownerId: user!._id,
-      values: fieldValues
-        .map((fieldValue) => {
-          const { id: fieldId } = fromGlobalId(fieldValue.field.id)
+      values: modelFields.map((field) => {
+        const fieldValue = fieldValues.find(
+          ({ field: { id: fieldId } }) => fieldId === field._id.toString()
+        )
 
-          return {
-            data: fieldValue.data,
-            fieldId,
-          }
-        })
-        .filter((fieldValue) => {
-          return (
-            modelFields.find(
-              (field) => field._id.toString() === fieldValue.fieldId
-            ) !== undefined
-          )
-        }),
+        if (!fieldValue) {
+          return { data: undefined, fieldId: field._id.toString() }
+        }
+
+        const { id: fieldId } = fromGlobalId(fieldValue.field.id)
+
+        return {
+          data: fieldValue.data,
+          fieldId,
+        }
+      }),
       flashCards: [],
     })
 
