@@ -58,7 +58,7 @@
     "@types/graphql-relay": "^0.6.0",
     "@types/graphql-type-json": "^0.3.0",
     "@types/helmet": "^0.0.47",
-    "@types/jest": "^26.0.8",
+    "@types/jest": "^26.0.9",
     "@types/lodash": "^4.14.158",
     "@types/mongodb": "^3.5.25",
     "@types/mongoose": "^5.7.34",
