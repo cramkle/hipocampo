@@ -1,5 +1,5 @@
 import { Application, Request } from 'express'
-import graphqlHTTP from 'express-graphql'
+import { graphqlHTTP } from 'express-graphql'
 
 import config from '../config'
 import { createLoaders } from '../loaders/createLoaders'
