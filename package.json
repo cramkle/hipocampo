@@ -67,7 +67,7 @@
     "@types/passport": "^1.0.4",
     "@types/passport-local": "^1.0.33",
     "@types/shortid": "^0.0.29",
-    "babel-jest": "^26.2.2",
+    "babel-jest": "^26.3.0",
     "eslint": "^7.6.0",
     "husky": "^4.2.5",
     "jest": "^26.3.0",
