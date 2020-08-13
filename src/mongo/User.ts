@@ -6,7 +6,7 @@ export interface User {
   password: string
   email: string
   roles: string[]
-  lastLogin: Date
+  lastLogin?: Date
   createdAt: Date
   preferences?: UserPreferences
 }

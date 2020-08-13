@@ -1,7 +1,5 @@
-import { graphql } from 'graphql'
-
 import gql from '../../../gql'
-import schema from '../../../schema'
+import { runQuery } from '../../../test/utils'
 
 describe('CreateUser mutation', () => {
   it('createUser successfully creates an user', async () => {
@@ -23,11 +21,10 @@ describe('CreateUser mutation', () => {
       }
     `
 
-    const result = await graphql({ schema, source: query })
+    const result = await runQuery(query)
 
-    expect(result.errors).toBeUndefined()
-    expect(result.data?.createUser.user.id).toBeTruthy()
-    expect(result.data?.createUser.user.username).toBe('lucas')
-    expect(result.data?.createUser.user.email).toBe('lucas@email.com')
+    expect(result.createUser.user.id).toBeTruthy()
+    expect(result.createUser.user.username).toBe('lucas')
+    expect(result.createUser.user.email).toBe('lucas@email.com')
   })
 })

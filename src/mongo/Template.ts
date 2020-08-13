@@ -1,11 +1,11 @@
 import { Document, Schema, Types, model } from 'mongoose'
 
-import { ContentStateDocument, ContentStateSchema } from './ContentState'
+import { ContentState, ContentStateSchema } from './ContentState'
 
 export interface Template {
   name: string
-  frontSide: ContentStateDocument | null
-  backSide: ContentStateDocument | null
+  frontSide: ContentState | null
+  backSide: ContentState | null
   modelId: Types.ObjectId
   ownerId: Types.ObjectId
 }
