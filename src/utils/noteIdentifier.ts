@@ -21,7 +21,7 @@ export const getNoteIdentifier = async (
 
   const contentState = convertFromRaw({
     entityMap: {},
-    ...primaryFieldValue.data.toJSON(),
+    ...(primaryFieldValue.data?.toJSON() ?? { blocks: [] }),
   })
 
   return contentState.getPlainText()
