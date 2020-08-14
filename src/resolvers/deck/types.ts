@@ -151,8 +151,7 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       },
       resolve: (async (
         root: DeckDocument,
-        args: PageConnectionArgs & { search?: string },
-        ctx: Context
+        args: PageConnectionArgs & { search?: string }
       ) => {
         const query = {
           deckId: root._id,
@@ -168,9 +167,9 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
 
         const paginationStart = (args.page - 1) * args.size
 
-        const [notes, totalCount] = await Promise.all([
+        const [totalCount, notes] = await Promise.all([
+          NoteModel.find().merge(notesQuery).countDocuments(),
           notesQuery.skip(paginationStart).limit(args.size).exec(),
-          ctx.countNotesByDeckLoader.load(root._id),
         ] as const)
 
         const cursor = pageToCursor(args.page, args.size)

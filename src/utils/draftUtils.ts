@@ -10,7 +10,7 @@ type DraftRichObject = {
 
 export const draftContent = (
   strings: TemplateStringsArray,
-  ...keys: DraftRichObject[]
+  ...keys: (number | string | DraftRichObject)[]
 ) => {
   return (modelFields: FieldDocument[] = []) => {
     const entityMap: Record<string, RawDraftEntity> = {}
@@ -29,6 +29,10 @@ export const draftContent = (
         }
 
         const rawKeyEntity = keys[index]
+
+        if (typeof rawKeyEntity !== 'object') {
+          return total + str + rawKeyEntity
+        }
 
         const draftEntity: RawDraftEntity = {
           type: rawKeyEntity.type,
