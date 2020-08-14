@@ -1,3 +1,5 @@
+import { v4 } from 'uuid'
+
 import {
   DeckModel,
   FieldModel,
@@ -7,15 +9,13 @@ import {
 } from '../mongo'
 import { draftContent, mention } from '../utils/draftUtils'
 
-let usersCreated = 0
-
 export const createUserWithData = async () => {
-  usersCreated++
+  const uuid = v4().replace('-', '_')
 
   const user = await UserModel.create({
-    username: `testuser${usersCreated}`,
+    username: `testuser${uuid}`,
     password: 'hunter2',
-    email: `test-user+${usersCreated}@cramkle.com`,
+    email: `test-user+${uuid}@cramkle.com`,
     roles: ['REGULAR'],
     preferences: {
       zoneInfo: 'UTC',

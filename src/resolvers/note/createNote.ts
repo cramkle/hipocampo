@@ -35,7 +35,6 @@ export const createNote = mutationWithClientMutationId({
   },
   outputFields: { note: { type: NoteType } },
   mutateAndGetPayload: async (args: CreateNoteMutationInput, { user }) => {
-    const { fieldValues } = args
     const { id: deckId } = fromGlobalId(args.deckId)
     const { id: modelId } = fromGlobalId(args.modelId)
 
@@ -50,6 +49,14 @@ export const createNote = mutationWithClientMutationId({
     }
 
     const modelFields = await FieldModel.find({ modelId: model._id })
+    const fieldValues = args.fieldValues.map((fieldValue) => {
+      const { id: fieldId } = fromGlobalId(fieldValue.field.id)
+
+      return {
+        data: fieldValue.data,
+        fieldId,
+      }
+    })
 
     const note = await NoteModel.create({
       modelId: model._id,
@@ -57,19 +64,14 @@ export const createNote = mutationWithClientMutationId({
       ownerId: user!._id,
       values: modelFields.map((field) => {
         const fieldValue = fieldValues.find(
-          ({ field: { id: fieldId } }) => fieldId === field._id.toString()
+          ({ fieldId }) => fieldId === field._id.toString()
         )
 
         if (!fieldValue) {
           return { data: undefined, fieldId: field._id.toString() }
         }
 
-        const { id: fieldId } = fromGlobalId(fieldValue.field.id)
-
-        return {
-          data: fieldValue.data,
-          fieldId,
-        }
+        return fieldValue
       }),
       flashCards: [],
     })

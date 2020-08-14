@@ -12,7 +12,7 @@ export const draftContent = (
   strings: TemplateStringsArray,
   ...keys: DraftRichObject[]
 ) => {
-  return (modelFields: FieldDocument[]) => {
+  return (modelFields: FieldDocument[] = []) => {
     const entityMap: Record<string, RawDraftEntity> = {}
     const entityList: Array<{
       entityKey: number
