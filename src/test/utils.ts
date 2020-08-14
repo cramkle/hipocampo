@@ -3,11 +3,11 @@ import { graphql } from 'graphql'
 import { createLoaders } from '../loaders/createLoaders'
 import schema from '../schema'
 
-export const runQuery = (
+export const runQuery = <TData = any, TVariables = Record<string, any>>(
   query: string,
   context: Partial<Omit<Context, 'loaders'>> = {},
-  variables: Record<string, any> = {}
-) => {
+  variables?: TVariables
+): Promise<TData> => {
   const loaders = createLoaders(context.user)
 
   return graphql({
@@ -15,8 +15,8 @@ export const runQuery = (
     source: query,
     variableValues: variables,
     contextValue: {
+      ...loaders,
       ...context,
-      loaders,
     },
   }).then((result) => {
     if (result.errors) {
@@ -24,6 +24,6 @@ export const runQuery = (
       throw error.originalError ?? error
     }
 
-    return result.data!
+    return result.data! as TData
   })
 }

@@ -4,7 +4,7 @@ import { runQuery } from '../../../test/utils'
 describe('CreateUser mutation', () => {
   it('createUser successfully creates an user', async () => {
     const query = gql`
-      mutation {
+      mutation CreateUser_BasicCreateUser {
         createUser(
           input: {
             username: "lucas"
