@@ -73,7 +73,7 @@
     "@types/uuid": "^8.3.0",
     "apollo": "^2.30.2",
     "babel-jest": "^26.3.0",
-    "eslint": "^7.6.0",
+    "eslint": "^7.7.0",
     "husky": "^4.2.5",
     "jest": "^26.4.0",
     "lint-staged": "^10.2.11",
