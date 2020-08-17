@@ -63,7 +63,7 @@
     "@types/helmet": "^0.0.47",
     "@types/jest": "^26.0.9",
     "@types/lodash": "^4.14.159",
-    "@types/mongodb": "^3.5.25",
+    "@types/mongodb": "^3.5.26",
     "@types/mongoose": "^5.7.36",
     "@types/morgan": "^1.9.1",
     "@types/node": "^14.0.27",
