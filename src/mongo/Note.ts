@@ -20,7 +20,7 @@ export const FieldValueSchema = new Schema<FieldValueDocument>({
 })
 
 // ----------
-// Flash cards
+// Flashcards
 export enum FlashCardStatus {
   NEW = 'NEW',
   LEARNING = 'LEARNING',
@@ -38,6 +38,7 @@ export interface FlashCard {
   reviews: number
   interval: number
   easeFactor: number
+  remainingStepsForGraduation: number
   due: Date
   templateId: Types.ObjectId
   noteId: Types.ObjectId
@@ -52,6 +53,7 @@ export const FlashCardSchema = new Schema<FlashCardDocument>({
   reviews: { type: Number, default: 0 },
   interval: { type: Number },
   easeFactor: { type: Number, default: 2.5 },
+  remainingStepsForGraduation: { type: Number },
   due: { type: Schema.Types.Date },
   templateId: {
     type: Schema.Types.ObjectId,

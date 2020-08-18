@@ -7,6 +7,7 @@ import {
   TemplateModel,
   UserModel,
 } from '../mongo'
+import { defaultDeckConfig } from '../mongo/Deck'
 import { draftContent, mention } from '../utils/draftUtils'
 
 export const createUserWithData = async () => {
@@ -32,6 +33,7 @@ export const createUserWithData = async () => {
         description: 'Deck created for testing purposes',
         ownerId: user._id,
         published: false,
+        configuration: defaultDeckConfig,
       })
     )
   )

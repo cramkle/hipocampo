@@ -65,7 +65,7 @@ export const ModelType: GraphQLObjectType<
       type: GraphQLNonNull(GraphQLInt),
       description: 'Total number of flashcards associated with this model',
       resolve: (root, _, ctx) =>
-        ctx.countFlashCardsByModelLoader.load(root._id),
+        ctx.countFlashcardsByModelLoader.load(root._id),
     },
   }),
 })

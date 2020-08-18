@@ -19,7 +19,7 @@ import {
   createPageCursors,
   pageToCursor,
 } from '../../utils/pagination'
-import { studyFlashCardsByDeck } from '../../utils/study'
+import { studyFlashcardsByDeck } from '../../utils/study'
 import { FieldValueType } from '../fieldValue/types'
 import { FlashCardType } from '../flashCard/types'
 import { ModelType } from '../model/types'
@@ -127,14 +127,14 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       type: GraphQLNonNull(StudySessionDetailsType),
       description: 'Details of current study session',
       resolve: async (root, _, ctx) => {
-        const studyFlashCards = await studyFlashCardsByDeck(root._id, ctx)
+        const studyFlashcards = await studyFlashcardsByDeck(root._id, ctx)
 
         const detailsObject: StudySessionDetailsObject = new Map()
 
-        studyFlashCards.forEach((flashCard) => {
+        studyFlashcards.forEach((flashcard) => {
           detailsObject.set(
-            flashCard.status,
-            (detailsObject.get(flashCard.status) ?? 0) + 1
+            flashcard.status,
+            (detailsObject.get(flashcard.status) ?? 0) + 1
           )
         })
 
@@ -206,7 +206,7 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
     totalFlashcards: {
       type: GraphQLNonNull(GraphQLInt),
       description: 'Number of flashcards in this deck',
-      resolve: (root, _, ctx) => ctx.countFlashCardsByDeckLoader.load(root._id),
+      resolve: (root, _, ctx) => ctx.countFlashcardsByDeckLoader.load(root._id),
     },
   }),
 })

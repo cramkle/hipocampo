@@ -6,7 +6,7 @@ import {
 } from 'graphql'
 
 import { DeckModel } from '../../mongo'
-import { studyFlashCardsByDeck } from '../../utils/study'
+import { studyFlashcardsByDeck } from '../../utils/study'
 import { DeckType } from './types'
 
 interface DecksArgs {
@@ -30,8 +30,8 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
       // eslint-disable-next-line require-atomic-updates
       decks = await Promise.all(
         decks.map((deck) =>
-          studyFlashCardsByDeck(deck._id, ctx).then(
-            (flashCards) => flashCards.length > 0
+          studyFlashcardsByDeck(deck._id, ctx).then(
+            (flashcards) => flashcards.length > 0
           )
         )
       ).then((results) => decks.filter((_, index) => results[index]))
