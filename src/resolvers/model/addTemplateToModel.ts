@@ -5,6 +5,7 @@ import {
   GraphQLString,
 } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
+import { Types } from 'mongoose'
 
 import { NoteModel, TemplateModel } from '../../mongo'
 import { TemplateType } from '../template/types'
@@ -50,7 +51,17 @@ export const addTemplateToModel: GraphQLFieldConfig<
           flashCards: {
             $concatArrays: [
               '$flashCards',
-              [{ templateId: template._id, noteId: '$_id' }],
+              [
+                {
+                  // Apparently mongodb isn't creating
+                  // an id for the subdocument when it
+                  // is created using the `$concatArrays`
+                  // aggregation operator
+                  _id: Types.ObjectId(),
+                  templateId: template._id,
+                  noteId: '$_id',
+                },
+              ],
             ],
           },
         },
