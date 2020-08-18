@@ -39,16 +39,11 @@ export const removeTemplateFromModel: GraphQLFieldConfig<
       throw new GraphQLError('Template not found')
     }
 
-    const modelNotes = await NoteModel.find({
-      modelId: template.modelId.toString(),
-    })
-
-    await Promise.all(
-      modelNotes.map(async (note) => {
-        await note.updateOne({
-          $pull: { flashCards: { templateId: template._id } },
-        })
-      })
+    await NoteModel.updateMany(
+      {
+        modelId: template.modelId.toString(),
+      },
+      { $pull: { flashCards: { templateId: template._id } } }
     )
 
     await template.remove()

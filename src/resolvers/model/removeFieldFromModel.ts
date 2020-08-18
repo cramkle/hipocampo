@@ -40,14 +40,9 @@ export const removeFieldFromModel: GraphQLFieldConfig<
       throw new GraphQLError('Field not found')
     }
 
-    const modelNotes = await NoteModel.find({ modelId: fieldModel._id })
-
-    await Promise.all(
-      modelNotes.map(async (note) => {
-        await note.update({
-          $pull: { values: { fieldId: field._id } },
-        })
-      })
+    await NoteModel.updateMany(
+      { modelId: fieldModel._id },
+      { $pull: { values: { fieldId: field._id } } }
     )
 
     await field.remove()

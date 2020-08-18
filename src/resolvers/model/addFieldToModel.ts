@@ -46,16 +46,11 @@ export const addFieldToModel: GraphQLFieldConfig<
       modelId: model._id,
     })
 
-    const modelNotes = await NoteModel.find({
-      modelId: model._id,
-    })
-
-    await Promise.all(
-      modelNotes.map(async (note) => {
-        await note.update({
-          $push: { values: { fieldId: field._id } },
-        })
-      })
+    await NoteModel.updateMany(
+      {
+        modelId: model._id,
+      },
+      { $push: { values: { fieldId: field._id } } }
     )
 
     return { field }

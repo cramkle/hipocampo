@@ -44,15 +44,18 @@ export const addTemplateToModel: GraphQLFieldConfig<
       backSide: null,
     })
 
-    const modelNotes = await NoteModel.find({ modelId })
-
-    await Promise.all(
-      modelNotes.map((note) => {
-        return note.update({
-          $push: { flashCards: { templateId: template._id, noteId: note._id } },
-        })
-      })
-    )
+    await NoteModel.updateMany({ modelId }, [
+      {
+        $set: {
+          flashCards: {
+            $concatArrays: [
+              '$flashCards',
+              [{ templateId: template._id, noteId: '$_id' }],
+            ],
+          },
+        },
+      },
+    ] as any)
 
     return { template }
   },
