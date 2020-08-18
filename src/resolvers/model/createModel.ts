@@ -49,18 +49,16 @@ export const createModel: GraphQLFieldConfig<
       ownerId: user?._id,
     })
 
-    await Promise.all(
-      fields.map((field) => FieldModel.create({ ...field, modelId: model._id }))
+    await FieldModel.create(
+      fields.map((field) => ({ ...field, modelId: model._id }))
     )
 
-    await Promise.all(
-      templates.map((template) =>
-        TemplateModel.create({
-          ...template,
-          modelId: model._id,
-          ownerId: user?._id,
-        })
-      )
+    await TemplateModel.create(
+      templates.map((template) => ({
+        ...template,
+        modelId: model._id,
+        ownerId: user?._id,
+      }))
     )
 
     return { model }

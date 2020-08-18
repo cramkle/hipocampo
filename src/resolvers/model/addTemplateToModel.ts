@@ -5,6 +5,7 @@ import {
   GraphQLString,
 } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
+import { Types } from 'mongoose'
 
 import { NoteModel, TemplateModel } from '../../mongo'
 import { TemplateType } from '../template/types'
@@ -44,15 +45,28 @@ export const addTemplateToModel: GraphQLFieldConfig<
       backSide: null,
     })
 
-    const modelNotes = await NoteModel.find({ modelId })
-
-    await Promise.all(
-      modelNotes.map((note) => {
-        return note.update({
-          $push: { flashCards: { templateId: template._id, noteId: note._id } },
-        })
-      })
-    )
+    await NoteModel.updateMany({ modelId }, [
+      {
+        $set: {
+          flashCards: {
+            $concatArrays: [
+              '$flashCards',
+              [
+                {
+                  // Apparently mongodb isn't creating
+                  // an id for the subdocument when it
+                  // is created using the `$concatArrays`
+                  // aggregation operator
+                  _id: Types.ObjectId(),
+                  templateId: template._id,
+                  noteId: '$_id',
+                },
+              ],
+            ],
+          },
+        },
+      },
+    ] as any)
 
     return { template }
   },
