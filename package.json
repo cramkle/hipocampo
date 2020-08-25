@@ -62,7 +62,7 @@
     "@types/graphql-type-json": "^0.3.0",
     "@types/helmet": "^0.0.48",
     "@types/jest": "^26.0.10",
-    "@types/lodash": "^4.14.159",
+    "@types/lodash": "^4.14.160",
     "@types/mongodb": "^3.5.26",
     "@types/mongoose": "^5.7.36",
     "@types/morgan": "^1.9.1",
