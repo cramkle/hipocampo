@@ -77,7 +77,7 @@
     "husky": "^4.2.5",
     "jest": "^26.4.2",
     "lint-staged": "^10.2.11",
-    "prettier": "^2.0.4",
+    "prettier": "^2.1.0",
     "release-it": "^13.6.9",
     "tsc-watch": "^4.2.9",
     "typescript": "^3.9.7"
