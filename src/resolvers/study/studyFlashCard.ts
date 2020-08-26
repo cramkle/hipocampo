@@ -1,9 +1,9 @@
 import { GraphQLFieldConfig, GraphQLString } from 'graphql'
 
-import { studyFlashCardsByDeck } from '../../utils/study'
+import { studyFlashcardsByDeck } from '../../utils/study'
 import { FlashCardType } from '../flashCard/types'
 
-export const studyFlashCard: GraphQLFieldConfig<
+export const studyFlashcard: GraphQLFieldConfig<
   void,
   Context,
   { deckSlug: string }
@@ -21,8 +21,8 @@ export const studyFlashCard: GraphQLFieldConfig<
       throw new Error('Deck not found')
     }
 
-    const flashCards = await studyFlashCardsByDeck(deck._id, ctx)
+    const flashcards = await studyFlashcardsByDeck(deck._id, ctx)
 
-    return flashCards[0]
+    return flashcards[0]
   },
 }

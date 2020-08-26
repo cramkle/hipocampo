@@ -1,10 +1,9 @@
 import { compareAsc, endOfDay, isAfter, startOfDay } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
-import { FlashCardStatus } from '../mongo/Note'
+import { FlashCard, FlashCardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
 import { fromUserDate, toUserDate } from './date'
-import { MINIMUM_ANSWER_QUALITY } from './scheduler'
 
 const sumByStatus = (logs: RevisionLogDocument[], status: FlashCardStatus) => {
   return logs
@@ -17,18 +16,22 @@ const sumByStatus = (logs: RevisionLogDocument[], status: FlashCardStatus) => {
     .reduce((total, log) => (log.status === status ? total + 1 : total), 0)
 }
 
-const MAX_NEW_FLASHCARDS_PER_DAY = 20
-const MAX_LEARNING_FLASHCARDS_PER_DAY = 100
-const MAX_REVIEW_FLASHCARDS_PER_DAY = 50
-
-const STUDY_LIMIT_BY_STATUS = {
-  [FlashCardStatus.NEW]: MAX_NEW_FLASHCARDS_PER_DAY,
-  [FlashCardStatus.LEARNING]: MAX_LEARNING_FLASHCARDS_PER_DAY,
-  [FlashCardStatus.REVIEW]: MAX_REVIEW_FLASHCARDS_PER_DAY,
+const getFlashcardCountStatus = (flashcard: FlashCard) => {
+  if (flashcard.status === FlashCardStatus.LEARNING) {
+    return FlashCardStatus.REVIEW
+  }
+  return flashcard.status
 }
 
-export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
+export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
   const userTimeZone = ctx.user?.preferences?.zoneInfo
+
+  const deck = await ctx.deckLoader.load(deckId)
+
+  const studyLimitByStatus = {
+    [FlashCardStatus.NEW]: deck.configuration.new.perDay,
+    [FlashCardStatus.REVIEW]: deck.configuration.review.perDay,
+  }
 
   const now = toUserDate(new Date(), userTimeZone)
 
@@ -41,35 +44,12 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
     date: { $gte: startDate, $lte: endDate },
   })
 
-  const finishedFlashCardLogByFlashCardId = new Map<
-    string,
-    RevisionLogDocument
-  >()
+  const flashcardLogByFlashcardId = new Map<string, RevisionLogDocument>()
 
   todayLogs.forEach((revisionLog) => {
-    if (revisionLog.answerQuality >= MINIMUM_ANSWER_QUALITY) {
-      finishedFlashCardLogByFlashCardId.set(
-        revisionLog.flashCardId.toString(),
-        revisionLog
-      )
-    }
-  })
-
-  const unfinishedFlashCards = todayLogs.filter(
-    (log) =>
-      log.answerQuality < MINIMUM_ANSWER_QUALITY &&
-      !finishedFlashCardLogByFlashCardId.has(log.flashCardId.toString())
-  )
-
-  const unfinishedFlashCardLogByFlashCardId = new Map<
-    string,
-    RevisionLogDocument
-  >()
-
-  unfinishedFlashCards.forEach((unfinishedFlashCardLog) => {
-    unfinishedFlashCardLogByFlashCardId.set(
-      unfinishedFlashCardLog.flashCardId.toString(),
-      unfinishedFlashCardLog
+    flashcardLogByFlashcardId.set(
+      revisionLog.flashCardId.toString(),
+      revisionLog
     )
   })
 
@@ -83,28 +63,30 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
     [FlashCardStatus.REVIEW]: numOfReview,
   }
 
-  const flashCards = (await ctx.flashCardsByDeckLoader.load(deckId))
-    .filter((flashCard) => {
-      const isUnfinished = unfinishedFlashCardLogByFlashCardId.has(
-        flashCard._id.toString()
+  const flashcards = (await ctx.flashcardsByDeckLoader.load(deckId))
+    .filter((flashcard) => {
+      const studiedToday = flashcardLogByFlashcardId.has(
+        flashcard._id.toString()
       )
 
-      if (flashCard.due && isAfter(flashCard.due, endDate) && !isUnfinished) {
+      if (flashcard.due && isAfter(flashcard.due, endDate)) {
         return false
       }
 
-      const totalOfStudiedUntilNow = cardCounts[flashCard.status]
+      const countStatus = getFlashcardCountStatus(flashcard)
+
+      const totalOfStudiedUntilNow = cardCounts[countStatus]
 
       if (totalOfStudiedUntilNow == undefined) {
         return false
       }
 
-      const maxPerDay = STUDY_LIMIT_BY_STATUS[flashCard.status]
+      const maxPerDay = studyLimitByStatus[countStatus]
 
-      if (isUnfinished) {
+      if (studiedToday) {
         return true
       } else if (totalOfStudiedUntilNow < maxPerDay) {
-        cardCounts[flashCard.status]++
+        cardCounts[flashcard.status]++
         return true
       }
 
@@ -126,5 +108,5 @@ export const studyFlashCardsByDeck = async (deckId: string, ctx: Context) => {
       return compareAsc(a.due, b.due)
     })
 
-  return flashCards
+  return flashcards
 }

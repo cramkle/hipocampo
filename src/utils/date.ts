@@ -1,3 +1,4 @@
+import { endOfToday } from 'date-fns'
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 
 /**
@@ -16,4 +17,8 @@ export const toUserDate = (utcDate: Date, userTimeZone = 'UTC') => {
   const zonedDate = utcToZonedTime(utcDate, userTimeZone)
 
   return zonedDate
+}
+
+export const endOfUserDay = (userTimeZone: string) => {
+  return toUserDate(endOfToday(), userTimeZone)
 }

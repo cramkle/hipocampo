@@ -24,7 +24,7 @@ import { deleteNote } from './resolvers/note/deleteNote'
 import { note } from './resolvers/note/noteById'
 import { deckStatistics } from './resolvers/statistics/deckStatistics'
 import { answerFlashCard } from './resolvers/study/answerFlashCard'
-import { studyFlashCard } from './resolvers/study/studyFlashCard'
+import { studyFlashcard } from './resolvers/study/studyFlashCard'
 import { template } from './resolvers/template/template'
 import { updateTemplate } from './resolvers/template/updateTemplate'
 import { createUser } from './resolvers/user/createUser'
@@ -46,7 +46,8 @@ const schema = new GraphQLSchema({
       models,
       node: nodeField,
       note,
-      studyFlashCard,
+      studyFlashCard: studyFlashcard,
+      studyFlashcard,
       template,
     } as any,
   }),

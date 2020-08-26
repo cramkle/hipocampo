@@ -2,6 +2,7 @@ import { GraphQLNonNull, GraphQLString } from 'graphql'
 import { mutationWithClientMutationId } from 'graphql-relay'
 
 import { DeckModel } from '../../mongo'
+import { defaultDeckConfig } from '../../mongo/Deck'
 import { DeckType } from './types'
 
 export const createDeck = mutationWithClientMutationId({
@@ -21,6 +22,7 @@ export const createDeck = mutationWithClientMutationId({
       ownerId: user?._id,
       slug: '',
       published: false,
+      configuration: defaultDeckConfig,
     })
 
     return { deck }

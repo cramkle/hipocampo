@@ -5,12 +5,12 @@ import { NoteDocument } from '../mongo/Note'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
-export const countFlashCardsByProperty = (
+export const countFlashcardsByProperty = (
   propertyName: keyof NoteDocument
 ) => async (keys: readonly Types.ObjectId[]) => {
-  const flashCardCounts = await NoteModel.aggregate<{
+  const flashcardCounts = await NoteModel.aggregate<{
     _id: Types.ObjectId
-    totalFlashCards: number
+    totalFlashcards: number
   }>([
     {
       $match: {
@@ -23,24 +23,24 @@ export const countFlashCardsByProperty = (
     {
       $group: {
         _id: `$${propertyName}`,
-        flashCards: { $push: '$flashCards' },
+        flashcards: { $push: '$flashCards' },
       },
     },
     {
       $project: {
-        totalFlashCards: { $size: '$flashCards' },
+        totalFlashcards: { $size: '$flashcards' },
       },
     },
   ])
 
   const normalizedResults = await normalizeResults(
     keys,
-    flashCardCounts,
+    flashcardCounts,
     '_id',
     mongoIdCacheKeyFn
   )
 
   return normalizedResults.map((value) =>
-    'totalFlashCards' in value ? value.totalFlashCards : 0
+    'totalFlashcards' in value ? value.totalFlashcards : 0
   )
 }

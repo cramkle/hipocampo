@@ -14,7 +14,7 @@ import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
 import { FlashCardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
-import { countFlashCardsByProperty } from './countFlashCardsByProperty'
+import { countFlashcardsByProperty } from './countFlashCardsByProperty'
 import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
@@ -30,12 +30,12 @@ export interface Loaders {
   noteLoader: DataLoader<Types.ObjectId, NoteDocument>
   notesByModelLoader: DataLoader<Types.ObjectId, NoteDocument[]>
   notesByDeckLoader: DataLoader<Types.ObjectId | string, NoteDocument[]>
-  flashCardsByDeckLoader: DataLoader<
+  flashcardsByDeckLoader: DataLoader<
     Types.ObjectId | string,
     (FlashCardDocument & { flashcardIndex: number })[]
   >
-  countFlashCardsByModelLoader: DataLoader<Types.ObjectId | string, number>
-  countFlashCardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
+  countFlashcardsByModelLoader: DataLoader<Types.ObjectId | string, number>
+  countFlashcardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
   countNotesByDeckLoader: DataLoader<Types.ObjectId | string, number>
   countNotesByModelLoader: DataLoader<Types.ObjectId | string, number>
 }
@@ -174,11 +174,11 @@ export function createLoaders(user?: Express.User): Loaders {
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
-    flashCardsByDeckLoader: new DataLoader(
+    flashcardsByDeckLoader: new DataLoader(
       async (deckIds) => {
-        const flashCardsAggregationResult = await NoteModel.aggregate<{
+        const flashcardsAggregationResult = await NoteModel.aggregate<{
           _id: Types.ObjectId
-          flashCards: (FlashCardDocument & { flashcardIndex: number })[]
+          flashcards: (FlashCardDocument & { flashcardIndex: number })[]
         }>([
           {
             $match: {
@@ -192,23 +192,23 @@ export function createLoaders(user?: Express.User): Loaders {
               includeArrayIndex: 'flashCards.flashcardIndex',
             },
           },
-          { $group: { _id: '$deckId', flashCards: { $push: '$flashCards' } } },
+          { $group: { _id: '$deckId', flashcards: { $push: '$flashCards' } } },
         ])
 
-        const flashCardsByDeck = new Map<
+        const flashcardsByDeck = new Map<
           string,
           (FlashCardDocument & { flashcardIndex: number })[]
         >()
 
-        flashCardsAggregationResult.forEach((flashCardsResult) => {
-          flashCardsByDeck.set(
-            flashCardsResult._id.toString(),
-            flashCardsResult.flashCards
+        flashcardsAggregationResult.forEach((flashcardsResult) => {
+          flashcardsByDeck.set(
+            flashcardsResult._id.toString(),
+            flashcardsResult.flashcards
           )
         })
 
         return deckIds.map(
-          (deckId) => flashCardsByDeck.get(deckId.toString()) ?? []
+          (deckId) => flashcardsByDeck.get(deckId.toString()) ?? []
         )
       },
       { cacheKeyFn: mongoIdCacheKeyFn }
@@ -219,12 +219,12 @@ export function createLoaders(user?: Express.User): Loaders {
     countNotesByModelLoader: new DataLoader(countNotesByProperty('modelId'), {
       cacheKeyFn: mongoIdCacheKeyFn,
     }),
-    countFlashCardsByDeckLoader: new DataLoader(
-      countFlashCardsByProperty('deckId'),
+    countFlashcardsByDeckLoader: new DataLoader(
+      countFlashcardsByProperty('deckId'),
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
-    countFlashCardsByModelLoader: new DataLoader(
-      countFlashCardsByProperty('modelId'),
+    countFlashcardsByModelLoader: new DataLoader(
+      countFlashcardsByProperty('modelId'),
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
   }
