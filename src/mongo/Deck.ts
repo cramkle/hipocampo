@@ -105,6 +105,11 @@ const DeckConfigurationSchema = new Schema<DeckConfiguration>({
   review: {
     perDay: { type: Number },
   },
+  lapse: {
+    steps: [{ type: Number }],
+    minimumInterval: { type: Number },
+    intervalPercentage: { type: Number },
+  },
 })
 
 export const defaultDeckConfig: DeckConfiguration = {
