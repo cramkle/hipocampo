@@ -233,7 +233,7 @@ const scheduleFlashcardAsReview = ({
  * given a configuration.
  */
 const calculateDelayForStep = (steps: number[], currentStep: number) => {
-  const delay = steps[steps.length - currentStep - 1] ?? steps[0] ?? 1
+  const delay = steps[steps.length - currentStep] ?? steps[0] ?? 1
 
   return delay * 60
 }
