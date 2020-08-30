@@ -11,7 +11,10 @@ import authRouter from './routes/auth'
 
 const app = express()
 
-app.use(helmet())
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet())
+}
+
 app.use(morgan('dev'))
 
 ioMiddleware.set(app)

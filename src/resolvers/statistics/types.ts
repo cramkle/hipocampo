@@ -3,9 +3,7 @@ import {
   eachDayOfInterval,
   eachMonthOfInterval,
   eachYearOfInterval,
-  endOfDay,
   parseISO,
-  startOfDay,
 } from 'date-fns'
 import {
   GraphQLFloat,
@@ -18,7 +16,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { fromUserDate, toUserDate } from '../../utils/date'
+import { toUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -29,11 +27,12 @@ const StudyFrequencyPointType = new GraphQLObjectType({
   name: 'StudyFrequencyPoint',
   fields: {
     date: {
-      type: GraphQLNonNull(GraphQLFloat),
-      resolve: (root) => root.date.getTime(),
+      type: GraphQLNonNull(GraphQLString),
+      resolve: (root) => root.date.toISOString(),
     },
     learning: { type: GraphQLNonNull(GraphQLInt) },
     new: { type: GraphQLNonNull(GraphQLInt) },
+    review: { type: GraphQLNonNull(GraphQLInt) },
   },
 })
 
@@ -46,6 +45,7 @@ enum DateGroupBy {
 interface StudyFrequencyArgs {
   startDate: string
   endDate: string
+  zoneInfo: string
 }
 
 export const DeckStatisticsType = new GraphQLObjectType<
@@ -136,27 +136,15 @@ export const DeckStatisticsType = new GraphQLObjectType<
           type: GraphQLNonNull(GraphQLString),
           description: 'End interval date in ISO format',
         },
+        zoneInfo: {
+          type: GraphQLString,
+          description: 'Timezone',
+          defaultValue: 'UTC',
+        },
       },
-      resolve: (async (
-        root: DeckStatistics,
-        args: StudyFrequencyArgs,
-        ctx: Context
-      ) => {
-        const startDate = fromUserDate(
-          startOfDay(
-            toUserDate(
-              parseISO(args.startDate),
-              ctx.user?.preferences?.zoneInfo
-            )
-          ),
-          ctx.user?.preferences?.zoneInfo
-        )
-        const endDate = fromUserDate(
-          endOfDay(
-            toUserDate(parseISO(args.endDate), ctx.user?.preferences?.zoneInfo)
-          ),
-          ctx.user?.preferences?.zoneInfo
-        )
+      resolve: (async (root: DeckStatistics, args: StudyFrequencyArgs) => {
+        const startDate = toUserDate(parseISO(args.startDate), args.zoneInfo)
+        const endDate = toUserDate(parseISO(args.endDate), args.zoneInfo)
 
         const daysInterval = differenceInDays(endDate, startDate)
 
@@ -178,6 +166,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
           date: Date
           learning: number
           new: number
+          review: number
         }>([
           {
             $match: {
@@ -225,6 +214,17 @@ export const DeckStatisticsType = new GraphQLObjectType<
                   : null),
                 year: '$_id.year',
               },
+              review: {
+                $sum: {
+                  $cond: {
+                    if: {
+                      $eq: ['$flashcard.status', 'REVIEW'],
+                    },
+                    then: 1,
+                    else: 0,
+                  },
+                },
+              },
               learning: {
                 $sum: {
                   $cond: {
@@ -254,6 +254,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
               _id: 0,
               learning: 1,
               new: 1,
+              review: 1,
               date: {
                 $dateFromParts: {
                   day: dateGroupBy <= DateGroupBy.DAY ? '$_id.day' : 1,
@@ -287,6 +288,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
                           else: {
                             date: '$$date',
                             learning: 0,
+                            review: 0,
                             new: 0,
                           },
                         },
