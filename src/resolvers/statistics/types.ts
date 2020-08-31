@@ -16,7 +16,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { toUserDate } from '../../utils/date'
+import { fromUserDate, toUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -155,12 +155,14 @@ export const DeckStatisticsType = new GraphQLObjectType<
             ? DateGroupBy.MONTH
             : DateGroupBy.YEAR
 
-        const interval =
+        let interval =
           dateGroupBy === DateGroupBy.DAY
             ? eachDayOfInterval({ start: startDate, end: endDate })
             : dateGroupBy === DateGroupBy.MONTH
             ? eachMonthOfInterval({ start: startDate, end: endDate })
             : eachYearOfInterval({ start: startDate, end: endDate })
+
+        interval = interval.map((date) => fromUserDate(date, args.zoneInfo))
 
         const studyFrequency = await RevisionLogModel.aggregate<{
           date: Date
