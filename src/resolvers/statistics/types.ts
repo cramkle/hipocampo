@@ -1,5 +1,6 @@
 import {
   differenceInDays,
+  differenceInHours,
   eachDayOfInterval,
   eachMonthOfInterval,
   eachYearOfInterval,
@@ -16,7 +17,7 @@ import {
 
 import { RevisionLogModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { fromUserDate, toUserDate } from '../../utils/date'
+import { fromUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 
 interface DeckStatistics {
@@ -143,8 +144,8 @@ export const DeckStatisticsType = new GraphQLObjectType<
         },
       },
       resolve: (async (root: DeckStatistics, args: StudyFrequencyArgs) => {
-        const startDate = toUserDate(parseISO(args.startDate), args.zoneInfo)
-        const endDate = toUserDate(parseISO(args.endDate), args.zoneInfo)
+        const startDate = parseISO(args.startDate)
+        const endDate = parseISO(args.endDate)
 
         const daysInterval = differenceInDays(endDate, startDate)
 
@@ -155,14 +156,35 @@ export const DeckStatisticsType = new GraphQLObjectType<
             ? DateGroupBy.MONTH
             : DateGroupBy.YEAR
 
-        let interval =
+        const bucketInterval =
           dateGroupBy === DateGroupBy.DAY
-            ? eachDayOfInterval({ start: startDate, end: endDate })
+            ? eachDayOfInterval({ start: startDate, end: endDate }).map(
+                (date, index, array) => {
+                  if (index === array.length - 1) return endDate
+                  return fromUserDate(date, args.zoneInfo)
+                }
+              )
             : dateGroupBy === DateGroupBy.MONTH
-            ? eachMonthOfInterval({ start: startDate, end: endDate })
-            : eachYearOfInterval({ start: startDate, end: endDate })
+            ? eachMonthOfInterval({
+                start: startDate,
+                end: endDate,
+              }).map((date) => fromUserDate(date, args.zoneInfo))
+            : eachYearOfInterval({
+                start: startDate,
+                end: endDate,
+              }).map((date) => fromUserDate(date, args.zoneInfo))
 
-        interval = interval.map((date) => fromUserDate(date, args.zoneInfo))
+        const interval = bucketInterval.slice()
+
+        if (bucketInterval.length >= 2) {
+          const lastDate = bucketInterval[bucketInterval.length - 1]
+          const secondLastDate = bucketInterval[bucketInterval.length - 2]
+
+          if (differenceInHours(lastDate, secondLastDate) < 24) {
+            // don't show the same date twice at the end
+            interval.pop()
+          }
+        }
 
         const studyFrequency = await RevisionLogModel.aggregate<{
           date: Date
@@ -179,23 +201,20 @@ export const DeckStatisticsType = new GraphQLObjectType<
           {
             $group: {
               _id: {
-                flashCardId: '$flashCardId',
-                ...(dateGroupBy <= DateGroupBy.DAY
-                  ? {
-                      day: {
-                        $dayOfMonth: '$date',
-                      },
-                    }
-                  : null),
-                ...(dateGroupBy <= DateGroupBy.MONTH
-                  ? {
-                      month: {
-                        $month: '$date',
-                      },
-                    }
-                  : null),
-                year: {
-                  $year: '$date',
+                flashcardId: '$flashCardId',
+                date: {
+                  $switch: {
+                    branches: bucketInterval
+                      .slice()
+                      .reverse()
+                      .map((date) => ({
+                        case: {
+                          $gt: ['$date', date],
+                        },
+                        then: date,
+                      })),
+                    default: 0,
+                  },
                 },
               },
               flashcard: { $first: '$$ROOT' },
@@ -203,19 +222,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
           },
           {
             $group: {
-              _id: {
-                ...(dateGroupBy <= DateGroupBy.DAY
-                  ? {
-                      day: '$_id.day',
-                    }
-                  : null),
-                ...(dateGroupBy <= DateGroupBy.MONTH
-                  ? {
-                      month: '$_id.month',
-                    }
-                  : null),
-                year: '$_id.year',
-              },
+              _id: '$_id.date',
               review: {
                 $sum: {
                   $cond: {
@@ -254,16 +261,10 @@ export const DeckStatisticsType = new GraphQLObjectType<
           {
             $project: {
               _id: 0,
-              learning: 1,
+              date: '$_id',
               new: 1,
+              learning: 1,
               review: 1,
-              date: {
-                $dateFromParts: {
-                  day: dateGroupBy <= DateGroupBy.DAY ? '$_id.day' : 1,
-                  month: dateGroupBy <= DateGroupBy.MONTH ? '$_id.month' : 1,
-                  year: '$_id.year',
-                },
-              },
             },
           },
           {
