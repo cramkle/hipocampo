@@ -46,7 +46,7 @@
     "uuid": "^8.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.5",
+    "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-typescript": "^7.10.4",
     "@lucasecdb/eslint-config": "^0.11.0",
