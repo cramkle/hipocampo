@@ -81,7 +81,7 @@ export default {
         cookie: cookieOpts,
         secret: config.SESSION_SECRET,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
       })
     )
     app.use(passport.initialize())
