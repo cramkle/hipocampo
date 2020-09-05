@@ -1188,10 +1188,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@lucasecdb/eslint-config@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@lucasecdb/eslint-config/-/eslint-config-0.11.0.tgz#18d64eb4a825fbca905a9a7c7fedc4ae337efbcf"
-  integrity sha512-NOJGo68nsYHiy0uJjkDNe7EGPxOOZ9mWDbjlLbBKE4CVk9hlvFi0JHwKlaQgX6H0eTjfC3N6djKPZ/BPjNBv8A==
+"@lucasecdb/eslint-config@^0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@lucasecdb/eslint-config/-/eslint-config-0.12.0.tgz#cc258be6d1011f730c5cd9becffd6360374378bf"
+  integrity sha512-CJ0DOSLU/5XLH41/OZ5jAcRjZffOGljxyfDeZTCygWJqWlIqA7yV4KLBztgbkJyD6CS8sAl+bQsjwOqXtgBu9w==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^3.3.0"
     "@typescript-eslint/parser" "^3.3.0"
@@ -9241,10 +9241,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^3.9.7:
-  version "3.9.7"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
-  integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
+typescript@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.2.tgz#7ea7c88777c723c681e33bf7988be5d008d05ac2"
+  integrity sha512-e4ERvRV2wb+rRZ/IQeb3jm2VxBsirQLpQhdxplZ2MEzGvDkkMmPglecnNDfSUBivMjP93vRbngYYDQqQ/78bcQ==
 
 ua-parser-js@^0.7.18:
   version "0.7.21"
