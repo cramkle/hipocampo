@@ -1,14 +1,14 @@
 import { GraphQLFieldConfig, GraphQLString } from 'graphql'
 
 import { studyFlashcardsByDeck } from '../../modules/studySession'
-import { FlashCardType } from '../flashCard/types'
+import { FlashcardType } from '../flashcard/types'
 
 export const studyFlashcard: GraphQLFieldConfig<
   void,
   Context,
   { deckSlug: string }
 > = {
-  type: FlashCardType,
+  type: FlashcardType,
   description:
     'Retrieves the next flashcard for a study session in the given deck',
   args: {

@@ -21,7 +21,7 @@ import {
   pageToCursor,
 } from '../../utils/pagination'
 import { FieldValueType } from '../fieldValue/types'
-import { FlashCardType } from '../flashCard/types'
+import { FlashcardType } from '../flashcard/types'
 import { ModelType } from '../model/types'
 import { nodeInterface } from '../node/types'
 import { UserType } from '../user/types'
@@ -55,7 +55,7 @@ on the number of templates.
       description: 'Values of this note',
     },
     flashCards: {
-      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FlashCardType))),
+      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FlashcardType))),
       description: 'Generated flashcards',
     },
     text: {

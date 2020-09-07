@@ -1,6 +1,6 @@
 import { GraphQLEnumType } from 'graphql'
 
-export const FlashCardAnswerEnumType = new GraphQLEnumType({
+export const FlashcardAnswerEnumType = new GraphQLEnumType({
   name: 'FlashCardAnswer',
   values: {
     REPEAT: {},
