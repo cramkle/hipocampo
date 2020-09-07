@@ -1,12 +1,12 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
-import { NoteModel, RevisionLogModel } from '../../mongo'
 import {
   FlashcardAnswer,
   answerToQualityValue,
   scheduleFlashcard,
-} from '../../utils/scheduler'
+} from '../../modules/scheduler'
+import { NoteModel, RevisionLogModel } from '../../mongo'
 import { FlashCardType } from '../flashCard/types'
 import { FlashCardAnswerEnumType } from './types'
 

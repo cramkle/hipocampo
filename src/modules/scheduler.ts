@@ -6,9 +6,9 @@ import {
   LearningFlashcardConfiguration,
   NewFlashcardConfiguration,
 } from '../mongo/Deck'
-import { FlashCard, FlashCardStatus } from '../mongo/Note'
+import { Flashcard, FlashcardStatus } from '../mongo/Note'
 import { UserDocument } from '../mongo/User'
-import { endOfUserDay } from './date'
+import { endOfUserDay } from '../utils/date'
 
 export const MINIMUM_ANSWER_QUALITY = 3
 
@@ -94,7 +94,7 @@ const fuzzedInterval = (interval: number) => {
 }
 
 const lapsedInterval = (
-  flashcard: FlashCard,
+  flashcard: Flashcard,
   lapseConfig: LapseFlashcardConfiguration
 ) => {
   const interval = Math.max(
@@ -118,7 +118,7 @@ const scheduleReviewFlashcard = ({
   deckConfig,
   userTimeZone,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   answer: FlashcardAnswer
   deckConfig: DeckConfiguration
   userTimeZone: string
@@ -169,12 +169,12 @@ const graduatingInterval = ({
   force,
   fuzz = true,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   flashcardConfig: NewFlashcardConfiguration
   force: boolean
   fuzz?: boolean
 }) => {
-  if (flashcard.status === FlashCardStatus.REVIEW) {
+  if (flashcard.status === FlashcardStatus.REVIEW) {
     const bonus = force ? 1 : 0
     return flashcard.interval + bonus
   }
@@ -206,11 +206,11 @@ const scheduleFlashcardAsReview = ({
   deckConfig,
   force = false,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   deckConfig: DeckConfiguration
   force?: boolean
 }) => {
-  const lapse = flashcard.status === FlashCardStatus.REVIEW
+  const lapse = flashcard.status === FlashcardStatus.REVIEW
 
   if (lapse && force) {
     flashcard.interval += 1
@@ -223,7 +223,7 @@ const scheduleFlashcardAsReview = ({
     flashcard.easeFactor = deckConfig.new.initialEaseFactor
   }
 
-  flashcard.status = FlashCardStatus.REVIEW
+  flashcard.status = FlashcardStatus.REVIEW
 
   flashcard.due = addDays(new Date(), flashcard.interval)
 }
@@ -272,7 +272,7 @@ const rescheduleLearningFlashcard = ({
   userTimeZone,
   fuzz = true,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   flashcardConfig: LearningFlashcardConfiguration
   delay?: number
   fuzz?: boolean
@@ -304,7 +304,7 @@ const scheduleFlashcardToNextStep = ({
   flashcardConfig,
   userTimeZone,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   flashcardConfig: LearningFlashcardConfiguration
   userTimeZone: string
 }) => {
@@ -323,7 +323,7 @@ const scheduleFlashcardToRepeatStep = ({
   flashcardConfig,
   userTimeZone,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   flashcardConfig: LearningFlashcardConfiguration
   userTimeZone: string
 }) => {
@@ -346,7 +346,7 @@ const scheduleFlashcardToFirstStep = ({
   userTimeZone,
   fuzz = false,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   flashcardConfig: LearningFlashcardConfiguration
   userTimeZone: string
   fuzz?: boolean
@@ -367,7 +367,7 @@ const scheduleLearningFlashcard = ({
   deckConfig,
   userTimeZone,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   answer: FlashcardAnswer
   deckConfig: DeckConfiguration
   userTimeZone: string
@@ -414,7 +414,7 @@ export const scheduleFlashcard = ({
   deckConfig,
   user,
 }: {
-  flashcard: FlashCard
+  flashcard: Flashcard
   answer: FlashcardAnswer
   deckConfig: DeckConfiguration
   user: UserDocument
@@ -423,19 +423,19 @@ export const scheduleFlashcard = ({
 
   flashcard.reviews += 1
 
-  if (flashcard.status === FlashCardStatus.NEW) {
-    flashcard.status = FlashCardStatus.LEARNING
+  if (flashcard.status === FlashcardStatus.NEW) {
+    flashcard.status = FlashcardStatus.LEARNING
     flashcard.remainingStepsForGraduation = deckConfig.new.steps.length
   }
 
-  if (flashcard.status === FlashCardStatus.LEARNING) {
+  if (flashcard.status === FlashcardStatus.LEARNING) {
     scheduleLearningFlashcard({
       flashcard,
       answer,
       deckConfig,
       userTimeZone,
     })
-  } else if (flashcard.status === FlashCardStatus.REVIEW) {
+  } else if (flashcard.status === FlashcardStatus.REVIEW) {
     scheduleReviewFlashcard({ flashcard, answer, deckConfig, userTimeZone })
   }
 }

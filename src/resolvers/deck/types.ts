@@ -8,9 +8,10 @@ import {
 } from 'graphql'
 import { connectionFromArraySlice } from 'graphql-relay'
 
+import { studyFlashcardsByDeck } from '../../modules/studySession'
 import { NoteModel, UserModel } from '../../mongo'
 import { DeckDocument } from '../../mongo/Deck'
-import { FlashCardStatus, NoteDocument } from '../../mongo/Note'
+import { FlashcardStatus, NoteDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { getNoteIdentifier } from '../../utils/noteIdentifier'
 import {
@@ -19,7 +20,6 @@ import {
   createPageCursors,
   pageToCursor,
 } from '../../utils/pagination'
-import { studyFlashcardsByDeck } from '../../utils/study'
 import { FieldValueType } from '../fieldValue/types'
 import { FlashCardType } from '../flashCard/types'
 import { ModelType } from '../model/types'
@@ -66,7 +66,7 @@ on the number of templates.
   }),
 })
 
-type StudySessionDetailsObject = Map<FlashCardStatus, number>
+type StudySessionDetailsObject = Map<FlashcardStatus, number>
 
 export const StudySessionDetailsType = new GraphQLObjectType({
   name: 'StudySessionDetails',
@@ -74,17 +74,17 @@ export const StudySessionDetailsType = new GraphQLObjectType({
     newCount: {
       type: GraphQLNonNull(GraphQLInt),
       resolve: (root: StudySessionDetailsObject) =>
-        root.get(FlashCardStatus.NEW) ?? 0,
+        root.get(FlashcardStatus.NEW) ?? 0,
     },
     learningCount: {
       type: GraphQLNonNull(GraphQLInt),
       resolve: (root: StudySessionDetailsObject) =>
-        root.get(FlashCardStatus.LEARNING) ?? 0,
+        root.get(FlashcardStatus.LEARNING) ?? 0,
     },
     reviewCount: {
       type: GraphQLNonNull(GraphQLInt),
       resolve: (root: StudySessionDetailsObject) =>
-        root.get(FlashCardStatus.REVIEW) ?? 0,
+        root.get(FlashcardStatus.REVIEW) ?? 0,
     },
   },
 })

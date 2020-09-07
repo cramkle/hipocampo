@@ -7,7 +7,7 @@ import {
   GraphQLObjectType,
 } from 'graphql'
 
-import { FlashCardDocument } from '../../mongo/Note'
+import { FlashcardDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { NoteType } from '../deck/types'
 import { nodeInterface } from '../node/types'
@@ -23,9 +23,9 @@ export const FlashCardStatusEnumType = new GraphQLEnumType({
 })
 
 export const FlashCardType: GraphQLObjectType<
-  FlashCardDocument,
+  FlashcardDocument,
   Context
-> = new GraphQLObjectType<FlashCardDocument, Context>({
+> = new GraphQLObjectType<FlashcardDocument, Context>({
   name: 'FlashCard',
   description: `
 FlashCards are what the user study/reviews in the study sessions.
