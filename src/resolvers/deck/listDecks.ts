@@ -5,8 +5,8 @@ import {
   GraphQLNonNull,
 } from 'graphql'
 
+import { studyFlashcardsByDeck } from '../../modules/studySession'
 import { DeckModel } from '../../mongo'
-import { studyFlashcardsByDeck } from '../../utils/study'
 import { DeckType } from './types'
 
 interface DecksArgs {

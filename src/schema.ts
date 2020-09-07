@@ -23,8 +23,8 @@ import { createNote } from './resolvers/note/createNote'
 import { deleteNote } from './resolvers/note/deleteNote'
 import { note } from './resolvers/note/noteById'
 import { deckStatistics } from './resolvers/statistics/deckStatistics'
-import { answerFlashCard } from './resolvers/study/answerFlashCard'
-import { studyFlashcard } from './resolvers/study/studyFlashCard'
+import { answerFlashcard } from './resolvers/study/answerFlashcard'
+import { studyFlashcard } from './resolvers/study/studyFlashcard'
 import { template } from './resolvers/template/template'
 import { updateTemplate } from './resolvers/template/updateTemplate'
 import { createUser } from './resolvers/user/createUser'
@@ -56,7 +56,8 @@ const schema = new GraphQLSchema({
     fields: {
       addFieldToModel,
       addTemplateToModel,
-      answerFlashCard,
+      answerFlashCard: answerFlashcard,
+      answerFlashcard,
       createDeck,
       createModel,
       createNote,

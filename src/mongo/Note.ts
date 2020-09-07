@@ -21,19 +21,19 @@ export const FieldValueSchema = new Schema<FieldValueDocument>({
 
 // ----------
 // Flashcards
-export enum FlashCardStatus {
+export enum FlashcardStatus {
   NEW = 'NEW',
   LEARNING = 'LEARNING',
   REVIEW = 'REVIEW',
 }
 
-export interface FlashCard {
+export interface Flashcard {
   active: boolean
   /**
    * @deprecated Use `status` instead
    */
-  state: FlashCardStatus
-  status: FlashCardStatus
+  state: FlashcardStatus
+  status: FlashcardStatus
   lapses: number
   reviews: number
   interval: number
@@ -44,11 +44,11 @@ export interface FlashCard {
   noteId: Types.ObjectId
 }
 
-export interface FlashCardDocument extends Document, FlashCard {}
+export interface FlashcardDocument extends Document, Flashcard {}
 
-export const FlashCardSchema = new Schema<FlashCardDocument>({
+export const FlashcardSchema = new Schema<FlashcardDocument>({
   active: { type: Boolean, default: true },
-  status: { type: FlashCardStatus, default: 'NEW' },
+  status: { type: FlashcardStatus, default: 'NEW' },
   lapses: { type: Number, default: 0 },
   reviews: { type: Number, default: 0 },
   interval: { type: Number },
@@ -68,7 +68,7 @@ export const FlashCardSchema = new Schema<FlashCardDocument>({
 // ----------
 // Note
 export interface Note {
-  flashCards: Types.DocumentArray<FlashCardDocument>
+  flashCards: Types.DocumentArray<FlashcardDocument>
   values: Types.DocumentArray<FieldValueDocument>
   deckId: Types.ObjectId
   modelId: Types.ObjectId
@@ -92,7 +92,7 @@ const NoteSchema = new Schema<NoteDocument>({
     ref: 'User',
   },
   values: [FieldValueSchema],
-  flashCards: [FlashCardSchema],
+  flashCards: [FlashcardSchema],
 })
 
 NoteSchema.index({ 'values.data.blocks.text': 'text' })

@@ -1,26 +1,15 @@
 import { compareAsc, endOfDay, isAfter, startOfDay } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
-import { FlashCard, FlashCardStatus } from '../mongo/Note'
+import { FlashcardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
-import { fromUserDate, toUserDate } from './date'
+import { fromUserDate, toUserDate } from '../utils/date'
 
-const sumByStatus = (logs: RevisionLogDocument[], status: FlashCardStatus) => {
-  return logs
-    .filter(
-      (log, index, array) =>
-        array.findIndex(
-          ({ flashCardId }) => log.flashCardId === flashCardId
-        ) === index
-    )
-    .reduce((total, log) => (log.status === status ? total + 1 : total), 0)
-}
-
-const getFlashcardCountStatus = (flashcard: FlashCard) => {
-  if (flashcard.status === FlashCardStatus.LEARNING) {
-    return FlashCardStatus.REVIEW
-  }
-  return flashcard.status
+const sumByStatus = (logs: RevisionLogDocument[], status: FlashcardStatus) => {
+  return logs.reduce(
+    (total, log) => (log.status === status ? total + 1 : total),
+    0
+  )
 }
 
 export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
@@ -29,8 +18,8 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
   const deck = await ctx.deckLoader.load(deckId)
 
   const studyLimitByStatus = {
-    [FlashCardStatus.NEW]: deck.configuration.new.perDay,
-    [FlashCardStatus.REVIEW]: deck.configuration.review.perDay,
+    [FlashcardStatus.NEW]: deck.configuration.new.perDay,
+    [FlashcardStatus.REVIEW]: deck.configuration.review.perDay,
   }
 
   const now = toUserDate(new Date(), userTimeZone)
@@ -47,20 +36,32 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
   const flashcardLogByFlashcardId = new Map<string, RevisionLogDocument>()
 
   todayLogs.forEach((revisionLog) => {
+    if (flashcardLogByFlashcardId.has(revisionLog.flashCardId.toString())) {
+      return
+    }
+
     flashcardLogByFlashcardId.set(
       revisionLog.flashCardId.toString(),
       revisionLog
     )
   })
 
-  const numOfNew = sumByStatus(todayLogs, FlashCardStatus.NEW)
-  const numOfLearning = sumByStatus(todayLogs, FlashCardStatus.LEARNING)
-  const numOfReview = sumByStatus(todayLogs, FlashCardStatus.REVIEW)
+  const todayLogsByDistinctFlashcards = Array.from(
+    flashcardLogByFlashcardId.values()
+  )
 
-  const cardCounts = {
-    [FlashCardStatus.NEW]: numOfNew,
-    [FlashCardStatus.LEARNING]: numOfLearning,
-    [FlashCardStatus.REVIEW]: numOfReview,
+  const numOfNew = sumByStatus(
+    todayLogsByDistinctFlashcards,
+    FlashcardStatus.NEW
+  )
+  const numOfReview = sumByStatus(
+    todayLogsByDistinctFlashcards,
+    FlashcardStatus.REVIEW
+  )
+
+  const flashcardCounts = {
+    [FlashcardStatus.NEW]: numOfNew,
+    [FlashcardStatus.REVIEW]: numOfReview,
   }
 
   const flashcards = (await ctx.flashcardsByDeckLoader.load(deckId))
@@ -73,20 +74,24 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
         return false
       }
 
-      const countStatus = getFlashcardCountStatus(flashcard)
-
-      const totalOfStudiedUntilNow = cardCounts[countStatus]
+      const totalOfStudiedUntilNow =
+        flashcard.status === FlashcardStatus.LEARNING
+          ? 0
+          : flashcardCounts[flashcard.status]
 
       if (totalOfStudiedUntilNow == undefined) {
         return false
       }
 
-      const maxPerDay = studyLimitByStatus[countStatus]
+      const maxPerDay =
+        flashcard.status === FlashcardStatus.LEARNING
+          ? 0
+          : studyLimitByStatus[flashcard.status]
 
-      if (studiedToday) {
+      if (studiedToday || flashcard.status === FlashcardStatus.LEARNING) {
         return true
       } else if (totalOfStudiedUntilNow < maxPerDay) {
-        cardCounts[flashcard.status]++
+        flashcardCounts[flashcard.status]++
         return true
       }
 

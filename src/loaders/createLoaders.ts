@@ -12,9 +12,9 @@ import {
 import { DeckDocument } from '../mongo/Deck'
 import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
-import { FlashCardDocument, NoteDocument } from '../mongo/Note'
+import { FlashcardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
-import { countFlashcardsByProperty } from './countFlashCardsByProperty'
+import { countFlashcardsByProperty } from './countFlashcardsByProperty'
 import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
@@ -32,7 +32,7 @@ export interface Loaders {
   notesByDeckLoader: DataLoader<Types.ObjectId | string, NoteDocument[]>
   flashcardsByDeckLoader: DataLoader<
     Types.ObjectId | string,
-    (FlashCardDocument & { flashcardIndex: number })[]
+    (FlashcardDocument & { flashcardIndex: number })[]
   >
   countFlashcardsByModelLoader: DataLoader<Types.ObjectId | string, number>
   countFlashcardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
@@ -178,7 +178,7 @@ export function createLoaders(user?: Express.User): Loaders {
       async (deckIds) => {
         const flashcardsAggregationResult = await NoteModel.aggregate<{
           _id: Types.ObjectId
-          flashcards: (FlashCardDocument & { flashcardIndex: number })[]
+          flashcards: (FlashcardDocument & { flashcardIndex: number })[]
         }>([
           {
             $match: {
@@ -197,7 +197,7 @@ export function createLoaders(user?: Express.User): Loaders {
 
         const flashcardsByDeck = new Map<
           string,
-          (FlashCardDocument & { flashcardIndex: number })[]
+          (FlashcardDocument & { flashcardIndex: number })[]
         >()
 
         flashcardsAggregationResult.forEach((flashcardsResult) => {

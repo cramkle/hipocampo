@@ -1,6 +1,6 @@
 import { Document, Schema, Types, model } from 'mongoose'
 
-import { FlashCardStatus } from './Note'
+import { FlashcardStatus } from './Note'
 
 export interface RevisionLog {
   interval: number
@@ -8,7 +8,7 @@ export interface RevisionLog {
   timespan: number
   easeFactor: number
   date: Date
-  status: FlashCardStatus
+  status: FlashcardStatus
   answerQuality: number
   ownerId: Types.ObjectId
   noteId: Types.ObjectId
@@ -25,7 +25,7 @@ const RevisionLogSchema = new Schema<RevisionLogDocument>(
     timespan: { type: Number },
     easeFactor: { type: Number },
     date: { type: Schema.Types.Date, index: true },
-    status: { type: FlashCardStatus },
+    status: { type: FlashcardStatus },
     answerQuality: { type: Number },
     ownerId: { type: Types.ObjectId, ref: 'User' },
     noteId: { type: Types.ObjectId, ref: 'Note' },

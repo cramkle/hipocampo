@@ -7,13 +7,13 @@ import {
   GraphQLObjectType,
 } from 'graphql'
 
-import { FlashCardDocument } from '../../mongo/Note'
+import { FlashcardDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { NoteType } from '../deck/types'
 import { nodeInterface } from '../node/types'
 import { TemplateType } from '../template/types'
 
-export const FlashCardStatusEnumType = new GraphQLEnumType({
+export const FlashcardStatusEnumType = new GraphQLEnumType({
   name: 'FlashCardStatus',
   values: {
     NEW: {},
@@ -22,13 +22,13 @@ export const FlashCardStatusEnumType = new GraphQLEnumType({
   },
 })
 
-export const FlashCardType: GraphQLObjectType<
-  FlashCardDocument,
+export const FlashcardType: GraphQLObjectType<
+  FlashcardDocument,
   Context
-> = new GraphQLObjectType<FlashCardDocument, Context>({
+> = new GraphQLObjectType<FlashcardDocument, Context>({
   name: 'FlashCard',
   description: `
-FlashCards are what the user study/reviews in the study sessions.
+Flashcards are what the user study/reviews in the study sessions.
 
 The objects of this type are auto generated when creating
 the note and depend of the number of templates that are
@@ -51,7 +51,7 @@ number of templates.
       resolve: (root, _, ctx) => ctx.templateLoader.load(root.templateId),
     },
     status: {
-      type: FlashCardStatusEnumType,
+      type: FlashcardStatusEnumType,
       description: 'Current status of this flashcard.',
       resolve: (root) => root.status ?? root.state,
     },

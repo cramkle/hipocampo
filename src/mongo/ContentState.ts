@@ -1,10 +1,5 @@
 import { Document, Schema } from 'mongoose'
 
-interface CharacterBlock {
-  style: string[]
-  entity: string
-}
-
 type BlockData = Record<string, unknown>
 
 export interface ContentState {

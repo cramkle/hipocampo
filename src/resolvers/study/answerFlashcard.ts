@@ -1,14 +1,14 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
-import { NoteModel, RevisionLogModel } from '../../mongo'
 import {
   FlashcardAnswer,
   answerToQualityValue,
   scheduleFlashcard,
-} from '../../utils/scheduler'
-import { FlashCardType } from '../flashCard/types'
-import { FlashCardAnswerEnumType } from './types'
+} from '../../modules/scheduler'
+import { NoteModel, RevisionLogModel } from '../../mongo'
+import { FlashcardType } from '../flashcard/types'
+import { FlashcardAnswerEnumType } from './types'
 
 interface AnswerFlashCardArgs {
   noteId: string
@@ -18,8 +18,8 @@ interface AnswerFlashCardArgs {
   timespan: number
 }
 
-export const answerFlashCard = mutationWithClientMutationId({
-  name: 'AnswerFlashCard',
+export const answerFlashcard = mutationWithClientMutationId({
+  name: 'AnswerFlashcard',
   description:
     'Records an answer to the flashcard during the study session and re-schedules it to a future date.',
   inputFields: {
@@ -32,7 +32,7 @@ export const answerFlashCard = mutationWithClientMutationId({
       type: GraphQLID,
       description: 'Id of the flashcard',
     },
-    answer: { type: FlashCardAnswerEnumType, description: 'Answer value' },
+    answer: { type: FlashcardAnswerEnumType, description: 'Answer value' },
     timespan: {
       type: GraphQLInt,
       description: 'Time the user took to answer in milliseconds',
@@ -40,10 +40,10 @@ export const answerFlashCard = mutationWithClientMutationId({
   },
   outputFields: {
     flashCard: {
-      type: GraphQLNonNull(FlashCardType),
+      type: GraphQLNonNull(FlashcardType),
       deprecationReason: "Use field 'flashcard' instead.",
     },
-    flashcard: { type: GraphQLNonNull(FlashCardType) },
+    flashcard: { type: GraphQLNonNull(FlashcardType) },
   },
   mutateAndGetPayload: async (args: AnswerFlashCardArgs, ctx: Context) => {
     const { id: noteId } = fromGlobalId(args.noteId)
