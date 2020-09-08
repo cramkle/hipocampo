@@ -132,10 +132,12 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
         const detailsObject: StudySessionDetailsObject = new Map()
 
         studyFlashcards.forEach((flashcard) => {
-          detailsObject.set(
-            flashcard.status,
-            (detailsObject.get(flashcard.status) ?? 0) + 1
-          )
+          const status =
+            flashcard.status === FlashcardStatus.RELEARNING
+              ? FlashcardStatus.LEARNING
+              : flashcard.status
+
+          detailsObject.set(status, (detailsObject.get(status) ?? 0) + 1)
         })
 
         return detailsObject

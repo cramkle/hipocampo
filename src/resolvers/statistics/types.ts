@@ -238,7 +238,10 @@ export const DeckStatisticsType = new GraphQLObjectType<
                 $sum: {
                   $cond: {
                     if: {
-                      $eq: ['$flashcard.status', 'LEARNING'],
+                      $or: [
+                        { $eq: ['$flashcard.status', 'LEARNING'] },
+                        { $eq: ['$flashcard.status', 'RELEARNING'] },
+                      ],
                     },
                     then: 1,
                     else: 0,

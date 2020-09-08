@@ -75,16 +75,22 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
       }
 
       const totalOfStudiedUntilNow =
-        flashcard.status === FlashcardStatus.LEARNING
+        flashcard.status === FlashcardStatus.LEARNING ||
+        flashcard.status === FlashcardStatus.RELEARNING
           ? 0
           : flashcardCounts[flashcard.status]
 
       const maxPerDay =
-        flashcard.status === FlashcardStatus.LEARNING
+        flashcard.status === FlashcardStatus.LEARNING ||
+        flashcard.status === FlashcardStatus.RELEARNING
           ? 0
           : studyLimitByStatus[flashcard.status]
 
-      if (studiedToday || flashcard.status === FlashcardStatus.LEARNING) {
+      if (
+        studiedToday ||
+        flashcard.status === FlashcardStatus.LEARNING ||
+        flashcard.status === FlashcardStatus.RELEARNING
+      ) {
         return true
       } else if (totalOfStudiedUntilNow < maxPerDay) {
         flashcardCounts[flashcard.status]++

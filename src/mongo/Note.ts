@@ -25,6 +25,7 @@ export enum FlashcardStatus {
   NEW = 'NEW',
   LEARNING = 'LEARNING',
   REVIEW = 'REVIEW',
+  RELEARNING = 'RELEARNING',
 }
 
 export interface Flashcard {

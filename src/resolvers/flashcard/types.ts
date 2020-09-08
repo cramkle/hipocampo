@@ -7,7 +7,7 @@ import {
   GraphQLObjectType,
 } from 'graphql'
 
-import { FlashcardDocument } from '../../mongo/Note'
+import { FlashcardDocument, FlashcardStatus } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { NoteType } from '../deck/types'
 import { nodeInterface } from '../node/types'
@@ -53,7 +53,15 @@ number of templates.
     status: {
       type: FlashcardStatusEnumType,
       description: 'Current status of this flashcard.',
-      resolve: (root) => root.status ?? root.state,
+      resolve: (root) => {
+        const status = root.status ?? root.state
+
+        if (status === FlashcardStatus.RELEARNING) {
+          return FlashcardStatus.LEARNING
+        }
+
+        return status
+      },
     },
     due: {
       type: GraphQLFloat,
