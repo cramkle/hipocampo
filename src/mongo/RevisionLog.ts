@@ -3,8 +3,8 @@ import { Document, Schema, Types, model } from 'mongoose'
 import { FlashcardStatus } from './Note'
 
 export interface RevisionLog {
-  interval: number
-  lastInterval: number
+  interval?: number
+  lastInterval?: number
   timespan: number
   easeFactor: number
   date: Date
