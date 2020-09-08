@@ -131,9 +131,9 @@ const scheduleReviewFlashcard = ({
 
     // TODO: check leech lapses
 
-    flashcard.interval = lapsedInterval(flashcard, deckConfig.lapse)
-
     if (deckConfig.lapse.steps) {
+      flashcard.status = FlashcardStatus.RELEARNING
+
       scheduleFlashcardToFirstStep({
         flashcard,
         flashcardConfig: deckConfig.lapse,
@@ -141,6 +141,8 @@ const scheduleReviewFlashcard = ({
         fuzz: true,
       })
     } else {
+      flashcard.interval = lapsedInterval(flashcard, deckConfig.lapse)
+
       scheduleFlashcardAsReview({ flashcard, deckConfig })
       // TODO: check suspended
     }
@@ -174,7 +176,10 @@ const graduatingInterval = ({
   force: boolean
   fuzz?: boolean
 }) => {
-  if (flashcard.status === FlashcardStatus.REVIEW) {
+  if (
+    flashcard.status === FlashcardStatus.REVIEW ||
+    flashcard.status === FlashcardStatus.RELEARNING
+  ) {
     const bonus = force ? 1 : 0
     return (flashcard.interval ?? 0) + bonus
   }
@@ -210,7 +215,9 @@ const scheduleFlashcardAsReview = ({
   deckConfig: DeckConfiguration
   force?: boolean
 }) => {
-  const lapse = flashcard.status === FlashcardStatus.REVIEW
+  const lapse =
+    flashcard.status === FlashcardStatus.REVIEW ||
+    flashcard.status === FlashcardStatus.RELEARNING
 
   flashcard.interval ??= 0
 
@@ -234,10 +241,13 @@ const scheduleFlashcardAsReview = ({
  * Calculates the delay, in minutes, of the current step
  * given a configuration.
  */
-const calculateDelayForStep = (steps: number[], currentStep: number) => {
+const calculateDelayForStep = (
+  steps: number[],
+  currentStep: number = steps.length
+) => {
   const delay = steps[steps.length - currentStep] ?? steps[0] ?? 1
 
-  return delay * 60
+  return delay
 }
 
 /**
@@ -355,6 +365,13 @@ const scheduleFlashcardToFirstStep = ({
 }) => {
   flashcard.remainingStepsForGraduation = flashcardConfig.steps.length
 
+  if (flashcard.status === FlashcardStatus.RELEARNING) {
+    flashcard.interval = lapsedInterval(
+      flashcard,
+      flashcardConfig as LapseFlashcardConfiguration
+    )
+  }
+
   rescheduleLearningFlashcard({
     flashcard,
     flashcardConfig,
@@ -374,6 +391,11 @@ const scheduleLearningFlashcard = ({
   deckConfig: DeckConfiguration
   userTimeZone: string
 }) => {
+  const flashcardConfig =
+    flashcard.status === FlashcardStatus.RELEARNING
+      ? deckConfig.lapse
+      : deckConfig.new
+
   if (answer === FlashcardAnswer.EASY) {
     // force graduate
     scheduleFlashcardAsReview({ flashcard, deckConfig, force: true })
@@ -385,7 +407,7 @@ const scheduleLearningFlashcard = ({
       // move to next step
       scheduleFlashcardToNextStep({
         flashcard,
-        flashcardConfig: deckConfig.new,
+        flashcardConfig,
         userTimeZone,
       })
     }
@@ -393,14 +415,14 @@ const scheduleLearningFlashcard = ({
     // repeat
     scheduleFlashcardToRepeatStep({
       flashcard,
-      flashcardConfig: deckConfig.new,
+      flashcardConfig,
       userTimeZone,
     })
   } else {
     // reset flashcard
     scheduleFlashcardToFirstStep({
       flashcard,
-      flashcardConfig: deckConfig.new,
+      flashcardConfig,
       userTimeZone,
     })
   }
@@ -430,7 +452,10 @@ export const scheduleFlashcard = ({
     flashcard.remainingStepsForGraduation = deckConfig.new.steps.length
   }
 
-  if (flashcard.status === FlashcardStatus.LEARNING) {
+  if (
+    flashcard.status === FlashcardStatus.LEARNING ||
+    flashcard.status === FlashcardStatus.RELEARNING
+  ) {
     scheduleLearningFlashcard({
       flashcard,
       answer,

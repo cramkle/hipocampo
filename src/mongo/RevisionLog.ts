@@ -9,7 +9,9 @@ export interface RevisionLog {
   easeFactor: number
   date: Date
   status: FlashcardStatus
+  nextStatus: FlashcardStatus
   answerQuality: number
+  graduationStepsRemaining: number
   ownerId: Types.ObjectId
   noteId: Types.ObjectId
   flashCardId: Types.ObjectId
@@ -26,7 +28,9 @@ const RevisionLogSchema = new Schema<RevisionLogDocument>(
     easeFactor: { type: Number },
     date: { type: Schema.Types.Date, index: true },
     status: { type: FlashcardStatus },
+    nextStatus: { type: FlashcardStatus },
     answerQuality: { type: Number },
+    graduationStepsRemaining: { type: Number },
     ownerId: { type: Types.ObjectId, ref: 'User' },
     noteId: { type: Types.ObjectId, ref: 'Note' },
     flashCardId: { type: Types.ObjectId, ref: 'Note.flashCards' },
