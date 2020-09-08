@@ -36,10 +36,10 @@ export interface Flashcard {
   status: FlashcardStatus
   lapses: number
   reviews: number
-  interval: number
+  interval?: number
   easeFactor: number
   remainingStepsForGraduation: number
-  due: Date
+  due?: Date
   templateId: Types.ObjectId
   noteId: Types.ObjectId
 }

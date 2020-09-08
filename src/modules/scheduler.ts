@@ -100,7 +100,7 @@ const lapsedInterval = (
   const interval = Math.max(
     1,
     lapseConfig.minimumInterval,
-    flashcard.interval * lapseConfig.intervalPercentage
+    (flashcard.interval ?? 0) * lapseConfig.intervalPercentage
   )
 
   return interval
@@ -176,7 +176,7 @@ const graduatingInterval = ({
 }) => {
   if (flashcard.status === FlashcardStatus.REVIEW) {
     const bonus = force ? 1 : 0
-    return flashcard.interval + bonus
+    return (flashcard.interval ?? 0) + bonus
   }
 
   let interval: number
@@ -211,6 +211,8 @@ const scheduleFlashcardAsReview = ({
   force?: boolean
 }) => {
   const lapse = flashcard.status === FlashcardStatus.REVIEW
+
+  flashcard.interval ??= 0
 
   if (lapse && force) {
     flashcard.interval += 1

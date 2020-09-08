@@ -79,10 +79,6 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
           ? 0
           : flashcardCounts[flashcard.status]
 
-      if (totalOfStudiedUntilNow == undefined) {
-        return false
-      }
-
       const maxPerDay =
         flashcard.status === FlashcardStatus.LEARNING
           ? 0
