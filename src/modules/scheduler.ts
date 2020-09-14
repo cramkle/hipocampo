@@ -1,4 +1,4 @@
-import { addDays, addMinutes, min, subMinutes } from 'date-fns'
+import { addDays, addMinutes, max, min, subMinutes } from 'date-fns'
 
 import {
   DeckConfiguration,
@@ -297,7 +297,7 @@ const rescheduleLearningFlashcard = ({
     )
   }
 
-  flashcard.due = addMinutes(new Date(), delay)
+  flashcard.due = addMinutes(max([new Date(), flashcard.due ?? 0]), delay)
 
   if (fuzz) {
     // maximum extra delay to add, 5 minutes or 25% of `delay`
