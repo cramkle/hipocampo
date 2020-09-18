@@ -12,19 +12,24 @@ export interface Template {
 
 export interface TemplateDocument extends Template, Document {}
 
-const TemplateSchema = new Schema<TemplateDocument>({
-  name: String,
-  frontSide: ContentStateSchema,
-  backSide: ContentStateSchema,
-  modelId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Model',
-    index: true,
+const TemplateSchema = new Schema<TemplateDocument>(
+  {
+    name: String,
+    frontSide: ContentStateSchema,
+    backSide: ContentStateSchema,
+    modelId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Model',
+      index: true,
+    },
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    createdAt: { type: Schema.Types.Date },
+    updatedAt: { type: Schema.Types.Date },
   },
-  ownerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-})
+  { timestamps: { createdAt: true, updatedAt: true } }
+)
 
 export default model<TemplateDocument>('Template', TemplateSchema)
