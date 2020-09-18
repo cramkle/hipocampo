@@ -130,27 +130,34 @@ export const defaultDeckConfig: DeckConfiguration = {
   },
 }
 
-const DeckSchema = new Schema<DeckDocument>({
-  title: {
-    type: String,
-    required: true,
+const DeckSchema = new Schema<DeckDocument>(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: String,
+    slug: {
+      type: String,
+      unique: true,
+      index: true,
+    },
+    configuration: {
+      type: DeckConfigurationSchema,
+      default: defaultDeckConfig,
+    },
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    published: Boolean,
+    createdAt: {
+      type: Schema.Types.Date,
+    },
+    updatedAt: { type: Schema.Types.Date },
   },
-  description: String,
-  slug: {
-    type: String,
-    unique: true,
-    index: true,
-  },
-  configuration: {
-    type: DeckConfigurationSchema,
-    default: defaultDeckConfig,
-  },
-  ownerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  published: Boolean,
-})
+  { timestamps: { createdAt: true, updatedAt: true } }
+)
 
 DeckSchema.pre('save', function (next) {
   const deck = this as DeckDocument

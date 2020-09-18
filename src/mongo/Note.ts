@@ -78,23 +78,32 @@ export interface Note {
 
 export interface NoteDocument extends Note, Document {}
 
-const NoteSchema = new Schema<NoteDocument>({
-  deckId: {
-    type: Schema.Types.ObjectId,
-    index: true,
-    ref: 'Deck',
+const NoteSchema = new Schema<NoteDocument>(
+  {
+    deckId: {
+      type: Schema.Types.ObjectId,
+      index: true,
+      ref: 'Deck',
+    },
+    modelId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Model',
+    },
+    ownerId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    values: [FieldValueSchema],
+    flashCards: [FlashcardSchema],
+    createdAt: {
+      type: Schema.Types.Date,
+    },
+    updatedAt: {
+      type: Schema.Types.Date,
+    },
   },
-  modelId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Model',
-  },
-  ownerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  values: [FieldValueSchema],
-  flashCards: [FlashcardSchema],
-})
+  { timestamps: { createdAt: true, updatedAt: true } }
+)
 
 NoteSchema.index({ 'values.data.blocks.text': 'text' })
 
