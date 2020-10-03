@@ -1,6 +1,6 @@
 {
   "name": "@cramkle/hipocampo",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "license": "MIT",
   "private": true,
   "main": "dist/index.js",
