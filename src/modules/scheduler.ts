@@ -1,4 +1,4 @@
-import { addDays, addMinutes, max, min, subMinutes } from 'date-fns'
+import { addDays, addMinutes, max, min } from 'date-fns'
 
 import {
   DeckConfiguration,
@@ -297,7 +297,10 @@ const rescheduleLearningFlashcard = ({
     )
   }
 
-  flashcard.due = addMinutes(max([new Date(), flashcard.due ?? 0]), delay)
+  flashcard.due = min([
+    addMinutes(max([new Date(), flashcard.due ?? 0]), delay),
+    endOfUserDay(userTimeZone),
+  ])
 
   if (fuzz) {
     // maximum extra delay to add, 5 minutes or 25% of `delay`
@@ -305,7 +308,7 @@ const rescheduleLearningFlashcard = ({
     // random number between 0 and `maxExtraDelay`
     const fuzz = Math.floor(Math.random() * maxExtraDelay)
     flashcard.due = min([
-      subMinutes(endOfUserDay(userTimeZone), 1),
+      endOfUserDay(userTimeZone),
       addMinutes(flashcard.due, fuzz),
     ])
   }
