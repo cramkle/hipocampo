@@ -1,4 +1,4 @@
-import { GraphQLError, GraphQLFieldConfig, GraphQLID } from 'graphql'
+import { GraphQLFieldConfig, GraphQLID } from 'graphql'
 import { fromGlobalId } from 'graphql-relay'
 
 import { DeckModel } from '../../mongo'
@@ -29,9 +29,11 @@ export const deckStatistics: GraphQLFieldConfig<
     }
 
     if (!deck) {
-      throw new GraphQLError(
+      console.error(
         args.deckId ? 'Deck not found' : 'User does not have any decks'
       )
+
+      return null
     }
 
     return {
