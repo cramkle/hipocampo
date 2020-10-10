@@ -62,9 +62,12 @@ export const DeckStatisticsType = new GraphQLObjectType<
       type: GraphQLNonNull(GraphQLFloat),
       description: 'The total amount of time studied in milliseconds',
       resolve: async (root) => {
-        const [{ totalStudyTime }] = await RevisionLogModel.aggregate<{
-          totalStudyTime: number
-        }>([
+        const [result] = await RevisionLogModel.aggregate<
+          | {
+              totalStudyTime: number
+            }
+          | undefined
+        >([
           {
             $match: {
               deckId: root.deck._id,
@@ -85,7 +88,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
           },
         ])
 
-        return totalStudyTime
+        return result?.totalStudyTime ?? 0
       },
     },
     totalTimesStudied: {
@@ -99,9 +102,12 @@ export const DeckStatisticsType = new GraphQLObjectType<
       type: GraphQLNonNull(GraphQLInt),
       description: 'The number of flashcards the user has studied',
       resolve: async (root) => {
-        const [{ totalFlashcardsStudied }] = await RevisionLogModel.aggregate<{
-          totalFlashcardsStudied: number
-        }>([
+        const [result] = await RevisionLogModel.aggregate<
+          | {
+              totalFlashcardsStudied: number
+            }
+          | undefined
+        >([
           { $match: { deckId: root.deck._id } },
           {
             $group: {
@@ -121,7 +127,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
           },
         ])
 
-        return totalFlashcardsStudied
+        return result?.totalFlashcardsStudied ?? 0
       },
     },
     studyFrequency: {
