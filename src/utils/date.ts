@@ -20,5 +20,5 @@ export const toUserDate = (utcDate: Date, userTimeZone = 'UTC') => {
 }
 
 export const endOfUserDay = (userTimeZone: string) => {
-  return toUserDate(endOfToday(), userTimeZone)
+  return fromUserDate(endOfToday(), userTimeZone)
 }

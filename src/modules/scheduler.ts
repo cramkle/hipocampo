@@ -1,4 +1,4 @@
-import { addDays, addMinutes, max, min } from 'date-fns'
+import { addDays, addMinutes, max } from 'date-fns'
 
 import {
   DeckConfiguration,
@@ -8,7 +8,6 @@ import {
 } from '../mongo/Deck'
 import { Flashcard, FlashcardStatus } from '../mongo/Note'
 import { UserDocument } from '../mongo/User'
-import { endOfUserDay } from '../utils/date'
 
 export const MINIMUM_ANSWER_QUALITY = 3
 
@@ -281,6 +280,7 @@ const rescheduleLearningFlashcard = ({
   flashcard,
   flashcardConfig,
   delay,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userTimeZone,
   fuzz = true,
 }: {
@@ -297,20 +297,17 @@ const rescheduleLearningFlashcard = ({
     )
   }
 
-  flashcard.due = min([
-    addMinutes(max([new Date(), flashcard.due ?? 0]), delay),
-    endOfUserDay(userTimeZone),
-  ])
+  // TODO: limit to user current day, the `endOfUserDay` function
+  // is not taking in account the user timzeone properly
+  flashcard.due = addMinutes(max([new Date(), flashcard.due ?? 0]), delay)
 
   if (fuzz) {
     // maximum extra delay to add, 5 minutes or 25% of `delay`
     const maxExtraDelay = Math.max(5, delay * 0.25)
     // random number between 0 and `maxExtraDelay`
     const fuzz = Math.floor(Math.random() * maxExtraDelay)
-    flashcard.due = min([
-      endOfUserDay(userTimeZone),
-      addMinutes(flashcard.due, fuzz),
-    ])
+    // TODO: same as the above todo
+    flashcard.due = addMinutes(flashcard.due, fuzz)
   }
 }
 

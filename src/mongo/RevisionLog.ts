@@ -7,11 +7,11 @@ export interface RevisionLog {
   lastInterval?: number
   timespan: number
   easeFactor: number
-  date: Date
   status: FlashcardStatus
   nextStatus: FlashcardStatus
   answerQuality: number
   graduationStepsRemaining: number
+  nextDueDate?: Date
   ownerId: Types.ObjectId
   noteId: Types.ObjectId
   flashCardId: Types.ObjectId
@@ -26,11 +26,11 @@ const RevisionLogSchema = new Schema<RevisionLogDocument>(
     lastInterval: { type: Number },
     timespan: { type: Number },
     easeFactor: { type: Number },
-    date: { type: Schema.Types.Date, index: true },
     status: { type: FlashcardStatus },
     nextStatus: { type: FlashcardStatus },
     answerQuality: { type: Number },
     graduationStepsRemaining: { type: Number },
+    nextDueDate: { type: Schema.Types.Date },
     ownerId: { type: Types.ObjectId, ref: 'User' },
     noteId: { type: Types.ObjectId, ref: 'Note' },
     flashCardId: { type: Types.ObjectId, ref: 'Note.flashCards' },
