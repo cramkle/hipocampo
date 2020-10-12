@@ -93,7 +93,7 @@ export const answerFlashcard = mutationWithClientMutationId({
       easeFactor: flashcard.easeFactor,
       timespan,
       graduationStepsRemaining: flashcard.remainingStepsForGraduation,
-      date: new Date(),
+      nextDueDate: flashcard.due,
       ownerId: ctx.user!._id,
       noteId: note._id,
       flashCardId: flashcard._id,
