@@ -1,9 +1,9 @@
-import { compareAsc, endOfDay, isAfter, startOfDay } from 'date-fns'
+import { compareAsc, isAfter } from 'date-fns'
 
 import { RevisionLogModel } from '../mongo'
 import { FlashcardStatus } from '../mongo/Note'
 import { RevisionLogDocument } from '../mongo/RevisionLog'
-import { fromUserDate, toUserDate } from '../utils/date'
+import { endOfUserDay, startOfUserDay } from '../utils/date'
 
 const sumByStatus = (logs: RevisionLogDocument[], status: FlashcardStatus) => {
   return logs.reduce(
@@ -13,7 +13,7 @@ const sumByStatus = (logs: RevisionLogDocument[], status: FlashcardStatus) => {
 }
 
 export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
-  const userTimeZone = ctx.user?.preferences?.zoneInfo
+  const userTimeZone = ctx.user?.preferences?.zoneInfo ?? 'UTC'
 
   const deck = await ctx.deckLoader.load(deckId)
 
@@ -22,11 +22,8 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
     [FlashcardStatus.REVIEW]: deck.configuration.review.perDay,
   }
 
-  const now = toUserDate(new Date(), userTimeZone)
-
-  const [startDate, endDate] = [startOfDay(now), endOfDay(now)].map((date) =>
-    fromUserDate(date, userTimeZone)
-  )
+  const startDate = startOfUserDay(userTimeZone)
+  const endDate = endOfUserDay(userTimeZone)
 
   const todayLogs = await RevisionLogModel.find({
     deckId,
