@@ -201,7 +201,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
           {
             $match: {
               deckId: root.deck._id,
-              date: { $gte: startDate, $lte: endDate },
+              createdAt: { $gte: startDate, $lte: endDate },
             },
           },
           {
@@ -215,7 +215,7 @@ export const DeckStatisticsType = new GraphQLObjectType<
                       .reverse()
                       .map((date) => ({
                         case: {
-                          $gt: ['$date', date],
+                          $gt: ['$createdAt', date],
                         },
                         then: date,
                       })),
