@@ -192,6 +192,9 @@ export function createLoaders(user?: Express.User): Loaders {
               includeArrayIndex: 'flashCards.flashcardIndex',
             },
           },
+          {
+            $sort: { '$flashCards._id': 1 },
+          },
           { $group: { _id: '$deckId', flashcards: { $push: '$flashCards' } } },
         ])
 
