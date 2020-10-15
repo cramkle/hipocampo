@@ -193,7 +193,7 @@ export function createLoaders(user?: Express.User): Loaders {
             },
           },
           {
-            $sort: { '$flashCards._id': 1 },
+            $sort: { 'flashCards._id': 1 },
           },
           { $group: { _id: '$deckId', flashcards: { $push: '$flashCards' } } },
         ])
