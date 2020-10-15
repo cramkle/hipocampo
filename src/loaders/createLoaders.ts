@@ -187,13 +187,13 @@ export function createLoaders(user?: Express.User): Loaders {
             },
           },
           {
+            $sort: { createdAt: 1 },
+          },
+          {
             $unwind: {
               path: '$flashCards',
               includeArrayIndex: 'flashCards.flashcardIndex',
             },
-          },
-          {
-            $sort: { 'flashCards._id': 1 },
           },
           { $group: { _id: '$deckId', flashcards: { $push: '$flashCards' } } },
         ])
