@@ -27,7 +27,7 @@ export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
 
   const todayLogs = await RevisionLogModel.find({
     deckId,
-    date: { $gte: startDate, $lte: endDate },
+    createdAt: { $gte: startDate, $lte: endDate },
   })
 
   const flashcardLogByFlashcardId = new Map<string, RevisionLogDocument>()
