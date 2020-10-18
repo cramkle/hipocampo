@@ -1,7 +1,7 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
-import { DeckModel } from '../../mongo'
+import { DeckModel, NoteModel } from '../../mongo'
 import { DeckType } from './types'
 
 export const deleteDeck = mutationWithClientMutationId({
@@ -16,11 +16,18 @@ export const deleteDeck = mutationWithClientMutationId({
   mutateAndGetPayload: async ({ id }, { user }: Context) => {
     const { id: deckId } = fromGlobalId(id)
 
+    const deck = await DeckModel.findOne({ _id: deckId, ownerId: user?._id })
+
+    if (!deck) {
+      throw new Error('Deck not found')
+    }
+
+    await NoteModel.deleteMany({ deckId: deck._id })
+
+    await deck.remove()
+
     return {
-      deck: await DeckModel.findOneAndDelete({
-        _id: deckId,
-        ownerId: user?._id,
-      }).exec(),
+      deck,
     }
   },
 })
