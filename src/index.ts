@@ -3,25 +3,21 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 
 import config from './config'
-import authMiddleware from './middlewares/auth'
-import graphqlMiddleware from './middlewares/graphql'
-import ioMiddleware from './middlewares/io'
 import { getConnection } from './mongo/connection'
-import authRouter from './routes/auth'
+import router from './routes'
 
 const app = express()
 
 if (process.env.NODE_ENV === 'production') {
   app.use(helmet())
+  app.set('trust proxy', 1)
 }
 
 app.use(morgan('dev'))
 
-ioMiddleware.set(app)
-authMiddleware.set(app)
-graphqlMiddleware.set(app)
-
-app.use('/auth', authRouter)
+// Keep for backward compatibility
+app.use(router)
+app.use('/_c', router)
 
 getConnection()
   .then(() => {
