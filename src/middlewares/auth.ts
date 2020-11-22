@@ -1,5 +1,5 @@
 import createStore from 'connect-redis'
-import { Application } from 'express'
+import { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import { Strategy } from 'passport-local'
@@ -53,7 +53,7 @@ passport.deserializeUser(async (id, done) => {
 })
 
 export default {
-  set: (app: Application) => {
+  set: (app: IRouter) => {
     const cookieOpts = {
       httpOnly: true,
       secure: false,
@@ -61,7 +61,6 @@ export default {
     }
 
     if (config.NODE_ENV === 'production') {
-      app.set('trust proxy', 1)
       cookieOpts.secure = true
     }
 

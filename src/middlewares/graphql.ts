@@ -1,4 +1,4 @@
-import { Application, Request } from 'express'
+import { IRouter, Request } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 
 import config from '../config'
@@ -6,7 +6,7 @@ import { createLoaders } from '../loaders/createLoaders'
 import schema from '../schema'
 
 export default {
-  set: (app: Application) => {
+  set: (app: IRouter) => {
     app.use(
       '/graphql',
       graphqlHTTP((request) => {
