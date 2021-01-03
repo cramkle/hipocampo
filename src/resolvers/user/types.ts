@@ -1,4 +1,5 @@
 import {
+  GraphQLBoolean,
   GraphQLEnumType,
   GraphQLList,
   GraphQLNonNull,
@@ -26,8 +27,18 @@ export const UserPreferencesType = new GraphQLObjectType<
   fields: {
     zoneInfo: {
       type: GraphQLNonNull(GraphQLString),
-      description: 'User prefered timezone',
+      description: 'User preferred timezone',
       resolve: (preferences) => preferences.zoneInfo ?? 'UTC',
+    },
+    locale: {
+      type: GraphQLNonNull(GraphQLString),
+      description: 'User preferred locale',
+      resolve: (preferences) => preferences.locale ?? 'en',
+    },
+    darkMode: {
+      type: GraphQLNonNull(GraphQLBoolean),
+      description: 'User preferred dark mode or not',
+      resolve: (preferences) => preferences.darkMode ?? false,
     },
   },
 })

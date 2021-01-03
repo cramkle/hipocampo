@@ -20,6 +20,8 @@ export const createUserWithData = async () => {
     roles: ['REGULAR'],
     preferences: {
       zoneInfo: 'UTC',
+      locale: 'en',
+      darkMode: false,
     },
     lastLogin: undefined,
     createdAt: new Date(),

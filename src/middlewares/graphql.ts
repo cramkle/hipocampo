@@ -10,7 +10,8 @@ export default {
     app.use(
       '/graphql',
       graphqlHTTP((request) => {
-        const user = (request as Request).user
+        const req = request as Request
+        const user = req.user
 
         return {
           schema,
@@ -18,6 +19,10 @@ export default {
           context: {
             ...createLoaders(user),
             user,
+            t: req.t,
+            language: req.language,
+            languages: req.languages,
+            i18n: req.i18n,
           } as Context,
         }
       })

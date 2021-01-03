@@ -1,7 +1,16 @@
-import { GraphQLNonNull, GraphQLString } from 'graphql'
+import {
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql'
 import { mutationWithClientMutationId } from 'graphql-relay'
+import { MongoError } from 'mongodb'
+import { Error } from 'mongoose'
 
 import { UserModel } from '../../mongo'
+import { ErrorEnumType, ErrorValue } from '../../utils/error'
 import { UserType } from './types'
 
 interface CreateUserArgs {
@@ -10,6 +19,17 @@ interface CreateUserArgs {
   password: string
   zoneInfo: string
 }
+
+const CreateUserErrorType = new GraphQLObjectType({
+  name: 'CreateUserError',
+  fields: {
+    type: { type: GraphQLNonNull(ErrorEnumType) },
+    status: { type: GraphQLNonNull(GraphQLInt) },
+    fields: {
+      type: GraphQLList(GraphQLNonNull(ErrorValue)),
+    },
+  },
+})
 
 export const createUser = mutationWithClientMutationId({
   name: 'CreateUser',
@@ -30,13 +50,14 @@ export const createUser = mutationWithClientMutationId({
       defaultValue: 'UTC',
     },
   },
-  outputFields: { user: { type: UserType, description: 'Created user' } },
-  mutateAndGetPayload: async ({
-    username,
-    email,
-    password,
-    zoneInfo,
-  }: CreateUserArgs) => {
+  outputFields: {
+    user: { type: UserType, description: 'Created user' },
+    error: { type: CreateUserErrorType },
+  },
+  mutateAndGetPayload: async (
+    { username, email, password, zoneInfo }: CreateUserArgs,
+    { t }: Context
+  ) => {
     const user = new UserModel({
       username,
       email,
@@ -44,14 +65,64 @@ export const createUser = mutationWithClientMutationId({
       preferences: { zoneInfo },
     })
 
-    const validation = user?.validateSync()
-
-    if (validation) {
-      const error = Object.values(validation.errors)[0]
-      return Promise.reject(error)
+    try {
+      await user?.validate()
+    } catch (validation) {
+      if (validation instanceof Error.ValidationError) {
+        return {
+          error: {
+            type: 'BAD_INPUT',
+            status: 400,
+            fields: Object.values(validation.errors).map((validationError) => ({
+              fieldName: validationError.path,
+              errorDescription:
+                'properties' in validationError
+                  ? t(validationError.properties.message)
+                  : validationError.message,
+            })),
+          },
+        }
+      }
     }
 
-    await user?.hashifyAndSave()
+    try {
+      await user?.hashifyAndSave()
+    } catch (err) {
+      if (err instanceof MongoError) {
+        // duplicate key error
+        if (err.code === 11000) {
+          const duplicatedKeys = (err as any).keyPattern as Record<
+            string,
+            unknown
+          >
+
+          return {
+            error: {
+              type: 'BAD_INPUT',
+              status: 400,
+              fields: [
+                'username' in duplicatedKeys
+                  ? {
+                      fieldName: 'username',
+                      errorDescription: t('usernameAlreadyRegistered'),
+                    }
+                  : undefined,
+                'email' in duplicatedKeys
+                  ? {
+                      fieldName: 'email',
+                      errorDescription: t('emailAlreadyRegistered'),
+                    }
+                  : undefined,
+              ].filter(Boolean),
+            },
+          }
+        }
+      }
+
+      console.error(err)
+
+      return { error: { type: 'SERVER_ERROR', status: 500 } }
+    }
 
     return { user }
   },
