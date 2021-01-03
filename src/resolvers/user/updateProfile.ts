@@ -58,6 +58,8 @@ export const updateProfile = mutationWithClientMutationId({
       return { error: { type: 'AUTHENTICATION', status: 403 } }
     }
 
+    const userModel = await UserModel.findOne({ _id: user._id })
+
     const updateProps: Partial<Omit<UpdateProfileInput, 'currentPassword'>> = {}
 
     if (email != null) {
@@ -69,16 +71,25 @@ export const updateProfile = mutationWithClientMutationId({
     }
 
     if (password != null) {
-      if (!(await user?.comparePassword(currentPassword))) {
-        return { error: { type: 'BAD_INPUT', status: 400 } }
+      if (!(await userModel?.comparePassword(currentPassword))) {
+        return {
+          error: {
+            type: 'BAD_INPUT',
+            status: 400,
+            fields: [
+              {
+                fieldName: 'currentPassword',
+                errorDescription: t('currentPasswordIsIncorrect'),
+              },
+            ],
+          },
+        }
       }
 
       updateProps.password = password
     }
 
     try {
-      const userModel = await UserModel.findOne({ _id: user._id })
-
       Object.assign(userModel, updateProps)
 
       try {

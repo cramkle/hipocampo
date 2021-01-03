@@ -1,4 +1,5 @@
 module.exports = {
+  currentPasswordIsIncorrect: 'A senha está incorreta',
   emailAlreadyRegistered: 'Email já está em uso',
   emailIsMalformed: 'Email deve ser um email válido',
   emailIsRequired: 'Email é obrigatório',
