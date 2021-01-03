@@ -11,7 +11,7 @@ import { defaultDeckConfig } from '../mongo/Deck'
 import { draftContent, mention } from '../utils/draftUtils'
 
 export const createUserWithData = async () => {
-  const uuid = v4().replace('-', '_')
+  const uuid = v4().replace('-', '_').substr(0, 10)
 
   const user = await UserModel.create({
     username: `testuser${uuid}`,
