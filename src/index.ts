@@ -1,41 +1,18 @@
-import { promises as fsp } from 'fs'
-import { join, relative } from 'path'
-
 import express from 'express'
 import helmet from 'helmet'
 import i18next from 'i18next'
-import Backend from 'i18next-fs-backend'
 import i18nextMiddleware from 'i18next-http-middleware'
 import morgan from 'morgan'
 
 import config from './config'
+import { i18nPromise } from './i18n'
 import authMiddleware from './middlewares/auth'
 import ioMiddleware from './middlewares/io'
 import { getConnection } from './mongo/connection'
 import router from './routes'
 
 const start = async () => {
-  const dir = await fsp.realpath(process.cwd())
-
-  await i18next
-    .use(Backend)
-    .use(i18nextMiddleware.LanguageDetector)
-    .init({
-      supportedLngs: ['en', 'pt'],
-      fallbackLng: 'en',
-      ns: ['translation'],
-      defaultNS: 'translation',
-      backend: {
-        loadPath: relative(
-          dir,
-          join(__dirname, 'locales', '{{lng}}', '{{ns}}.js')
-        ),
-      },
-      detection: {
-        lookupCookie: 'language',
-        lookupHeader: 'accept-language',
-      },
-    })
+  await i18nPromise
 
   const app = express()
 

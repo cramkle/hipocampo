@@ -27,6 +27,8 @@ export const createUserWithData = async () => {
     createdAt: new Date(),
   })
 
+  await user.hashifyAndSave()
+
   await Promise.all(
     [1, 2, 3, 4].map((num) =>
       DeckModel.create({

@@ -1,14 +1,20 @@
 import { graphql } from 'graphql'
+import i18next from 'i18next'
 
+import { i18nPromise } from '../i18n'
 import { createLoaders } from '../loaders/createLoaders'
 import schema from '../schema'
 
-export const runQuery = <TData = any, TVariables = Record<string, any>>(
+export const runQuery = async <TData = any, TVariables = Record<string, any>>(
   query: string,
   context: Partial<Omit<Context, 'loaders'>> = {},
   variables?: TVariables
 ): Promise<TData> => {
+  await i18nPromise
+
   const loaders = createLoaders(context.user)
+
+  const i18n = i18next.cloneInstance({ initImmediate: false })
 
   return graphql({
     schema,
@@ -17,6 +23,10 @@ export const runQuery = <TData = any, TVariables = Record<string, any>>(
     contextValue: {
       ...loaders,
       ...context,
+      t: i18n.t.bind(i18n),
+      language: i18n.language,
+      languages: i18n.languages,
+      i18n,
     },
   }).then((result) => {
     if (result.errors) {
