@@ -18,6 +18,7 @@ interface CreateUserArgs {
   email: string
   password: string
   zoneInfo: string
+  locale?: string
 }
 
 const CreateUserErrorType = new GraphQLObjectType({
@@ -44,6 +45,10 @@ export const createUser = mutationWithClientMutationId({
       type: GraphQLNonNull(GraphQLString),
       description: "User's password",
     },
+    locale: {
+      type: GraphQLString,
+      description: 'User preferred locale',
+    },
     zoneInfo: {
       type: GraphQLString,
       description: 'User timezone',
@@ -55,14 +60,14 @@ export const createUser = mutationWithClientMutationId({
     error: { type: CreateUserErrorType },
   },
   mutateAndGetPayload: async (
-    { username, email, password, zoneInfo }: CreateUserArgs,
+    { username, email, password, locale, zoneInfo }: CreateUserArgs,
     { t }: Context
   ) => {
     const user = new UserModel({
       username,
       email,
       password,
-      preferences: { zoneInfo },
+      preferences: { zoneInfo, locale },
     })
 
     try {
