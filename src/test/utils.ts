@@ -14,7 +14,7 @@ export const runQuery = async <TData = any, TVariables = Record<string, any>>(
 
   const loaders = createLoaders(context.user)
 
-  const i18n = i18next.cloneInstance({ initImmediate: false })
+  const i18n = i18next.cloneInstance({ initImmediate: false, lng: 'en' })
 
   return graphql({
     schema,
