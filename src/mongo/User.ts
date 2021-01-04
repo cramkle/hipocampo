@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import { Document, Schema, model } from 'mongoose'
+import * as yup from 'yup'
 
 export interface User {
   username: string
@@ -13,6 +14,8 @@ export interface User {
 
 export interface UserPreferences {
   zoneInfo: string
+  locale: string
+  darkMode: boolean
 }
 
 export interface UserDocument extends User, Document {
@@ -27,6 +30,13 @@ const UserPreferencesSchema = new Schema<UserPreferencesDocument>({
     type: String,
     default: 'UTC',
   },
+  locale: {
+    type: String,
+  },
+  darkMode: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const UserSchema = new Schema<UserDocument>(
@@ -34,16 +44,30 @@ const UserSchema = new Schema<UserDocument>(
     username: {
       type: String,
       unique: true,
-      required: [true, 'Username is required'],
+      required: [true, 'usernameIsRequired'],
+      validate: [
+        (username) =>
+          yup
+            .string()
+            .min(4)
+            .max(20)
+            .matches(/[a-zA-Z](\w)*/)
+            .isValidSync(username),
+        'usernameIsInvalid',
+      ],
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [true, 'passwordIsRequired'],
     },
     email: {
       type: String,
       unique: true,
-      required: [true, 'E-mail is required'],
+      required: [true, 'emailIsRequired'],
+      validate: [
+        (email) => yup.string().email().isValidSync(email),
+        'emailIsMalformed',
+      ],
     },
     roles: {
       type: [{ type: String }],
@@ -69,7 +93,7 @@ UserSchema.methods.hashifyAndSave = function () {
       }
 
       this.password = hash
-      this.save().then(() => res())
+      this.save().then(() => res(), rej)
     })
   })
 }

@@ -1,8 +1,9 @@
 import type { UserDocument } from '../mongo/User'
 import type { Loaders } from '../loaders/createLoaders'
+import type { I18NextRequest } from 'i18next-http-middleware'
 
 declare global {
-  interface Context extends Loaders {
+  interface Context extends Loaders, I18NextRequest {
     user?: UserDocument
   }
 

@@ -11,7 +11,7 @@ import { defaultDeckConfig } from '../mongo/Deck'
 import { draftContent, mention } from '../utils/draftUtils'
 
 export const createUserWithData = async () => {
-  const uuid = v4().replace('-', '_')
+  const uuid = v4().replace('-', '_').substr(0, 10)
 
   const user = await UserModel.create({
     username: `testuser${uuid}`,
@@ -20,10 +20,14 @@ export const createUserWithData = async () => {
     roles: ['REGULAR'],
     preferences: {
       zoneInfo: 'UTC',
+      locale: 'en',
+      darkMode: false,
     },
     lastLogin: undefined,
     createdAt: new Date(),
   })
+
+  await user.hashifyAndSave()
 
   await Promise.all(
     [1, 2, 3, 4].map((num) =>
