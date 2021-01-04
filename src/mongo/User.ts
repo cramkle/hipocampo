@@ -32,7 +32,6 @@ const UserPreferencesSchema = new Schema<UserPreferencesDocument>({
   },
   locale: {
     type: String,
-    default: 'en',
   },
   darkMode: {
     type: Boolean,

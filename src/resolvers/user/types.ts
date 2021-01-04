@@ -31,9 +31,8 @@ export const UserPreferencesType = new GraphQLObjectType<
       resolve: (preferences) => preferences.zoneInfo ?? 'UTC',
     },
     locale: {
-      type: GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: 'User preferred locale',
-      resolve: (preferences) => preferences.locale ?? 'en',
     },
     darkMode: {
       type: GraphQLNonNull(GraphQLBoolean),
