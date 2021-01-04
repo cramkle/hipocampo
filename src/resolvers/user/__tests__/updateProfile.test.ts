@@ -60,6 +60,46 @@ describe('UpdateProfile mutation', () => {
     expect(result.updateProfile.user.id).toStrictEqual(expect.any(String))
   })
 
+  it('errors on incorrect password', async () => {
+    const query = gql`
+      mutation UpdateProfile_PasswordUpdate {
+        updateProfile(
+          input: { currentPassword: "hunter3", password: "hunter2" }
+        ) {
+          user {
+            id
+          }
+          error {
+            type
+            status
+            fields {
+              fieldName
+              errorDescription
+            }
+          }
+        }
+      }
+    `
+
+    let result
+
+    try {
+      result = await runQuery(query, { user })
+    } catch (err) {
+      fail(err)
+    }
+
+    expect(result.updateProfile.user).toBeNull()
+    expect(result.updateProfile.error.fields).toStrictEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          fieldName: 'currentPassword',
+          errorDescription: expect.any(String),
+        }),
+      ])
+    )
+  })
+
   it('updateProfile errors on duplicated usernames', async () => {
     const newUser = await createUserWithData()
 
