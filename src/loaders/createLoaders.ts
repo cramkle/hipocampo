@@ -14,6 +14,7 @@ import { FieldDocument } from '../mongo/Field'
 import { ModelDocument } from '../mongo/Model'
 import { FlashcardDocument, NoteDocument } from '../mongo/Note'
 import { TemplateDocument } from '../mongo/Template'
+import { UserDocument } from '../mongo/User'
 import { countFlashcardsByProperty } from './countFlashcardsByProperty'
 import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
@@ -40,7 +41,7 @@ export interface Loaders {
   countNotesByModelLoader: DataLoader<Types.ObjectId | string, number>
 }
 
-export function createLoaders(user?: Express.User): Loaders {
+export function createLoaders(user?: UserDocument): Loaders {
   return {
     deckLoader: new DataLoader(
       (deckIds) => {

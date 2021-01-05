@@ -8,11 +8,8 @@ declare global {
   }
 
   namespace Express {
-    // typescript-eslint bug
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface User extends UserDocument {
-      _id: string
-      username: string
+      _id?: string
     }
   }
 

@@ -19,28 +19,28 @@ export const UserRolesEnumType = new GraphQLEnumType({
   },
 })
 
-export const UserPreferencesType = new GraphQLObjectType<
-  UserPreferencesDocument
->({
-  name: 'UserPreferences',
-  description: 'Preferences associated with user account',
-  fields: {
-    zoneInfo: {
-      type: GraphQLNonNull(GraphQLString),
-      description: 'User preferred timezone',
-      resolve: (preferences) => preferences.zoneInfo ?? 'UTC',
+export const UserPreferencesType = new GraphQLObjectType<UserPreferencesDocument>(
+  {
+    name: 'UserPreferences',
+    description: 'Preferences associated with user account',
+    fields: {
+      zoneInfo: {
+        type: GraphQLNonNull(GraphQLString),
+        description: 'User preferred timezone',
+        resolve: (preferences) => preferences.zoneInfo ?? 'UTC',
+      },
+      locale: {
+        type: GraphQLString,
+        description: 'User preferred locale',
+      },
+      darkMode: {
+        type: GraphQLNonNull(GraphQLBoolean),
+        description: 'User preferred dark mode or not',
+        resolve: (preferences) => preferences.darkMode ?? false,
+      },
     },
-    locale: {
-      type: GraphQLString,
-      description: 'User preferred locale',
-    },
-    darkMode: {
-      type: GraphQLNonNull(GraphQLBoolean),
-      description: 'User preferred dark mode or not',
-      resolve: (preferences) => preferences.darkMode ?? false,
-    },
-  },
-})
+  }
+)
 
 export const UserType = new GraphQLObjectType<UserDocument>({
   name: 'User',
