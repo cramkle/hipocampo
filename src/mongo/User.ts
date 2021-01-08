@@ -76,14 +76,14 @@ const UserSchema = new Schema<UserDocument>(
     lastLogin: {
       type: Schema.Types.Date,
     },
-    preferences: UserPreferencesSchema,
+    preferences: { type: UserPreferencesSchema },
     createdAt: { type: Schema.Types.Date },
     updatedAt: { type: Schema.Types.Date },
   },
   { timestamps: { createdAt: true } }
 )
 
-UserSchema.methods.hashifyAndSave = function (this: UserDocument) {
+UserSchema.methods.hashifyAndSave = function () {
   return new Promise<void>((res, rej) => {
     bcrypt.hash(this.password, 12, (err, hash) => {
       if (err) {
@@ -98,10 +98,7 @@ UserSchema.methods.hashifyAndSave = function (this: UserDocument) {
   })
 }
 
-UserSchema.methods.comparePassword = function (
-  this: UserDocument,
-  candidate: string
-) {
+UserSchema.methods.comparePassword = function (candidate: string) {
   return new Promise((res, rej) => {
     bcrypt.compare(candidate, this.password, (err, isMatch) => {
       if (err) {

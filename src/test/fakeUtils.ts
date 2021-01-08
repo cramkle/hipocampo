@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import { v4 } from 'uuid'
 
 import {
@@ -58,8 +59,8 @@ export const createUserWithData = async () => {
 
   await TemplateModel.create({
     name: 'Template',
-    modelId: model._id,
-    ownerId: user._id,
+    modelId: model._id as Types.ObjectId,
+    ownerId: user._id as Types.ObjectId,
     frontSide: draftContent`
 ${mention('Front')}
 `(modelFields),

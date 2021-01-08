@@ -3,6 +3,14 @@ import { Document, Schema } from 'mongoose'
 
 type BlockData = Record<string, unknown>
 
+export type EntityMapValue =
+  | {
+      type: 'TAG'
+      mutability: DraftEntityMutability
+      data: { id: string }
+    }
+  | { type: 'LINK'; mutability: DraftEntityMutability; data: { url: string } }
+
 export interface ContentState {
   blocks: {
     key: string
@@ -18,11 +26,7 @@ export interface ContentState {
     data: BlockData
   }[]
   entityMap: {
-    [key: string]: {
-      type: string
-      mutability: DraftEntityMutability
-      data: BlockData
-    }
+    [key: string]: EntityMapValue
   }
 }
 

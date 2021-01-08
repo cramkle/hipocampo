@@ -1,5 +1,6 @@
-import { RawDraftEntity, genKey } from 'draft-js'
+import { genKey } from 'draft-js'
 
+import { ContentState, EntityMapValue } from '../mongo/ContentState'
 import { FieldDocument } from '../mongo/Field'
 
 type DraftRichObject = {
@@ -12,8 +13,8 @@ export const draftContent = (
   strings: TemplateStringsArray,
   ...keys: (number | string | DraftRichObject)[]
 ) => {
-  return (modelFields: FieldDocument[] = []) => {
-    const entityMap: Record<string, RawDraftEntity> = {}
+  return (modelFields: FieldDocument[] = []): ContentState => {
+    const entityMap: Record<string, EntityMapValue> = {}
     const entityList: Array<{
       entityKey: number
       entityOffset: number
@@ -34,8 +35,8 @@ export const draftContent = (
           return total + str + rawKeyEntity
         }
 
-        const draftEntity: RawDraftEntity = {
-          type: rawKeyEntity.type,
+        const draftEntity = {
+          type: rawKeyEntity.type as EntityMapValue['type'],
           mutability: 'IMMUTABLE',
           data:
             rawKeyEntity.type === 'TAG'
@@ -43,10 +44,10 @@ export const draftContent = (
                   ...rawKeyEntity.data,
                   id: modelFields.find(
                     (field) => field.name === rawKeyEntity.data.fieldName
-                  )!._id,
+                  )!._id as string,
                 }
-              : rawKeyEntity.data,
-        }
+              : (rawKeyEntity.data as EntityMapValue['data']),
+        } as EntityMapValue
 
         const entityKey = entitiesCreated++
 

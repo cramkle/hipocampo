@@ -20,7 +20,7 @@ export const getNoteIdentifier = async (
   }
 
   const contentState = convertFromRaw({
-    entityMap: {},
+    ...{ entityMap: {} },
     ...(primaryFieldValue.data?.toJSON() ?? { blocks: [] }),
   })
 

@@ -1,5 +1,6 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
+import { Types } from 'mongoose'
 
 import {
   DeckModel,
@@ -8,6 +9,7 @@ import {
   NoteModel,
   TemplateModel,
 } from '../../mongo'
+import { validateContentStateInput } from '../contentState/utils'
 import { NoteType } from '../deck/types'
 import { FieldValueInput } from '../fieldValue/types'
 
@@ -63,15 +65,26 @@ export const createNote = mutationWithClientMutationId({
       deckId: deck._id,
       ownerId: user!._id,
       values: modelFields.map((field) => {
+        const modelFieldId = field._id as Types.ObjectId
+
         const fieldValue = fieldValues.find(
-          ({ fieldId }) => fieldId === field._id.toString()
+          ({ fieldId }) => fieldId === modelFieldId.toString()
         )
 
         if (!fieldValue) {
-          return { data: undefined, fieldId: field._id.toString() }
+          return { data: undefined, fieldId: modelFieldId.toString() }
         }
 
-        return fieldValue
+        const contentState = fieldValue.data
+
+        if (!validateContentStateInput(contentState)) {
+          throw new Error('Invalid content state')
+        }
+
+        return {
+          data: contentState,
+          fieldId: fieldValue.fieldId,
+        }
       }),
       flashCards: [],
     })
