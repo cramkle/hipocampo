@@ -67,7 +67,7 @@ export default {
     const client = redis.createClient({
       host: config.REDIS_HOST,
       port: config.REDIS_PORT,
-      db: 1,
+      db: config.REDIS_DB,
     })
 
     client.unref()

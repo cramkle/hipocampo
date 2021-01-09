@@ -22,6 +22,7 @@ const {
   PORT,
   REDIS_HOST,
   REDIS_PORT,
+  REDIS_DB,
   RESET_PASSWORD_TOKEN,
   SESSION_SECRET,
 } = process.env
@@ -32,6 +33,7 @@ export default {
   PORT: Number(PORT) || 5000,
   REDIS_HOST: ensureVariable('REDIS_HOST', REDIS_HOST),
   REDIS_PORT: Number(REDIS_PORT) || 6379,
+  REDIS_DB: ensureVariable('REDIS_DB', REDIS_DB),
   RESET_PASSWORD_TOKEN: ensureVariable(
     'RESET_PASSWORD_TOKEN',
     RESET_PASSWORD_TOKEN
