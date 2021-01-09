@@ -79,6 +79,10 @@ export interface DeckConfiguration {
   lapse: LapseFlashcardConfiguration
 }
 
+export interface DeckConfigurationDocument
+  extends DeckConfiguration,
+    Document {}
+
 export interface Deck {
   title: string
   description?: string
@@ -90,7 +94,7 @@ export interface Deck {
 
 export interface DeckDocument extends Deck, Document {}
 
-const DeckConfigurationSchema = new Schema<DeckConfiguration>({
+const DeckConfigurationSchema = new Schema<DeckConfigurationDocument>({
   new: {
     perDay: { type: Number },
     steps: [{ type: Number }],

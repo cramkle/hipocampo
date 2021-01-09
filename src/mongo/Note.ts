@@ -5,14 +5,14 @@ import { ContentStateDocument, ContentStateSchema } from './ContentState'
 // -----------
 // Field values
 interface FieldValue {
-  data: ContentStateDocument
+  data?: ContentStateDocument
   fieldId: Types.ObjectId
 }
 
 export interface FieldValueDocument extends FieldValue, Document {}
 
 export const FieldValueSchema = new Schema<FieldValueDocument>({
-  data: ContentStateSchema,
+  data: { type: ContentStateSchema },
   fieldId: {
     type: Schema.Types.ObjectId,
     ref: 'Field',

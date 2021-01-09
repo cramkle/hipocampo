@@ -1,6 +1,15 @@
+import { DraftEntityMutability, RawDraftInlineStyleRange } from 'draft-js'
 import { Document, Schema } from 'mongoose'
 
 type BlockData = Record<string, unknown>
+
+export type EntityMapValue =
+  | {
+      type: 'TAG'
+      mutability: DraftEntityMutability
+      data: { id: string }
+    }
+  | { type: 'LINK'; mutability: DraftEntityMutability; data: { url: string } }
 
 export interface ContentState {
   blocks: {
@@ -8,11 +17,7 @@ export interface ContentState {
     type: string
     text: string
     depth: number
-    inlineStyleRanges: {
-      style: string
-      offset: number
-      length: number
-    }[]
+    inlineStyleRanges: RawDraftInlineStyleRange[]
     entityRanges: {
       key: number
       length: number
@@ -21,11 +26,7 @@ export interface ContentState {
     data: BlockData
   }[]
   entityMap: {
-    [key: string]: {
-      type: string
-      mutability: string
-      data: BlockData
-    }
+    [key: string]: EntityMapValue
   }
 }
 

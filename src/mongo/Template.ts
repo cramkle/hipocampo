@@ -15,8 +15,8 @@ export interface TemplateDocument extends Template, Document {}
 const TemplateSchema = new Schema<TemplateDocument>(
   {
     name: String,
-    frontSide: ContentStateSchema,
-    backSide: ContentStateSchema,
+    frontSide: { type: ContentStateSchema },
+    backSide: { type: ContentStateSchema },
     modelId: {
       type: Schema.Types.ObjectId,
       ref: 'Model',

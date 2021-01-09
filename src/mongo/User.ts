@@ -46,7 +46,7 @@ const UserSchema = new Schema<UserDocument>(
       unique: true,
       required: [true, 'usernameIsRequired'],
       validate: [
-        (username) =>
+        (username: string) =>
           yup
             .string()
             .min(4)
@@ -65,7 +65,7 @@ const UserSchema = new Schema<UserDocument>(
       unique: true,
       required: [true, 'emailIsRequired'],
       validate: [
-        (email) => yup.string().email().isValidSync(email),
+        (email: string) => yup.string().email().isValidSync(email),
         'emailIsMalformed',
       ],
     },
@@ -76,7 +76,7 @@ const UserSchema = new Schema<UserDocument>(
     lastLogin: {
       type: Schema.Types.Date,
     },
-    preferences: UserPreferencesSchema,
+    preferences: { type: UserPreferencesSchema },
     createdAt: { type: Schema.Types.Date },
     updatedAt: { type: Schema.Types.Date },
   },
@@ -84,7 +84,7 @@ const UserSchema = new Schema<UserDocument>(
 )
 
 UserSchema.methods.hashifyAndSave = function () {
-  return new Promise((res, rej) => {
+  return new Promise<void>((res, rej) => {
     bcrypt.hash(this.password, 12, (err, hash) => {
       if (err) {
         console.error(err) // eslint-disable-line no-console
@@ -98,7 +98,7 @@ UserSchema.methods.hashifyAndSave = function () {
   })
 }
 
-UserSchema.methods.comparePassword = function (candidate) {
+UserSchema.methods.comparePassword = function (candidate: string) {
   return new Promise((res, rej) => {
     bcrypt.compare(candidate, this.password, (err, isMatch) => {
       if (err) {
