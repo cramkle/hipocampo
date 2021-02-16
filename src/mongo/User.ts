@@ -8,6 +8,7 @@ export interface User {
   password: string
   email: string
   roles: string[]
+  anonymous?: boolean
   lastLogin?: Date
   createdAt: Date
   preferences?: UserPreferences
@@ -20,7 +21,7 @@ export interface UserPreferences {
 }
 
 export interface UserDocument extends User, Document {
-  hashifyAndSave(): Promise<void>
+  hashifyAndSave(): Promise<UserDocument>
   comparePassword(candidate: string): Promise<boolean>
 }
 
@@ -51,8 +52,8 @@ const UserSchema = new Schema<UserDocument>(
           yup
             .string()
             .min(4)
-            .max(20)
-            .matches(/[a-zA-Z](\w)*/)
+            .max(40)
+            .matches(/[a-zA-Z][\w-_]*/)
             .isValidSync(username),
         'usernameIsInvalid',
       ],
@@ -70,6 +71,10 @@ const UserSchema = new Schema<UserDocument>(
         'emailIsMalformed',
       ],
     },
+    anonymous: {
+      type: Boolean,
+      default: false,
+    },
     roles: {
       type: [{ type: String }],
       default: ['REGULAR'],
@@ -85,7 +90,7 @@ const UserSchema = new Schema<UserDocument>(
 )
 
 UserSchema.methods.hashifyAndSave = function () {
-  return new Promise<void>((res, rej) => {
+  return new Promise<UserDocument>((res, rej) => {
     bcrypt.hash(this.password, 12, (err, hash) => {
       if (err) {
         console.error(err) // eslint-disable-line no-console
@@ -94,7 +99,7 @@ UserSchema.methods.hashifyAndSave = function () {
       }
 
       this.password = hash
-      this.save().then(() => res(), rej)
+      this.save().then((user) => res(user), rej)
     })
   })
 }

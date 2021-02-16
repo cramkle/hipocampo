@@ -16,6 +16,10 @@ router.post('/login', authenticate('local'), (req, res) => {
   )
 })
 
+router.post('/anonymousLogin', authenticate('anonymous'), (_, res) => {
+  res.redirect('/')
+})
+
 router.post('/logout', (req, res) => {
   req.logout()
   res.json({ ok: true })

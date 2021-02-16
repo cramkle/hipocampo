@@ -2,17 +2,18 @@ import createStore from 'connect-redis'
 import type { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
-import { Strategy } from 'passport-local'
+import { Strategy as LocalStrategy } from 'passport-local'
 import redis from 'redis'
 
 import config from '../config'
+import { AnonymousStrategy } from '../modules/anonymousStrategy'
 import type { UserDocument } from '../mongo/User'
 import UserModel from '../mongo/User'
 
 const RedisStore = createStore(session)
 
 passport.use(
-  new Strategy(async (username: string, password: string, done) => {
+  new LocalStrategy(async (username: string, password: string, done) => {
     let user = null
 
     try {
@@ -35,6 +36,8 @@ passport.use(
     return done(null, user)
   })
 )
+
+passport.use(new AnonymousStrategy())
 
 passport.serializeUser((user: UserDocument, done) => {
   done(null, user._id)
