@@ -63,5 +63,9 @@ export const UserType = new GraphQLObjectType<UserDocument>({
       type: GraphQLNonNull(UserPreferencesType),
       resolve: (user) => user.preferences ?? {},
     },
+    anonymous: {
+      type: GraphQLNonNull(GraphQLBoolean),
+      resolve: (user) => user.anonymous ?? false,
+    },
   },
 })

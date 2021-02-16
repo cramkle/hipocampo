@@ -58,9 +58,19 @@ export const updateProfile = mutationWithClientMutationId({
       return { error: { type: 'AUTHENTICATION', status: 403 } }
     }
 
-    const userModel = await UserModel.findOne({ _id: user._id })
+    const userModel = (await UserModel.findOne({ _id: user._id }))!
 
-    const updateProps: Partial<Omit<UpdateProfileInput, 'currentPassword'>> = {}
+    const updateProps: Partial<
+      Omit<UpdateProfileInput, 'currentPassword'> & { anonymous: boolean }
+    > = {}
+
+    if (userModel.anonymous) {
+      if (email == null || username == null || password == null) {
+        return { error: { type: 'BAD_INPUT', status: 400 } }
+      }
+
+      updateProps.anonymous = false
+    }
 
     if (email != null) {
       updateProps.email = email
@@ -71,7 +81,10 @@ export const updateProfile = mutationWithClientMutationId({
     }
 
     if (password != null) {
-      if (!(await userModel?.comparePassword(currentPassword))) {
+      if (
+        !userModel.anonymous &&
+        !(await userModel.comparePassword(currentPassword))
+      ) {
         return {
           error: {
             type: 'BAD_INPUT',
@@ -93,7 +106,7 @@ export const updateProfile = mutationWithClientMutationId({
       Object.assign(userModel, updateProps)
 
       try {
-        await userModel?.validate()
+        await userModel.validate()
       } catch (validation) {
         if (validation instanceof Error.ValidationError) {
           return {
