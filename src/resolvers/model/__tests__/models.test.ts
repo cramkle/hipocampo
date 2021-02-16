@@ -118,7 +118,7 @@ describe('Models', () => {
   })
 
   describe('Remove templates', () => {
-    it('should remove flashcards from the notes after deleting template', async () => {
+    it('should remove flashcards from notes after deleting template', async () => {
       const [model] = models
 
       await runQuery<Models_RemoveTemplate, Models_RemoveTemplateVariables>(

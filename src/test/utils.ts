@@ -34,6 +34,6 @@ export const runQuery = async <TData = any, TVariables = Record<string, any>>(
       throw error.originalError ?? error
     }
 
-    return result.data! as TData
+    return JSON.parse(JSON.stringify(result.data)) as TData
   })
 }
