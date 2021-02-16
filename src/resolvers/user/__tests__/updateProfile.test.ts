@@ -1,5 +1,5 @@
 import gql from '../../../gql'
-import { UserDocument } from '../../../mongo/User'
+import type { UserDocument } from '../../../mongo/User'
 import { createUserWithData } from '../../../test/fakeUtils'
 import { runQuery } from '../../../test/utils'
 

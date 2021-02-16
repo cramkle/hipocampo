@@ -1,6 +1,6 @@
-import { GraphQLFieldConfig } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
 import { globalIdField as relayGlobalIdField } from 'graphql-relay'
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 export const graphQLGlobalIdField = (
   typeName?: string

@@ -42,7 +42,7 @@ export const updateFieldValue = mutationWithClientMutationId({
     fieldValue.set('data', data)
 
     await NoteModel.updateOne(
-      { _id: noteId, 'values._id': fieldValue._id },
+      { '_id': noteId, 'values._id': fieldValue._id },
       { $set: { 'values.$': fieldValue } }
     )
 

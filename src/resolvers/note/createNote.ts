@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLList, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 import {
   DeckModel,

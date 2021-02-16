@@ -1,4 +1,4 @@
-import { IRouter, Request } from 'express'
+import type { IRouter, Request } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 
 import config from '../config'

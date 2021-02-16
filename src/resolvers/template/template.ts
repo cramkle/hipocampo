@@ -1,4 +1,5 @@
-import { GraphQLFieldConfig, GraphQLID } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLID } from 'graphql'
 
 import { TemplateModel } from '../../mongo'
 import { TemplateType } from './types'

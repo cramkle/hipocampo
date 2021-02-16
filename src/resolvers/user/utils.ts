@@ -1,7 +1,7 @@
 import { createHmac } from 'crypto'
 
 import config from '../../config'
-import { UserDocument } from '../../mongo/User'
+import type { UserDocument } from '../../mongo/User'
 
 const createResetPasswordHashValue = ({
   userId,

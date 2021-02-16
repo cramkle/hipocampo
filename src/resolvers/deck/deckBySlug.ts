@@ -1,4 +1,5 @@
-import { GraphQLFieldConfig, GraphQLNonNull, GraphQLString } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLNonNull, GraphQLString } from 'graphql'
 
 import { DeckType } from './types'
 

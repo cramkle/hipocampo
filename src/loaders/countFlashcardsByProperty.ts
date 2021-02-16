@@ -1,7 +1,7 @@
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 import { NoteModel } from '../mongo'
-import { NoteDocument } from '../mongo/Note'
+import type { NoteDocument } from '../mongo/Note'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 

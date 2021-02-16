@@ -5,7 +5,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { TemplateDocument } from '../../mongo/Template'
+import type { TemplateDocument } from '../../mongo/Template'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ContentStateType } from '../contentState/types'
 import { ModelType } from '../model/types'

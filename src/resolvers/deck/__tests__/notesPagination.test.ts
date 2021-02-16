@@ -1,9 +1,9 @@
 import gql from '../../../gql'
-import { UserDocument } from '../../../mongo/User'
+import type { UserDocument } from '../../../mongo/User'
 import { createUserWithData } from '../../../test/fakeUtils'
 import { runQuery } from '../../../test/utils'
 import { draftContent } from '../../../utils/draftUtils'
-import {
+import type {
   NotesPagination_UserData,
   NotesPagination_UserData_userDecks,
   NotesPagination_UserData_userModels,

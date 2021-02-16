@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
-import { Document, Schema, model } from 'mongoose'
+import type { Document } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import * as yup from 'yup'
 
 export interface User {

@@ -1,7 +1,7 @@
 import { fromGlobalId, nodeDefinitions } from 'graphql-relay'
-import { Document } from 'mongoose'
+import type { Document } from 'mongoose'
 
-import { NoteDocument } from '../../mongo/Note'
+import type { NoteDocument } from '../../mongo/Note'
 import { getConnection } from '../../mongo/connection'
 
 const { nodeInterface, nodeField } = nodeDefinitions(

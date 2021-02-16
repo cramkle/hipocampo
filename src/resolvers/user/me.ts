@@ -1,4 +1,4 @@
-import { GraphQLFieldConfig } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
 
 import { UserModel } from '../../mongo'
 import { UserType } from './types'

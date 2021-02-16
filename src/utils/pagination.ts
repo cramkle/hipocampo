@@ -6,12 +6,11 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql'
-import {
+import type {
   ConnectionConfig,
   GraphQLConnectionDefinitions,
-  connectionDefinitions,
-  offsetToCursor,
 } from 'graphql-relay'
+import { connectionDefinitions, offsetToCursor } from 'graphql-relay'
 
 export interface PageConnectionArgs {
   page: number

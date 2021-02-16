@@ -1,9 +1,5 @@
-import {
-  GraphQLBoolean,
-  GraphQLFieldConfig,
-  GraphQLList,
-  GraphQLNonNull,
-} from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLBoolean, GraphQLList, GraphQLNonNull } from 'graphql'
 
 import { studyFlashcardsByDeck } from '../../modules/studySession'
 import { DeckModel } from '../../mongo'

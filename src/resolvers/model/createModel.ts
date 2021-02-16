@@ -1,14 +1,10 @@
-import {
-  GraphQLFieldConfig,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLString,
-} from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLList, GraphQLNonNull, GraphQLString } from 'graphql'
 import { mutationWithClientMutationId } from 'graphql-relay'
 
 import { FieldModel, ModelModel, TemplateModel } from '../../mongo'
-import { Field } from '../../mongo/Field'
-import { Template } from '../../mongo/Template'
+import type { Field } from '../../mongo/Field'
+import type { Template } from '../../mongo/Template'
 import { FieldInputType } from '../field/types'
 import { TemplateInputType } from '../template/types'
 import { ModelType } from './types'

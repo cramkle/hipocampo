@@ -1,4 +1,5 @@
-import { Document, Schema, Types, model as mongooseModel } from 'mongoose'
+import type { Document, Types } from 'mongoose'
+import { Schema, model as mongooseModel } from 'mongoose'
 
 export interface Model {
   name: string

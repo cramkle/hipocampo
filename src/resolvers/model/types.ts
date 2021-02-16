@@ -7,7 +7,7 @@ import {
 } from 'graphql'
 
 import { UserModel } from '../../mongo'
-import { ModelDocument } from '../../mongo/Model'
+import type { ModelDocument } from '../../mongo/Model'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { getModelPrimaryField } from '../../utils/modelPrimaryField'
 import { NoteType } from '../deck/types'

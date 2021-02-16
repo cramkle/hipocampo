@@ -1,6 +1,6 @@
 import { fromGlobalId, toGlobalId } from 'graphql-relay'
 
-import { ContentState, EntityMapValue } from '../../mongo/ContentState'
+import type { ContentState, EntityMapValue } from '../../mongo/ContentState'
 
 export const parseContentStateWithGlobalId = (
   content: ContentState

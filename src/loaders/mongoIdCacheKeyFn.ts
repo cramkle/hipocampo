@@ -1,4 +1,4 @@
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 export function mongoIdCacheKeyFn(id: Types.ObjectId) {
   return id.toString()
