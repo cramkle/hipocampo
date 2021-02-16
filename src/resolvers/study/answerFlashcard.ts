@@ -1,8 +1,8 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
+import type { FlashcardAnswer } from '../../modules/scheduler'
 import {
-  FlashcardAnswer,
   answerToQualityValue,
   scheduleFlashcard,
 } from '../../modules/scheduler'
@@ -80,7 +80,7 @@ export const answerFlashcard = mutationWithClientMutationId({
     })
 
     await NoteModel.updateOne(
-      { _id: note._id, 'flashCards._id': flashcard._id },
+      { '_id': note._id, 'flashCards._id': flashcard._id },
       { $set: { 'flashCards.$': flashcard } }
     )
 

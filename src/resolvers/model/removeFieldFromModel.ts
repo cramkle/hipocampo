@@ -1,9 +1,5 @@
-import {
-  GraphQLError,
-  GraphQLFieldConfig,
-  GraphQLID,
-  GraphQLNonNull,
-} from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLError, GraphQLID, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
 import { FieldModel, ModelModel, NoteModel } from '../../mongo'

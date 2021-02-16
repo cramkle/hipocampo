@@ -1,5 +1,6 @@
-import { DraftEntityMutability, RawDraftInlineStyleRange } from 'draft-js'
-import { Document, Schema } from 'mongoose'
+import type { DraftEntityMutability, RawDraftInlineStyleRange } from 'draft-js'
+import type { Document } from 'mongoose'
+import { Schema } from 'mongoose'
 
 type BlockData = Record<string, unknown>
 

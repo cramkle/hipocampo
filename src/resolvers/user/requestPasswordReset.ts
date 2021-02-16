@@ -1,6 +1,6 @@
 import { GraphQLBoolean, GraphQLString } from 'graphql'
 import { mutationWithClientMutationId } from 'graphql-relay'
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 import { UserModel } from '../../mongo'
 import { createHashWithTimestamp } from './utils'

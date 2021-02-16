@@ -1,6 +1,6 @@
 import { convertFromRaw } from 'draft-js'
 
-import { NoteDocument } from '../mongo/Note'
+import type { NoteDocument } from '../mongo/Note'
 import { getModelPrimaryField } from './modelPrimaryField'
 
 export const getNoteIdentifier = async (

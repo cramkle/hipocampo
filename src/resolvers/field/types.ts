@@ -6,7 +6,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { FieldDocument } from '../../mongo/Field'
+import type { FieldDocument } from '../../mongo/Field'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ModelType } from '../model/types'
 import { nodeInterface } from '../node/types'

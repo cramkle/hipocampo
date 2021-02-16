@@ -7,7 +7,8 @@ import {
   GraphQLObjectType,
 } from 'graphql'
 
-import { FlashcardDocument, FlashcardStatus } from '../../mongo/Note'
+import type { FlashcardDocument } from '../../mongo/Note'
+import { FlashcardStatus } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { NoteType } from '../deck/types'
 import { nodeInterface } from '../node/types'

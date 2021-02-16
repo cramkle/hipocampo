@@ -1,4 +1,4 @@
-import { ModelDocument } from '../mongo/Model'
+import type { ModelDocument } from '../mongo/Model'
 
 export const getModelPrimaryField = async (
   model: ModelDocument,

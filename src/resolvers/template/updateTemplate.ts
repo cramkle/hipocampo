@@ -2,7 +2,7 @@ import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
 import { TemplateModel } from '../../mongo'
-import { ContentStateDocument } from '../../mongo/ContentState'
+import type { ContentStateDocument } from '../../mongo/ContentState'
 import { ContentStateInputType } from '../contentState/types'
 import { parseContentStateWithGlobalId } from '../contentState/utils'
 import { TemplateType } from './types'

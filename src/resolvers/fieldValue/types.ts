@@ -1,6 +1,6 @@
 import { GraphQLInputObjectType, GraphQLObjectType } from 'graphql'
 
-import { FieldValueDocument } from '../../mongo/Note'
+import type { FieldValueDocument } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { ContentStateInputType, ContentStateType } from '../contentState/types'
 import { FieldInputType, FieldType } from '../field/types'

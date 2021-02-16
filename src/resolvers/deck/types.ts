@@ -10,12 +10,13 @@ import { connectionFromArraySlice } from 'graphql-relay'
 
 import { studyFlashcardsByDeck } from '../../modules/studySession'
 import { NoteModel, UserModel } from '../../mongo'
-import { DeckDocument } from '../../mongo/Deck'
-import { FlashcardStatus, NoteDocument } from '../../mongo/Note'
+import type { DeckDocument } from '../../mongo/Deck'
+import type { NoteDocument } from '../../mongo/Note'
+import { FlashcardStatus } from '../../mongo/Note'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { getNoteIdentifier } from '../../utils/noteIdentifier'
+import type { PageConnectionArgs } from '../../utils/pagination'
 import {
-  PageConnectionArgs,
   connectionWithCursorInfo,
   createPageCursors,
   pageToCursor,

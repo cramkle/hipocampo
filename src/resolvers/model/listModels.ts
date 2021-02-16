@@ -1,4 +1,5 @@
-import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLList, GraphQLNonNull } from 'graphql'
 
 import { ModelModel } from '../../mongo'
 import { ModelType } from './types'

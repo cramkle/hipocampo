@@ -8,7 +8,7 @@ import {
 } from 'graphql'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { ContentStateDocument } from '../../mongo/ContentState'
+import type { ContentStateDocument } from '../../mongo/ContentState'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { nodeInterface } from '../node/types'
 import { encodeEntityMapWithGlobalId } from './utils'

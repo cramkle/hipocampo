@@ -1,6 +1,6 @@
 import DataLoader from 'dataloader'
 import _ from 'lodash'
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 
 import {
   DeckModel,
@@ -9,12 +9,12 @@ import {
   NoteModel,
   TemplateModel,
 } from '../mongo'
-import { DeckDocument } from '../mongo/Deck'
-import { FieldDocument } from '../mongo/Field'
-import { ModelDocument } from '../mongo/Model'
-import { FlashcardDocument, NoteDocument } from '../mongo/Note'
-import { TemplateDocument } from '../mongo/Template'
-import { UserDocument } from '../mongo/User'
+import type { DeckDocument } from '../mongo/Deck'
+import type { FieldDocument } from '../mongo/Field'
+import type { ModelDocument } from '../mongo/Model'
+import type { FlashcardDocument, NoteDocument } from '../mongo/Note'
+import type { TemplateDocument } from '../mongo/Template'
+import type { UserDocument } from '../mongo/User'
 import { countFlashcardsByProperty } from './countFlashcardsByProperty'
 import { countNotesByProperty } from './countNotesByProperty'
 import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'

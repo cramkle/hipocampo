@@ -7,7 +7,7 @@ import {
   GraphQLString,
 } from 'graphql'
 
-import { UserDocument, UserPreferencesDocument } from '../../mongo/User'
+import type { UserDocument, UserPreferencesDocument } from '../../mongo/User'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
 import { nodeInterface } from '../node/types'
 

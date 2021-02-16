@@ -16,7 +16,7 @@ import {
 } from 'graphql'
 
 import { RevisionLogModel } from '../../mongo'
-import { DeckDocument } from '../../mongo/Deck'
+import type { DeckDocument } from '../../mongo/Deck'
 import { fromUserDate } from '../../utils/date'
 import { DeckType } from '../deck/types'
 

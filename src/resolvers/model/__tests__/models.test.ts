@@ -1,41 +1,41 @@
 import gql from '../../../gql'
-import { UserDocument } from '../../../mongo/User'
+import type { UserDocument } from '../../../mongo/User'
 import { createUserWithData } from '../../../test/fakeUtils'
 import { runQuery } from '../../../test/utils'
 import { draftContent } from '../../../utils/draftUtils'
-import {
+import type {
   Models_AddField,
   Models_AddFieldVariables,
 } from './__generated__/Models_AddField'
-import {
+import type {
   Models_AddTemplate,
   Models_AddTemplateVariables,
 } from './__generated__/Models_AddTemplate'
-import {
+import type {
   Models_NotesAfterAddField,
   Models_NotesAfterAddFieldVariables,
 } from './__generated__/Models_NotesAfterAddField'
-import {
+import type {
   Models_NotesAfterAddTemplate,
   Models_NotesAfterAddTemplateVariables,
 } from './__generated__/Models_NotesAfterAddTemplate'
-import {
+import type {
   Models_NotesAfterRemoveField,
   Models_NotesAfterRemoveFieldVariables,
 } from './__generated__/Models_NotesAfterRemoveField'
-import {
+import type {
   Models_NotesAfterRemoveTemplate,
   Models_NotesAfterRemoveTemplateVariables,
 } from './__generated__/Models_NotesAfterRemoveTemplate'
-import {
+import type {
   Models_RemoveField,
   Models_RemoveFieldVariables,
 } from './__generated__/Models_RemoveField'
-import {
+import type {
   Models_RemoveTemplate,
   Models_RemoveTemplateVariables,
 } from './__generated__/Models_RemoveTemplate'
-import {
+import type {
   Models_UserData,
   Models_UserData_userModels,
 } from './__generated__/Models_UserData'

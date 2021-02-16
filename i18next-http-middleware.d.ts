@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 declare module 'i18next-http-middleware' {
-  import * as express from 'express'
-  import * as i18next from 'i18next'
+  import type * as express from 'express'
+  import type * as i18next from 'i18next'
 
   type I18next = i18next.i18n
   type App = express.Application | express.Router

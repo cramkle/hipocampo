@@ -1,4 +1,5 @@
-import { Document, Schema, Types, model } from 'mongoose'
+import type { Document } from 'mongoose'
+import { Schema, Types, model } from 'mongoose'
 
 import { FlashcardStatus } from './Note'
 

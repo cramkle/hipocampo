@@ -1,12 +1,13 @@
 import createStore from 'connect-redis'
-import { IRouter } from 'express'
+import type { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import { Strategy } from 'passport-local'
 import redis from 'redis'
 
 import config from '../config'
-import UserModel, { UserDocument } from '../mongo/User'
+import type { UserDocument } from '../mongo/User'
+import UserModel from '../mongo/User'
 
 const RedisStore = createStore(session)
 
@@ -83,6 +84,7 @@ export default {
         saveUninitialized: false,
       })
     )
+
     app.use(passport.initialize())
     app.use(passport.session())
   },

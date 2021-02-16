@@ -1,4 +1,5 @@
-import { Document, Schema, Types, model } from 'mongoose'
+import type { Document, Types } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import shortid from 'shortid'
 
 export interface NewFlashcardConfiguration

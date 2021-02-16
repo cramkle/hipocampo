@@ -1,4 +1,5 @@
-import { GraphQLFieldConfig, GraphQLString } from 'graphql'
+import type { GraphQLFieldConfig } from 'graphql'
+import { GraphQLString } from 'graphql'
 
 import { studyFlashcardsByDeck } from '../../modules/studySession'
 import { FlashcardType } from '../flashcard/types'

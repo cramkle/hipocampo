@@ -1,6 +1,6 @@
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import { IRouter } from 'express'
+import type { IRouter } from 'express'
 
 export default {
   set: (app: IRouter) => {

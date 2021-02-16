@@ -1,7 +1,7 @@
 import { genKey } from 'draft-js'
 
-import { ContentState, EntityMapValue } from '../mongo/ContentState'
-import { FieldDocument } from '../mongo/Field'
+import type { ContentState, EntityMapValue } from '../mongo/ContentState'
+import type { FieldDocument } from '../mongo/Field'
 
 type DraftRichObject = {
   type: string
