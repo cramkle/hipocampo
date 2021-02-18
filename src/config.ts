@@ -9,7 +9,9 @@ config({
 const ensureVariable = (variableName: string, value: string | undefined) => {
   if (!value) {
     throw new Error(
-      `${variableName} env variable is required, but value is ${value}`
+      `${variableName} env variable is required, but value is ${JSON.stringify(
+        value
+      )}`
     )
   }
 
@@ -17,17 +19,21 @@ const ensureVariable = (variableName: string, value: string | undefined) => {
 }
 
 const {
+  MONGO_PASSWORD,
   MONGO_URI,
+  MONGO_USER,
   NODE_ENV,
   PORT,
+  REDIS_DB,
   REDIS_HOST,
   REDIS_PORT,
-  REDIS_DB,
   RESET_PASSWORD_TOKEN,
   SESSION_SECRET,
 } = process.env
 
 export default {
+  MONGO_PASSWORD,
+  MONGO_USER,
   MONGO_URI: ensureVariable('MONGO_URI', MONGO_URI),
   NODE_ENV: NODE_ENV ?? 'development',
   PORT: Number(PORT) || 5000,
