@@ -17,6 +17,8 @@ export const getConnection = async () => {
       useCreateIndex: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
+      user: config.MONGO_USER,
+      pass: config.MONGO_PASSWORD,
     })
     return connection
   } catch (err) {
