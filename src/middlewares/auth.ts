@@ -1,5 +1,4 @@
 import createStore from 'connect-redis'
-import type { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
@@ -56,39 +55,34 @@ passport.deserializeUser(async (id, done) => {
   done(null, user)
 })
 
-export default {
-  set: (app: IRouter) => {
-    const cookieOpts = {
-      httpOnly: true,
-      secure: false,
-      maxAge: 365 * 24 * 60 * 60 * 1000,
-    }
-
-    if (config.NODE_ENV === 'production') {
-      cookieOpts.secure = true
-    }
-
-    const client = redis.createClient({
-      host: config.REDIS_HOST,
-      port: config.REDIS_PORT,
-      db: config.REDIS_DB,
-    })
-
-    client.unref()
-    client.on('error', console.error)
-
-    app.use(
-      session({
-        name: 'sessid',
-        store: new RedisStore({ client }),
-        cookie: cookieOpts,
-        secret: config.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-      })
-    )
-
-    app.use(passport.initialize())
-    app.use(passport.session())
-  },
+const cookieOpts = {
+  httpOnly: true,
+  secure: false,
+  maxAge: 365 * 24 * 60 * 60 * 1000,
 }
+
+if (config.NODE_ENV === 'production') {
+  cookieOpts.secure = true
+}
+
+const client = redis.createClient({
+  host: config.REDIS_HOST,
+  port: config.REDIS_PORT,
+  db: config.REDIS_DB,
+})
+
+client.unref()
+client.on('error', console.error)
+
+export const authMiddlewares = [
+  session({
+    name: 'sessid',
+    store: new RedisStore({ client }),
+    cookie: cookieOpts,
+    secret: config.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  }),
+  passport.initialize(),
+  passport.session(),
+]

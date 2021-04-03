@@ -8,8 +8,7 @@ import morgan from 'morgan'
 import pkg from '../package.json'
 import config from './config'
 import { i18nPromise } from './i18n'
-import authMiddleware from './middlewares/auth'
-import ioMiddleware from './middlewares/io'
+import { authMiddlewares } from './middlewares/auth'
 import { getConnection } from './mongo/connection'
 import router from './routes'
 
@@ -38,8 +37,7 @@ const start = async () => {
 
   app.use(morgan('dev'))
 
-  authMiddleware.set(router)
-  ioMiddleware.set(router)
+  app.use(...authMiddlewares)
 
   app.use(i18nextMiddleware.handle(i18next))
 
