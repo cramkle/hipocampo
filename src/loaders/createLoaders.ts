@@ -2,6 +2,7 @@ import DataLoader from 'dataloader'
 import _ from 'lodash'
 import type { Types } from 'mongoose'
 
+import { subscriptionByUserLoader } from '../modules/subscription/loader'
 import {
   DeckModel,
   FieldModel,
@@ -39,6 +40,7 @@ export interface Loaders {
   countFlashcardsByDeckLoader: DataLoader<Types.ObjectId | string, number>
   countNotesByDeckLoader: DataLoader<Types.ObjectId | string, number>
   countNotesByModelLoader: DataLoader<Types.ObjectId | string, number>
+  subscriptionByUserLoader: typeof subscriptionByUserLoader
 }
 
 export function createLoaders(user?: UserDocument): Loaders {
@@ -231,5 +233,6 @@ export function createLoaders(user?: UserDocument): Loaders {
       countFlashcardsByProperty('modelId'),
       { cacheKeyFn: mongoIdCacheKeyFn }
     ),
+    subscriptionByUserLoader,
   }
 }

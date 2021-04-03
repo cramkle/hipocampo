@@ -1,6 +1,10 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json'
 
+import {
+  mutations as subscriptionMutations,
+  queries as subscriptionQueries,
+} from './modules/subscription/graphql'
 import { createDeck } from './resolvers/deck/createDeck'
 import { deck } from './resolvers/deck/deckBySlug'
 import { deleteDeck } from './resolvers/deck/deleteDeck'
@@ -49,6 +53,7 @@ const schema = new GraphQLSchema({
       studyFlashCard: studyFlashcard,
       studyFlashcard,
       template,
+      ...subscriptionQueries,
     } as any,
   }),
   mutation: new GraphQLObjectType<any, Context>({
@@ -78,6 +83,7 @@ const schema = new GraphQLSchema({
       updatePreferences,
       updateProfile,
       updateTemplate,
+      ...subscriptionMutations,
     } as any,
   }),
   types: [GraphQLJSON, GraphQLJSONObject, nodeInterface],

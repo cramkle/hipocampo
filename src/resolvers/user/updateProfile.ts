@@ -11,6 +11,7 @@ import { Error } from 'mongoose'
 
 import { UserModel } from '../../mongo'
 import { ErrorEnumType, ErrorValue } from '../../utils/error'
+import { stripe } from '../../utils/stripe'
 import { UserType } from './types'
 
 interface UpdateProfileInput {
@@ -131,6 +132,13 @@ export const updateProfile = mutationWithClientMutationId({
         await userModel?.hashifyAndSave()
       } else {
         await userModel?.save()
+      }
+
+      if (user.stripeCustomerId) {
+        await stripe.customers.update(user.stripeCustomerId, {
+          name: userModel.username,
+          email: userModel.email,
+        })
       }
 
       return { user: userModel }

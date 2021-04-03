@@ -6,6 +6,7 @@ import { graphqlHTTP } from 'express-graphql'
 
 import config from '../config'
 import { createLoaders } from '../loaders/createLoaders'
+import { subscriptionRouter } from '../modules/subscription/routes'
 import schema from '../schema'
 import authRouter from './auth'
 
@@ -36,5 +37,7 @@ router.use(
 )
 
 router.use('/auth', ...ioMiddlewares, authRouter)
+
+router.use('/subscription', subscriptionRouter)
 
 export default router

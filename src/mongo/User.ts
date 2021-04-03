@@ -12,6 +12,7 @@ export interface User {
   lastLogin?: Date
   createdAt: Date
   preferences?: UserPreferences
+  stripeCustomerId?: string
 }
 
 export interface UserPreferences {
@@ -74,6 +75,9 @@ const UserSchema = new Schema<UserDocument>(
     anonymous: {
       type: Boolean,
       default: false,
+    },
+    stripeCustomerId: {
+      type: String,
     },
     roles: {
       type: [{ type: String }],
