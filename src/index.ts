@@ -1,9 +1,11 @@
 import express from 'express'
+import promBundle from 'express-prom-bundle'
 import helmet from 'helmet'
 import i18next from 'i18next'
 import i18nextMiddleware from 'i18next-http-middleware'
 import morgan from 'morgan'
 
+import pkg from '../package.json'
 import config from './config'
 import { i18nPromise } from './i18n'
 import authMiddleware from './middlewares/auth'
@@ -15,6 +17,16 @@ const start = async () => {
   await i18nPromise
 
   const app = express()
+
+  app.use(
+    promBundle({
+      includeMethod: true,
+      customLabels: {
+        app: 'hipocampo',
+        version: pkg.version,
+      },
+    })
+  )
 
   if (process.env.NODE_ENV === 'production') {
     app.use(helmet())
