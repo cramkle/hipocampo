@@ -14,8 +14,8 @@ if [[ -z "$REGISTRY_SERVER" ]]; then
   exit 0;
 fi
 
-image_name=$REGISTRY_SERVER/cramkle/hipocampo:$version
-image_latest=$REGISTRY_SERVER/cramkle/hipocampo:latest
+image_name=$REGISTRY_SERVER/hipocampo:$version
+image_latest=$REGISTRY_SERVER/hipocampo:latest
 
 docker build -t $image_name .
 docker tag $image_name $image_latest
