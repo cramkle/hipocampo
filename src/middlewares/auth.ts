@@ -1,4 +1,3 @@
-import createStore from 'connect-redis'
 import type { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
@@ -7,10 +6,9 @@ import redis from 'redis'
 
 import config from '../config'
 import { AnonymousStrategy } from '../modules/anonymousStrategy'
+import { SessionStore } from '../modules/auth/SessionStore'
 import type { UserDocument } from '../mongo/User'
 import UserModel from '../mongo/User'
-
-const RedisStore = createStore(session)
 
 passport.use(
   new LocalStrategy(async (username: string, password: string, done) => {
@@ -80,7 +78,7 @@ export default {
     app.use(
       session({
         name: 'sessid',
-        store: new RedisStore({ client }),
+        store: new SessionStore({ client }),
         cookie: cookieOpts,
         secret: config.SESSION_SECRET,
         resave: false,
