@@ -29,6 +29,9 @@ const {
   REDIS_PORT,
   RESET_PASSWORD_TOKEN,
   SESSION_SECRET,
+  MAIL_HOST,
+  MAIL_USERNAME,
+  MAIL_PASSWORD,
 } = process.env
 
 export default {
@@ -45,4 +48,7 @@ export default {
     RESET_PASSWORD_TOKEN
   ),
   SESSION_SECRET: ensureVariable('SESSION_SECRET', SESSION_SECRET),
+  MAIL_HOST,
+  MAIL_USERNAME,
+  MAIL_PASSWORD,
 }
