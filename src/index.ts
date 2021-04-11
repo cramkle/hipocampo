@@ -25,6 +25,9 @@ const start = async () => {
         app: 'hipocampo',
         version: pkg.version,
       },
+      promClient: {
+        collectDefaultMetrics: {},
+      },
     })
   )
 
