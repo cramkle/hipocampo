@@ -32,6 +32,9 @@ const {
   MAIL_HOST,
   MAIL_USERNAME,
   MAIL_PASSWORD,
+  DKIM_PRIVATE_KEY,
+  DKIM_KEY_SELECTOR,
+  DKIM_DOMAIN_NAME,
 } = process.env
 
 export default {
@@ -51,4 +54,7 @@ export default {
   MAIL_HOST,
   MAIL_USERNAME,
   MAIL_PASSWORD,
+  DKIM_PRIVATE_KEY,
+  DKIM_KEY_SELECTOR,
+  DKIM_DOMAIN_NAME,
 }
