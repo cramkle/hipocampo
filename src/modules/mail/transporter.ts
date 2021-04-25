@@ -1,13 +1,11 @@
 import nodemailer from 'nodemailer'
 import type Mail from 'nodemailer/lib/mailer'
+import type SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 import config from '../../config'
 
 const transport = nodemailer.createTransport({
-  // @ts-ignore
   host: config.MAIL_HOST,
-  secure: false,
-  requireTLS: true,
   logger: true,
   port: 587,
   auth: {
@@ -21,7 +19,7 @@ const transport = nodemailer.createTransport({
         privateKey: config.DKIM_PRIVATE_KEY,
       }
     : undefined,
-})
+} as SMTPTransport.Options)
 
 transport.verify((err) => {
   if (err) {
