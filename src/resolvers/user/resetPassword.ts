@@ -35,7 +35,13 @@ export const resetPassword = mutationWithClientMutationId({
     userId,
     newPassword,
   }: ResetPasswordArgs) => {
-    const user = await UserModel.findById(userId)
+    let user
+
+    try {
+      user = await UserModel.findById(userId)
+    } catch {
+      return { success: false }
+    }
 
     if (!user) {
       return { success: false }
