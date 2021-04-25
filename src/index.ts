@@ -43,6 +43,10 @@ const start = async () => {
 
   app.use(i18nextMiddleware.handle(i18next))
 
+  app.get('/healthz', (_, res) => {
+    res.sendStatus(200)
+  })
+
   // Keep for backward compatibility
   app.use(router)
 
