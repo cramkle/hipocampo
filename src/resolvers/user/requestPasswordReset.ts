@@ -2,6 +2,7 @@ import { GraphQLBoolean, GraphQLString } from 'graphql'
 import { mutationWithClientMutationId } from 'graphql-relay'
 import type { Types } from 'mongoose'
 
+import { sendMail } from '../../modules/mail/transporter'
 import { UserModel } from '../../mongo'
 import { createHashWithTimestamp } from './utils'
 
@@ -34,8 +35,33 @@ export const requestPasswordReset = mutationWithClientMutationId({
 
     const hashString = createHashWithTimestamp(todayTimestamp, user)
 
-    // should send email instead
-    console.log(`/reset/${userId}/${todayTimestamp.toString(36)}-${hashString}`)
+    const passwordResetToken = `${todayTimestamp.toString(36)}-${hashString}`
+
+    sendMail({
+      to: user.email,
+      subject: 'Cramkle - Password Reset',
+      text: `
+Hello ${user.username},
+
+To reset your account's password, go to the following address:
+
+https://www.cramkle.com/reset-password/${userId}?token=${passwordResetToken}
+
+The above link will be valid for 24 hours, or until you log in to your account again.
+
+If you didn't request this password reset, please contact support@cramkle.com.
+
+Best regards,
+Cramkle Team
+`.trim(),
+    }).then(
+      (info) => {
+        console.log('Email sent successfully', info)
+      },
+      (err) => {
+        console.error(`Error sending email: ${err}`)
+      }
+    )
 
     return { success: true }
   },
