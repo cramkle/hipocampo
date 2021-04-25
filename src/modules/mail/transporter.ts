@@ -30,13 +30,8 @@ transport.verify((err) => {
   console.log('Succesfully connected to mail server')
 })
 
-export const sendMail = async (options: Mail.Options) => {
-  return new Promise<any>((resolve, reject) => {
-    transport.sendMail(options, (err, info) => {
-      if (err !== null) {
-        return reject(err)
-      }
-      resolve(info)
-    })
-  })
+export const sendMail = async (options: Omit<Mail.Options, 'from'>) => {
+  await transport.sendMail(
+    Object.assign({ from: 'Cramkle <no-reply@cramkle.com>' }, options)
+  )
 }

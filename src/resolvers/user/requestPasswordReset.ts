@@ -47,7 +47,9 @@ To reset your account's password, go to the following address:
 
 https://www.cramkle.com/reset-password/${userId}?token=${passwordResetToken}
 
-If you didn't request this password reset, contact support@cramkle.com.
+The above link will be valid for 24 hours, or until you log in to your account again.
+
+If you didn't request this password reset, please contact support@cramkle.com.
 
 Best regards,
 Cramkle Team
