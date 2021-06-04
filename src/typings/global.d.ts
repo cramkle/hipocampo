@@ -20,11 +20,11 @@ declare global {
     depth: number
     inlineStyleRanges: InlineStyleRangeInput[]
     entityRanges: EntityRangeInput[]
-    data: Record<string, unknown>
+    data?: Record<string, unknown>
   }
 
   interface ContentStateInput {
     blocks: BlockInput[]
-    entityMap: Record<string, unknown>
+    entityMap?: Record<string, unknown>
   }
 }
