@@ -19,8 +19,8 @@ export const UserRolesEnumType = new GraphQLEnumType({
   },
 })
 
-export const UserPreferencesType = new GraphQLObjectType<UserPreferencesDocument>(
-  {
+export const UserPreferencesType =
+  new GraphQLObjectType<UserPreferencesDocument>({
     name: 'UserPreferences',
     description: 'Preferences associated with user account',
     fields: {
@@ -39,8 +39,7 @@ export const UserPreferencesType = new GraphQLObjectType<UserPreferencesDocument
         resolve: (preferences) => preferences.darkMode ?? false,
       },
     },
-  }
-)
+  })
 
 export const UserType = new GraphQLObjectType<UserDocument>({
   name: 'User',

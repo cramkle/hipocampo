@@ -14,10 +14,12 @@ const { nodeInterface, nodeField } = nodeDefinitions(
 
     if (typeName === 'FlashCard') {
       const noteModel = mongoose.model('Note')
-      document = ((await noteModel.findOne(
-        { 'flashCards._id': objectId },
-        { 'flashCards.$': true }
-      )) as NoteDocument)?.flashCards.id(objectId)
+      document = (
+        (await noteModel.findOne(
+          { 'flashCards._id': objectId },
+          { 'flashCards.$': true }
+        )) as NoteDocument
+      )?.flashCards.id(objectId)
     } else {
       const documentModel = mongoose.model(typeName)
       document = await documentModel.findById(objectId)

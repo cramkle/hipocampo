@@ -27,45 +27,43 @@ import { ModelType } from '../model/types'
 import { nodeInterface } from '../node/types'
 import { UserType } from '../user/types'
 
-export const NoteType: GraphQLObjectType<
-  NoteDocument,
-  Context
-> = new GraphQLObjectType<NoteDocument, Context>({
-  name: 'Note',
-  description: `
+export const NoteType: GraphQLObjectType<NoteDocument, Context> =
+  new GraphQLObjectType<NoteDocument, Context>({
+    name: 'Note',
+    description: `
 A note is what the user registers on each deck.
 
 This type auto generates a number of cards, based
 on the number of templates.
   `.trim(),
-  interfaces: [nodeInterface],
-  fields: () => ({
-    id: graphQLGlobalIdField(),
-    deck: {
-      type: DeckType,
-      description: 'Deck containing this note',
-      resolve: (root, _, ctx) => ctx.deckLoader.load(root.deckId),
-    },
-    model: {
-      type: ModelType,
-      description: 'Model of this note',
-      resolve: (root, _, ctx) => ctx.modelLoader.load(root.modelId),
-    },
-    values: {
-      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FieldValueType))),
-      description: 'Values of this note',
-    },
-    flashCards: {
-      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FlashcardType))),
-      description: 'Generated flashcards',
-    },
-    text: {
-      type: GraphQLString,
-      description: 'Note text representation',
-      resolve: (root, _, ctx) => getNoteIdentifier(root, ctx),
-    },
-  }),
-})
+    interfaces: [nodeInterface],
+    fields: () => ({
+      id: graphQLGlobalIdField(),
+      deck: {
+        type: DeckType,
+        description: 'Deck containing this note',
+        resolve: (root, _, ctx) => ctx.deckLoader.load(root.deckId),
+      },
+      model: {
+        type: ModelType,
+        description: 'Model of this note',
+        resolve: (root, _, ctx) => ctx.modelLoader.load(root.modelId),
+      },
+      values: {
+        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FieldValueType))),
+        description: 'Values of this note',
+      },
+      flashCards: {
+        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(FlashcardType))),
+        description: 'Generated flashcards',
+      },
+      text: {
+        type: GraphQLString,
+        description: 'Note text representation',
+        resolve: (root, _, ctx) => getNoteIdentifier(root, ctx),
+      },
+    }),
+  })
 
 type StudySessionDetailsObject = Map<FlashcardStatus, number>
 
