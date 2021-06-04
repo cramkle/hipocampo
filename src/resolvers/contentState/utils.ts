@@ -64,7 +64,7 @@ export const validateContentStateInput = (
 ): contentStateInput is ContentState => {
   const entityMap = contentStateInput.entityMap
 
-  for (const [, value] of Object.entries(entityMap)) {
+  for (const [, value] of Object.entries(entityMap ?? {})) {
     if (typeof value !== 'object' || value == null) {
       return false
     }
