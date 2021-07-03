@@ -19,6 +19,12 @@ const ensureVariable = (variableName: string, value: string | undefined) => {
 }
 
 const {
+  DKIM_DOMAIN_NAME,
+  DKIM_KEY_SELECTOR,
+  DKIM_PRIVATE_KEY,
+  MAIL_HOST,
+  MAIL_PASSWORD,
+  MAIL_USERNAME,
   MONGO_PASSWORD,
   MONGO_URI,
   MONGO_USER,
@@ -28,14 +34,9 @@ const {
   REDIS_HOST,
   REDIS_PASSWORD,
   REDIS_PORT,
+  REDIS_REPLICA_HOST,
   RESET_PASSWORD_TOKEN,
   SESSION_SECRET,
-  MAIL_HOST,
-  MAIL_USERNAME,
-  MAIL_PASSWORD,
-  DKIM_PRIVATE_KEY,
-  DKIM_KEY_SELECTOR,
-  DKIM_DOMAIN_NAME,
 } = process.env
 
 export default {
@@ -45,9 +46,10 @@ export default {
   NODE_ENV: NODE_ENV ?? 'development',
   PORT: Number(PORT) || 5000,
   REDIS_HOST: ensureVariable('REDIS_HOST', REDIS_HOST),
-  REDIS_DB: ensureVariable('REDIS_DB', REDIS_DB),
+  REDIS_DB: Number(ensureVariable('REDIS_DB', REDIS_DB)),
   REDIS_PASSWORD,
   REDIS_PORT: Number(REDIS_PORT) || 6379,
+  REDIS_REPLICA_HOST,
   RESET_PASSWORD_TOKEN: ensureVariable(
     'RESET_PASSWORD_TOKEN',
     RESET_PASSWORD_TOKEN

@@ -1,9 +1,9 @@
 import createStore from 'connect-redis'
 import type { IRouter } from 'express'
 import session from 'express-session'
+import Redis from 'ioredis'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
-import redis from 'redis'
 
 import config from '../config'
 import { AnonymousStrategy } from '../modules/anonymousStrategy'
@@ -69,15 +69,36 @@ export default {
       cookieOpts.secure = true
     }
 
-    const client = redis.createClient({
-      host: config.REDIS_HOST,
-      port: config.REDIS_PORT,
+    const redisOptions = {
       db: config.REDIS_DB,
       password: config.REDIS_PASSWORD,
-    })
+    }
 
-    client.unref()
-    client.on('error', console.error)
+    const client = config.REDIS_REPLICA_HOST
+      ? new Redis.Cluster(
+          [
+            {
+              host: config.REDIS_HOST,
+              port: config.REDIS_PORT,
+            },
+            {
+              host: config.REDIS_REPLICA_HOST,
+              port: config.REDIS_PORT,
+            },
+          ],
+          {
+            redisOptions,
+          }
+        )
+      : new Redis({
+          host: config.REDIS_HOST,
+          port: config.REDIS_PORT,
+          ...redisOptions,
+        })
+
+    client.on('error', (error) => {
+      console.error('[REDIS ERROR]', error)
+    })
 
     app.use(
       session({
