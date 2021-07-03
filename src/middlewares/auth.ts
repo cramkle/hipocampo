@@ -62,6 +62,7 @@ export default {
       httpOnly: true,
       secure: false,
       maxAge: 365 * 24 * 60 * 60 * 1000,
+      sameSite: 'strict' as const,
     }
 
     if (config.NODE_ENV === 'production') {
@@ -72,6 +73,7 @@ export default {
       host: config.REDIS_HOST,
       port: config.REDIS_PORT,
       db: config.REDIS_DB,
+      password: config.REDIS_PASSWORD,
     })
 
     client.unref()
