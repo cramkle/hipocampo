@@ -69,33 +69,12 @@ export default {
       cookieOpts.secure = true
     }
 
-    const redisOptions = {
+    const client = new Redis({
+      host: config.REDIS_HOST,
+      port: config.REDIS_PORT,
       db: config.REDIS_DB,
       password: config.REDIS_PASSWORD,
-    }
-
-    const client = config.REDIS_REPLICA_HOST
-      ? new Redis.Cluster(
-          [
-            {
-              host: config.REDIS_HOST,
-              port: config.REDIS_PORT,
-            },
-            {
-              host: config.REDIS_REPLICA_HOST,
-              port: config.REDIS_PORT,
-            },
-          ],
-          {
-            scaleReads: 'all',
-            redisOptions,
-          }
-        )
-      : new Redis({
-          host: config.REDIS_HOST,
-          port: config.REDIS_PORT,
-          ...redisOptions,
-        })
+    })
 
     client.on('error', (error) => {
       console.error('[REDIS ERROR]', error)
