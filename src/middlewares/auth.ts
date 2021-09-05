@@ -1,7 +1,6 @@
 import createStore from 'connect-redis'
 import type { IRouter } from 'express'
 import session from 'express-session'
-import Redis from 'ioredis'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
@@ -9,6 +8,7 @@ import config from '../config'
 import { AnonymousStrategy } from '../modules/anonymousStrategy'
 import type { UserDocument } from '../mongo/User'
 import UserModel from '../mongo/User'
+import { getRedisInstance } from '../redis'
 
 const RedisStore = createStore(session)
 
@@ -57,7 +57,7 @@ passport.deserializeUser(async (id, done) => {
 })
 
 export default {
-  set: (app: IRouter) => {
+  set: async (app: IRouter) => {
     const cookieOpts = {
       httpOnly: true,
       secure: false,
@@ -69,16 +69,7 @@ export default {
       cookieOpts.secure = true
     }
 
-    const client = new Redis({
-      host: config.REDIS_HOST,
-      port: config.REDIS_PORT,
-      db: config.REDIS_DB,
-      password: config.REDIS_PASSWORD,
-    })
-
-    client.on('error', (error) => {
-      console.error('[REDIS ERROR]', error)
-    })
+    const client = await getRedisInstance()
 
     app.use(
       session({
