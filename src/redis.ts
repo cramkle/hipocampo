@@ -30,7 +30,7 @@ export async function getRedisInstance(): Promise<Redis> {
       host: config.REDIS_HOST,
       db: config.REDIS_DB,
       password: config.REDIS_PASSWORD,
-      name: 'hipocampo-primary',
+      name: config.REDIS_SENTINEL_NAME,
     })
 
     redisClient = sentinelInstance
