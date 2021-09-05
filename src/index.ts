@@ -38,7 +38,7 @@ const start = async () => {
 
   app.use(morgan('dev'))
 
-  authMiddleware.set(router)
+  await authMiddleware.set(router)
   ioMiddleware.set(router)
 
   app.use(i18nextMiddleware.handle(i18next))
