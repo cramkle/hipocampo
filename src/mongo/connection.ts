@@ -11,15 +11,15 @@ export const getConnection = async () => {
   }
 
   try {
-    // eslint-disable-next-line require-atomic-updates
-    connection = await mongoose.connect(config.MONGO_URI, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
+    const localConnection = await mongoose.connect(config.MONGO_URI, {
       user: config.MONGO_USER,
       pass: config.MONGO_PASSWORD,
     })
+
+    if (connection === null) {
+      connection = localConnection
+    }
+
     return connection
   } catch (err) {
     console.error('Failed to obtain a connection to MongoDB')

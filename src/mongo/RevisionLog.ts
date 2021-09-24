@@ -1,7 +1,7 @@
-import type { Document } from 'mongoose'
-import { Schema, Types, model } from 'mongoose'
+import type { Document, Types } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
-import { FlashcardStatus } from './Note'
+import type { FlashcardStatus } from './Note'
 
 export interface RevisionLog {
   interval?: number
@@ -17,6 +17,8 @@ export interface RevisionLog {
   noteId: Types.ObjectId
   flashCardId: Types.ObjectId
   deckId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface RevisionLogDocument extends Document, RevisionLog {}
@@ -27,15 +29,15 @@ const RevisionLogSchema = new Schema<RevisionLogDocument>(
     lastInterval: { type: Number },
     timespan: { type: Number },
     easeFactor: { type: Number },
-    status: { type: FlashcardStatus },
-    nextStatus: { type: FlashcardStatus },
+    status: { type: String },
+    nextStatus: { type: String },
     answerQuality: { type: Number },
     graduationStepsRemaining: { type: Number },
     nextDueDate: { type: Schema.Types.Date },
-    ownerId: { type: Types.ObjectId, ref: 'User' },
-    noteId: { type: Types.ObjectId, ref: 'Note' },
-    flashCardId: { type: Types.ObjectId, ref: 'Note.flashCards' },
-    deckId: { type: Types.ObjectId, ref: 'Deck', index: true },
+    ownerId: { type: Schema.Types.ObjectId, ref: 'User' },
+    noteId: { type: Schema.Types.ObjectId, ref: 'Note' },
+    flashCardId: { type: Schema.Types.ObjectId, ref: 'Note.flashCards' },
+    deckId: { type: Schema.Types.ObjectId, ref: 'Deck', index: true },
     createdAt: { type: Schema.Types.Date },
     updatedAt: { type: Schema.Types.Date },
   },

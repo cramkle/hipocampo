@@ -5,6 +5,8 @@ export interface Model {
   name: string
   ownerId: Types.ObjectId
   primaryFieldId?: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface ModelDocument extends Model, Document {}

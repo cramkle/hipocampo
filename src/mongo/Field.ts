@@ -4,6 +4,8 @@ import { Schema, model } from 'mongoose'
 export interface Field {
   name: string
   modelId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface FieldDocument extends Field, Document {}

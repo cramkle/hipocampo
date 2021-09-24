@@ -53,7 +53,7 @@ export const addTemplateToModel: GraphQLFieldConfig<
                   // an id for the subdocument when it
                   // is created using the `$concatArrays`
                   // aggregation operator
-                  _id: Types.ObjectId(),
+                  _id: new Types.ObjectId(),
                   templateId: template._id,
                   noteId: '$_id',
                 },

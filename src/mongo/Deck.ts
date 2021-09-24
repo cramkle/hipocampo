@@ -91,6 +91,8 @@ export interface Deck {
   published: boolean
   configuration: DeckConfiguration
   ownerId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface DeckDocument extends Deck, Document {}

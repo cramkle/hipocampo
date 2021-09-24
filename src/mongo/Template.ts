@@ -10,6 +10,8 @@ export interface Template {
   backSide: ContentState | null
   modelId: Types.ObjectId
   ownerId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface TemplateDocument extends Template, Document {}

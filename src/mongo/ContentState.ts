@@ -58,8 +58,4 @@ export const ContentStateSchema = new Schema<ContentStateDocument>({
     },
   ],
   entityMap: Object,
-  ownerId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
 })

@@ -51,7 +51,7 @@ export interface FlashcardDocument extends Document, Flashcard {}
 
 export const FlashcardSchema = new Schema<FlashcardDocument>({
   active: { type: Boolean, default: true },
-  status: { type: FlashcardStatus, default: 'NEW' },
+  status: { type: String, default: FlashcardStatus.NEW },
   lapses: { type: Number, default: 0 },
   reviews: { type: Number, default: 0 },
   interval: { type: Number },
@@ -76,6 +76,8 @@ export interface Note {
   deckId: Types.ObjectId
   modelId: Types.ObjectId
   ownerId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface NoteDocument extends Note, Document {}

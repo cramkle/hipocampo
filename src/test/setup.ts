@@ -7,12 +7,7 @@ jest.mock('../modules/mail/transporter')
 const anyGlobal = global as any
 
 beforeAll(async () => {
-  anyGlobal.mongoose = await mongoose.connect(process.env.MONGO_URL as string, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
+  anyGlobal.mongoose = await mongoose.connect(process.env.MONGO_URL as string)
 })
 
 afterAll(async () => {

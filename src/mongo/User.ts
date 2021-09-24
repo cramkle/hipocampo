@@ -11,6 +11,7 @@ export interface User {
   anonymous?: boolean
   lastLogin?: Date
   createdAt: Date
+  updatedAt: Date
   preferences?: UserPreferences
 }
 
@@ -76,7 +77,7 @@ const UserSchema = new Schema<UserDocument>(
       default: false,
     },
     roles: {
-      type: [{ type: String }],
+      type: [String],
       default: ['REGULAR'],
     },
     lastLogin: {
