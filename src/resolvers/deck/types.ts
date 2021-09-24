@@ -8,7 +8,7 @@ import {
 } from 'graphql'
 import { connectionFromArraySlice } from 'graphql-relay'
 
-import { studyFlashcardsByDeck } from '../../modules/studySession'
+import { studyFlashcardsByDeck } from '../../modules/study/studySession'
 import { NoteModel, UserModel } from '../../mongo'
 import type { DeckDocument } from '../../mongo/Deck'
 import type { NoteDocument } from '../../mongo/Note'

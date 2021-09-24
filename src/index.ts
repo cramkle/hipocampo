@@ -3,15 +3,16 @@ import promBundle from 'express-prom-bundle'
 import helmet from 'helmet'
 import i18next from 'i18next'
 import i18nextMiddleware from 'i18next-http-middleware'
-import morgan from 'morgan'
 
 import pkg from '../package.json'
 import config from './config'
 import { i18nPromise } from './i18n'
-import authMiddleware from './middlewares/auth'
-import ioMiddleware from './middlewares/io'
+import { io } from './middlewares/io'
+import { logger } from './middlewares/logger'
+import { auth } from './modules/auth/middlewares'
 import { getConnection } from './mongo/connection'
 import router from './routes'
+import healthzRouter from './routes/healthz'
 
 const start = async () => {
   await i18nPromise
@@ -36,21 +37,20 @@ const start = async () => {
     app.set('trust proxy', 1)
   }
 
-  app.use(morgan('dev'))
+  app.use(healthzRouter)
 
-  await authMiddleware.set(router)
-  ioMiddleware.set(router)
+  app.use(logger())
+
+  app.use(await auth())
+  app.use(io())
 
   app.use(i18nextMiddleware.handle(i18next))
 
-  app.get('/healthz', (_, res) => {
-    res.sendStatus(200)
-  })
-
-  // Keep for backward compatibility
+  // Kept for backward compatibility
   app.use(router)
 
   app.use('/_c', router)
+  app.use('/api', router)
 
   try {
     await getConnection()

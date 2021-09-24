@@ -1,7 +1,7 @@
 import type { GraphQLFieldConfig } from 'graphql'
 import { GraphQLBoolean, GraphQLList, GraphQLNonNull } from 'graphql'
 
-import { studyFlashcardsByDeck } from '../../modules/studySession'
+import { studyFlashcardsByDeck } from '../../modules/study/studySession'
 import { DeckModel } from '../../mongo'
 import { DeckType } from './types'
 

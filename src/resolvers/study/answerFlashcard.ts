@@ -1,11 +1,11 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull } from 'graphql'
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay'
 
-import type { FlashcardAnswer } from '../../modules/scheduler'
+import type { FlashcardAnswer } from '../../modules/study/scheduler'
 import {
   answerToQualityValue,
   scheduleFlashcard,
-} from '../../modules/scheduler'
+} from '../../modules/study/scheduler'
 import { NoteModel, RevisionLogModel } from '../../mongo'
 import { FlashcardType } from '../flashcard/types'
 import { FlashcardAnswerEnumType } from './types'

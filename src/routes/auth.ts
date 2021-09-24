@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import { authenticate } from 'passport'
+import passport from 'passport'
 
 import { UserModel } from '../mongo'
 
 const router = Router()
 
-router.post('/login', authenticate('local'), (req, res) => {
+router.post('/login', passport.authenticate('local'), (req, res) => {
   UserModel.findByIdAndUpdate(
     req.user!._id,
     { lastLogin: new Date() },
@@ -16,7 +16,7 @@ router.post('/login', authenticate('local'), (req, res) => {
   )
 })
 
-router.post('/anonymousLogin', authenticate('anonymous'), (_, res) => {
+router.post('/anonymousLogin', passport.authenticate('anonymous'), (_, res) => {
   res.redirect('/')
 })
 

@@ -1,7 +1,7 @@
 import type { GraphQLFieldConfig } from 'graphql'
 import { GraphQLString } from 'graphql'
 
-import { studyFlashcardsByDeck } from '../../modules/studySession'
+import { studyFlashcardsByDeck } from '../../modules/study/studySession'
 import { FlashcardType } from '../flashcard/types'
 
 export const studyFlashcard: GraphQLFieldConfig<

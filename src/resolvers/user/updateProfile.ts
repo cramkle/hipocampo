@@ -113,15 +113,15 @@ export const updateProfile = mutationWithClientMutationId({
             error: {
               type: 'BAD_INPUT',
               status: 400,
-              fields: Object.values(validation.errors).map(
-                (validationError) => ({
-                  fieldName: validationError.path,
+              fields: Object.values(validation.errors)
+                .filter((validationError) => 'path' in validationError)
+                .map((validationError) => ({
+                  fieldName: (validationError as any).path,
                   errorDescription:
                     'properties' in validationError
                       ? t(validationError.properties.message)
                       : validationError.message,
-                })
-              ),
+                })),
             },
           }
         }
