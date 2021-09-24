@@ -1,9 +1,9 @@
 import { compareAsc, isAfter } from 'date-fns'
 
-import { RevisionLogModel } from '../mongo'
-import { FlashcardStatus } from '../mongo/Note'
-import type { RevisionLogDocument } from '../mongo/RevisionLog'
-import { endOfUserDay, startOfUserDay } from '../utils/date'
+import { RevisionLogModel } from '../../mongo'
+import { FlashcardStatus } from '../../mongo/Note'
+import type { RevisionLogDocument } from '../../mongo/RevisionLog'
+import { endOfUserDay, startOfUserDay } from '../../utils/date'
 
 const sumByStatus = (logs: RevisionLogDocument[], status: FlashcardStatus) => {
   return logs.reduce(

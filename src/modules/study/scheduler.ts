@@ -5,11 +5,11 @@ import type {
   LapseFlashcardConfiguration,
   LearningFlashcardConfiguration,
   NewFlashcardConfiguration,
-} from '../mongo/Deck'
-import type { Flashcard } from '../mongo/Note'
-import { FlashcardStatus } from '../mongo/Note'
-import type { UserDocument } from '../mongo/User'
-import { endOfUserDay } from '../utils/date'
+} from '../../mongo/Deck'
+import type { Flashcard } from '../../mongo/Note'
+import { FlashcardStatus } from '../../mongo/Note'
+import type { UserDocument } from '../../mongo/User'
+import { endOfUserDay } from '../../utils/date'
 
 export const MINIMUM_ANSWER_QUALITY = 3
 

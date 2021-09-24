@@ -1,14 +1,13 @@
 import createStore from 'connect-redis'
-import type { IRouter } from 'express'
 import session from 'express-session'
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 
-import config from '../config'
-import { AnonymousStrategy } from '../modules/anonymousStrategy'
-import type { UserDocument } from '../mongo/User'
-import UserModel from '../mongo/User'
-import { getRedisInstance } from '../redis'
+import config from '../../config'
+import type { UserDocument } from '../../mongo/User'
+import UserModel from '../../mongo/User'
+import { getRedisInstance } from '../../redis'
+import { AnonymousStrategy } from './anonymousStrategy'
 
 const RedisStore = createStore(session)
 
@@ -56,33 +55,30 @@ passport.deserializeUser(async (id, done) => {
   done(null, user)
 })
 
-export default {
-  set: async (app: IRouter) => {
-    const cookieOpts = {
-      httpOnly: true,
-      secure: false,
-      maxAge: 365 * 24 * 60 * 60 * 1000,
-      sameSite: 'strict' as const,
-    }
+export async function auth() {
+  const cookieOpts = {
+    httpOnly: true,
+    secure: false,
+    maxAge: 365 * 24 * 60 * 60 * 1000,
+    sameSite: 'strict' as const,
+  }
 
-    if (config.NODE_ENV === 'production') {
-      cookieOpts.secure = true
-    }
+  if (config.NODE_ENV === 'production') {
+    cookieOpts.secure = true
+  }
 
-    const client = await getRedisInstance()
+  const client = await getRedisInstance()
 
-    app.use(
-      session({
-        name: 'sessid',
-        store: new RedisStore({ client }),
-        cookie: cookieOpts,
-        secret: config.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-      })
-    )
-
-    app.use(passport.initialize())
-    app.use(passport.session())
-  },
+  return [
+    session({
+      name: 'sessid',
+      store: new RedisStore({ client }),
+      cookie: cookieOpts,
+      secret: config.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+    }),
+    passport.initialize(),
+    passport.session(),
+  ]
 }

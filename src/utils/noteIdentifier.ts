@@ -12,7 +12,7 @@ export const getNoteIdentifier = async (
   const modelPrimaryField = await getModelPrimaryField(noteModel!, context)
 
   const primaryFieldValue = note.values.find((value) =>
-    value.fieldId.equals(modelPrimaryField?._id)
+    (value.fieldId as any).equals(modelPrimaryField?._id)
   )
 
   if (!primaryFieldValue) {

@@ -2,7 +2,7 @@ import type { Request } from 'express'
 import { Strategy } from 'passport'
 import { v4 } from 'uuid'
 
-import UserModel from '../mongo/User'
+import UserModel from '../../mongo/User'
 
 export class AnonymousStrategy extends Strategy {
   name = 'anonymous'
