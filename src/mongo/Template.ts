@@ -1,6 +1,8 @@
 import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
 import type { ContentState } from './ContentState'
 import { ContentStateSchema } from './ContentState'
 
@@ -14,9 +16,9 @@ export interface Template {
   updatedAt: Date
 }
 
-export interface TemplateDocument extends Template, Document {}
+export interface TemplateDocument extends Template, Document, SchemaMethods {}
 
-const TemplateSchema = new Schema<TemplateDocument>(
+const TemplateSchema = createSchema<TemplateDocument>(
   {
     name: String,
     frontSide: { type: ContentStateSchema },
@@ -33,7 +35,12 @@ const TemplateSchema = new Schema<TemplateDocument>(
     createdAt: { type: Schema.Types.Date },
     updatedAt: { type: Schema.Types.Date },
   },
-  { timestamps: { createdAt: true, updatedAt: true } }
+  {
+    hasWritePermission(user, template) {
+      return user?._id?.equals(template.ownerId) ?? false
+    },
+    timestamps: { createdAt: true, updatedAt: true },
+  }
 )
 
 export default model<TemplateDocument>('Template', TemplateSchema)

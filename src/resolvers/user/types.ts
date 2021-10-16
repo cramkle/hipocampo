@@ -9,7 +9,6 @@ import {
 
 import type { UserDocument, UserPreferencesDocument } from '../../mongo/User'
 import { graphQLGlobalIdField } from '../../utils/graphqlID'
-import { nodeInterface } from '../node/types'
 
 export const UserRolesEnumType = new GraphQLEnumType({
   name: 'UserRoles',
@@ -44,7 +43,6 @@ export const UserPreferencesType =
 export const UserType = new GraphQLObjectType<UserDocument>({
   name: 'User',
   description: 'User entity',
-  interfaces: [nodeInterface],
   fields: {
     id: graphQLGlobalIdField(),
     username: {

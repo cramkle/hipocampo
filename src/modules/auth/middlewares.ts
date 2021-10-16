@@ -46,7 +46,7 @@ passport.deserializeUser(async (id, done) => {
   let user = undefined
 
   try {
-    user = (await UserModel.findOne({ _id: id }).exec()) ?? undefined
+    user = (await UserModel.findOne({ _id: id as string }).exec()) ?? undefined
   } catch (e) {
     done(e)
     return
