@@ -2,6 +2,9 @@ import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 import shortid from 'shortid'
 
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
+
 export interface NewFlashcardConfiguration
   extends LearningFlashcardConfiguration {
   /**
@@ -95,7 +98,7 @@ export interface Deck {
   updatedAt: Date
 }
 
-export interface DeckDocument extends Deck, Document {}
+export interface DeckDocument extends Deck, Document, SchemaMethods {}
 
 const DeckConfigurationSchema = new Schema<DeckConfigurationDocument>({
   new: {
@@ -137,7 +140,7 @@ export const defaultDeckConfig: DeckConfiguration = {
   },
 }
 
-const DeckSchema = new Schema<DeckDocument>(
+const DeckSchema = createSchema<DeckDocument>(
   {
     title: {
       type: String,
@@ -163,7 +166,12 @@ const DeckSchema = new Schema<DeckDocument>(
     },
     updatedAt: { type: Schema.Types.Date },
   },
-  { timestamps: { createdAt: true, updatedAt: true } }
+  {
+    hasWritePermission(user, deck) {
+      return user?._id?.equals(deck.ownerId) ?? false
+    },
+    timestamps: { createdAt: true, updatedAt: true },
+  }
 )
 
 DeckSchema.pre('save', function (next) {

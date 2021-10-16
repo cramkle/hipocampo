@@ -1,6 +1,8 @@
 import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
 import type { ContentStateDocument } from './ContentState'
 import { ContentStateSchema } from './ContentState'
 
@@ -80,9 +82,9 @@ export interface Note {
   updatedAt: Date
 }
 
-export interface NoteDocument extends Note, Document {}
+export interface NoteDocument extends Note, Document, SchemaMethods {}
 
-const NoteSchema = new Schema<NoteDocument>(
+const NoteSchema = createSchema<NoteDocument>(
   {
     deckId: {
       type: Schema.Types.ObjectId,
@@ -106,7 +108,12 @@ const NoteSchema = new Schema<NoteDocument>(
       type: Schema.Types.Date,
     },
   },
-  { timestamps: { createdAt: true, updatedAt: true } }
+  {
+    hasWritePermission(user, note) {
+      return user?._id?.equals(note.ownerId) ?? false
+    },
+    timestamps: { createdAt: true, updatedAt: true },
+  }
 )
 
 NoteSchema.index({ 'values.data.blocks.text': 'text' })

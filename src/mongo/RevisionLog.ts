@@ -1,6 +1,8 @@
 import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
 import type { FlashcardStatus } from './Note'
 
 export interface RevisionLog {
@@ -21,9 +23,12 @@ export interface RevisionLog {
   updatedAt: Date
 }
 
-export interface RevisionLogDocument extends Document, RevisionLog {}
+export interface RevisionLogDocument
+  extends Document,
+    RevisionLog,
+    SchemaMethods {}
 
-const RevisionLogSchema = new Schema<RevisionLogDocument>(
+const RevisionLogSchema = createSchema<RevisionLogDocument>(
   {
     interval: { type: Number },
     lastInterval: { type: Number },
@@ -42,6 +47,9 @@ const RevisionLogSchema = new Schema<RevisionLogDocument>(
     updatedAt: { type: Schema.Types.Date },
   },
   {
+    hasWritePermission(user, revisionLog) {
+      return user?._id?.equals(revisionLog.ownerId) ?? false
+    },
     timestamps: { createdAt: true },
   }
 )

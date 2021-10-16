@@ -1,6 +1,9 @@
 import type { Document, Types } from 'mongoose'
 import { Schema, model as mongooseModel } from 'mongoose'
 
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
+
 export interface Model {
   name: string
   ownerId: Types.ObjectId
@@ -9,9 +12,9 @@ export interface Model {
   updatedAt: Date
 }
 
-export interface ModelDocument extends Model, Document {}
+export interface ModelDocument extends Model, Document, SchemaMethods {}
 
-const ModelSchema = new Schema<ModelDocument>(
+const ModelSchema = createSchema<ModelDocument>(
   {
     name: String,
     ownerId: {
@@ -25,7 +28,12 @@ const ModelSchema = new Schema<ModelDocument>(
     createdAt: { type: Schema.Types.Date },
     updatedAt: { type: Schema.Types.Date },
   },
-  { timestamps: { createdAt: true, updatedAt: true } }
+  {
+    hasWritePermission(user, model) {
+      return user?._id?.equals(model.ownerId) ?? false
+    },
+    timestamps: { createdAt: true, updatedAt: true },
+  }
 )
 
 export default mongooseModel<ModelDocument>('Model', ModelSchema)

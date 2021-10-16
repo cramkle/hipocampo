@@ -1,6 +1,10 @@
 import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 
+import { ModelModel } from '.'
+import type { SchemaMethods } from '../utils/createSchema'
+import { createSchema } from '../utils/createSchema'
+
 export interface Field {
   name: string
   modelId: Types.ObjectId
@@ -8,9 +12,9 @@ export interface Field {
   updatedAt: Date
 }
 
-export interface FieldDocument extends Field, Document {}
+export interface FieldDocument extends Field, Document, SchemaMethods {}
 
-const FieldSchema = new Schema<FieldDocument>(
+const FieldSchema = createSchema<FieldDocument>(
   {
     name: { type: String, required: true },
     modelId: {
@@ -25,7 +29,22 @@ const FieldSchema = new Schema<FieldDocument>(
       type: Schema.Types.Date,
     },
   },
-  { timestamps: { createdAt: true, updatedAt: true } }
+  {
+    async hasWritePermission(user, field) {
+      if (!user?._id) {
+        return false
+      }
+
+      const model = await ModelModel.findById(field.modelId)
+
+      if (!model) {
+        return false
+      }
+
+      return user._id.equals(model.ownerId)
+    },
+    timestamps: { createdAt: true, updatedAt: true },
+  }
 )
 
 export default model<FieldDocument>('Field', FieldSchema)

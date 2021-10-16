@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import type { Document } from 'mongoose'
+import type { Document, Types } from 'mongoose'
 import { Schema, model } from 'mongoose'
 import * as yup from 'yup'
 
@@ -21,7 +21,7 @@ export interface UserPreferences {
   darkMode: boolean
 }
 
-export interface UserDocument extends User, Document {
+export interface UserDocument extends User, Document<Types.ObjectId> {
   hashifyAndSave(): Promise<UserDocument>
   comparePassword(candidate: string): Promise<boolean>
 }

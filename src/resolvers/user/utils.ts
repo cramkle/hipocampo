@@ -32,7 +32,7 @@ export const createHashWithTimestamp = (
   const hashString = createHmac('sha256', config.RESET_PASSWORD_TOKEN)
     .update(
       createResetPasswordHashValue({
-        userId: user._id.toString(),
+        userId: user._id!.toString(),
         email: user.email,
         password: user.password,
         lastLogin: user.lastLogin?.getTime(),
