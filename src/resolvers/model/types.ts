@@ -24,7 +24,7 @@ export const ModelType: GraphQLObjectType<ModelDocument, Context> =
     fields: () => ({
       id: graphQLGlobalIdField(),
       name: {
-        type: GraphQLString,
+        type: GraphQLNonNull(GraphQLString),
         description:
           'Name of this card model (e.g. "Basic", "Basic with Reversed")',
       },
