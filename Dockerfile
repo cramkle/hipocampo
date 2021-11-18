@@ -1,9 +1,9 @@
-FROM node:12-alpine AS build-env
+FROM node:12 AS build-env
 
 WORKDIR /usr/src/app
 
 ## Install build toolchain, install node deps and compile native add-ons
-RUN apk add --no-cache --virtual .gyp python make g++
+# RUN apk add --no-cache --virtual .gyp python make g++
 
 COPY . .
 
@@ -11,11 +11,11 @@ RUN yarn --frozen-lockfile
 
 RUN yarn build
 
-FROM node:12-alpine
+# FROM node:12-alpine
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-COPY --from=build-env /usr/src/app/ .
+# COPY --from=build-env /usr/src/app/ .
 
 RUN yarn --prod
 
