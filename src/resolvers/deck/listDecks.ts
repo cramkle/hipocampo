@@ -36,3 +36,13 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
     return decks
   },
 }
+
+export const publishedDecks: GraphQLFieldConfig<void, Context, DecksArgs> = {
+  type: GraphQLNonNull(GraphQLList(GraphQLNonNull(DeckType))),
+  description: 'Retrieve all published decks',
+  args: {},
+  resolve: async (_) => {
+    const decks = await DeckModel.find({ published: true })
+    return decks
+  },
+}

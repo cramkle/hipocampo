@@ -4,7 +4,7 @@ import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json'
 import { createDeck } from './resolvers/deck/createDeck'
 import { deck } from './resolvers/deck/deckBySlug'
 import { deleteDeck } from './resolvers/deck/deleteDeck'
-import { decks } from './resolvers/deck/listDecks'
+import { decks, publishedDecks } from './resolvers/deck/listDecks'
 import { publishDeck, unpublishDeck } from './resolvers/deck/publish'
 import { updateDeck } from './resolvers/deck/updateDeck'
 import { updateField } from './resolvers/field/updateField'
@@ -41,6 +41,7 @@ const schema = new GraphQLSchema({
       deck,
       deckStatistics,
       decks,
+      publishedDecks,
       me,
       model,
       models,
