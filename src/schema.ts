@@ -2,7 +2,7 @@ import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json'
 
 import { createDeck } from './resolvers/deck/createDeck'
-import { deck } from './resolvers/deck/deckBySlug'
+import { deck, publishedDeck } from './resolvers/deck/deckBySlug'
 import { deleteDeck } from './resolvers/deck/deleteDeck'
 import { decks, publishedDecks } from './resolvers/deck/listDecks'
 import { publishDeck, unpublishDeck } from './resolvers/deck/publish'
@@ -39,6 +39,7 @@ const schema = new GraphQLSchema({
     name: 'Query',
     fields: {
       deck,
+      publishedDeck,
       deckStatistics,
       decks,
       publishedDecks,

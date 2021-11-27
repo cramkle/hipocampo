@@ -23,6 +23,7 @@ import { normalizeResults } from './normalizeResults'
 export interface Loaders {
   deckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckBySlugLoader: DataLoader<string, DeckDocument>
+  publishedDeckBySlugLoader: DataLoader<string, DeckDocument>
   modelLoader: DataLoader<Types.ObjectId | string, ModelDocument>
   templateLoader: DataLoader<Types.ObjectId, TemplateDocument>
   templatesByModelLoader: DataLoader<Types.ObjectId, TemplateDocument[]>
@@ -67,6 +68,16 @@ export function createLoaders(user?: UserDocument): Loaders {
         'slug'
       )
     }),
+    publishedDeckBySlugLoader: new DataLoader((slugs) => {
+      return normalizeResults(
+        slugs,
+        DeckModel.find({
+          slug: { $in: Array.from(slugs) },
+          published: true,
+        }),
+        'slug'
+      )
+    }),
     fieldLoader: new DataLoader(
       (fieldIds) => {
         return normalizeResults(
@@ -98,7 +109,9 @@ export function createLoaders(user?: UserDocument): Loaders {
           modelIds,
           ModelModel.find({
             _id: { $in: Array.from(modelIds) },
-            ownerId: user?._id,
+            // ownerId: user?._id,
+            // In order to get data for the Deck at the marketplace
+            // it is necessary get the model without being the model owner
           }),
           '_id',
           mongoIdCacheKeyFn
@@ -127,7 +140,9 @@ export function createLoaders(user?: UserDocument): Loaders {
           templateIds,
           TemplateModel.find({
             _id: { $in: Array.from(templateIds) },
-            ownerId: user?._id,
+            //ownerId: user?._id,
+            // In order to get data for the Deck at the marketplace
+            // it is necessary to get the template without being the model owner
           }),
           '_id',
           mongoIdCacheKeyFn
