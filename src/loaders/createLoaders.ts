@@ -21,6 +21,7 @@ import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
 export interface Loaders {
+  publishedDeckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckBySlugLoader: DataLoader<string, DeckDocument>
   publishedDeckBySlugLoader: DataLoader<string, DeckDocument>
@@ -44,6 +45,20 @@ export interface Loaders {
 
 export function createLoaders(user?: UserDocument): Loaders {
   return {
+    publishedDeckLoader: new DataLoader(
+      (deckIds) => {
+        return normalizeResults(
+          deckIds,
+          DeckModel.find({
+            _id: { $in: Array.from(deckIds) },
+            published: true,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
+      },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
     deckLoader: new DataLoader(
       (deckIds) => {
         return normalizeResults(

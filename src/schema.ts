@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json'
 
-import { createDeck } from './resolvers/deck/createDeck'
+import { createDeck, importDeck } from './resolvers/deck/createDeck'
 import { deck, publishedDeck } from './resolvers/deck/deckBySlug'
 import { deleteDeck } from './resolvers/deck/deleteDeck'
 import { decks, publishedDecks } from './resolvers/deck/listDecks'
@@ -60,6 +60,7 @@ const schema = new GraphQLSchema({
       addTemplateToModel,
       answerFlashCard: answerFlashcard,
       answerFlashcard,
+      importDeck,
       createDeck,
       createModel,
       createNote,
