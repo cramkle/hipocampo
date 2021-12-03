@@ -50,38 +50,44 @@ export const importDeck = mutationWithClientMutationId({
     { user, publishedDeckLoader, modelLoader, fieldsByModelLoader }: Context
   ) => {
     const helperMap: {
-      updateModelIndex: { oldId: string; newId: string }[]
-      updateFieldIndex: { oldId: string; newId: string }[]
+      updateModelIndex: Record<string, string>
+      updateFieldIndex: Record<string, string>
     } = {
-      updateModelIndex: [],
-      updateFieldIndex: [],
+      updateModelIndex: {},
+      updateFieldIndex: {},
     }
     const { id: deckId } = fromGlobalId(id)
     const publishedDeck = await publishedDeckLoader.load(deckId)
+
+    if (!publishedDeck) {
+      return
+    }
+
     const deckNotes = await NoteModel.find({ deckId: publishedDeck?._id })
 
     // Find requires models/fields & templates
     const modelIds = deckNotes.map((note) => note.modelId.toString())
     const uniqueModelIds = modelIds.filter((v, i) => modelIds.indexOf(v) === i)
-    const models = []
 
-    for await (const modelId of uniqueModelIds) {
-      const model = await modelLoader.load(modelId)
-      const currentModelFields = await fieldsByModelLoader.load(model?._id)
-      const currentModelTemplates = await TemplateModel.find({
-        modelId: model?._id,
-      })
+    const models = await Promise.all(
+      uniqueModelIds.map(async (modelId) => {
+        const model = await modelLoader.load(modelId)
+        const currentModelFields = await fieldsByModelLoader.load(model?._id)
+        const currentModelTemplates = await TemplateModel.find({
+          modelId: model?._id,
+        })
 
-      models.push({
-        model,
-        fields: currentModelFields,
-        templates: currentModelTemplates,
+        return {
+          model,
+          fields: currentModelFields,
+          templates: currentModelTemplates,
+        }
       })
-    }
+    )
 
     // Create deck
     const newDeck = await DeckModel.create({
-      title: `${publishedDeck?.title} - new`,
+      title: publishedDeck?.title,
       description: publishedDeck?.description,
       ownerId: user?._id,
       slug: '',
@@ -90,90 +96,90 @@ export const importDeck = mutationWithClientMutationId({
     })
 
     // Create models/fields & templates
-    for await (const model of models) {
-      // Create model
-      const newModel = await ModelModel.create({
-        name: `${model.model?.name} - copy`,
-        ownerId: user?._id,
-      })
-      helperMap.updateModelIndex.push({
-        oldId: model.model._id,
-        newId: newModel._id,
-      })
-
-      // Create fields
-      for await (const field of model.fields) {
-        const currentField = await FieldModel.create({
-          name: field.name,
-          modelId: newModel._id,
-        })
-        helperMap.updateFieldIndex.push({
-          oldId: field._id,
-          newId: currentField._id,
-        })
-      }
-
-      // Create templates
-      for await (const template of model.templates) {
-        const frontSideWithUpdatedEntities = updateEntitiesIds(
-          helperMap.updateFieldIndex,
-          template.frontSide
-        )
-        const backSideWithUpdatedEntities = updateEntitiesIds(
-          helperMap.updateFieldIndex,
-          template.backSide
-        )
-
-        await TemplateModel.create({
-          name: template.name,
-          modelId: newModel._id,
+    await Promise.all(
+      models.map(async (model) => {
+        // Create model
+        const newModel = await ModelModel.create({
+          name: model.model?.name,
           ownerId: user?._id,
-          frontSide: frontSideWithUpdatedEntities,
-          backSide: backSideWithUpdatedEntities,
         })
-      }
-    }
+        helperMap.updateModelIndex[model.model?._id] = newModel._id
+
+        // Create fields
+        await Promise.all(
+          model.fields.map(async (field) => {
+            const currentField = await FieldModel.create({
+              name: field.name,
+              modelId: newModel._id,
+            })
+            helperMap.updateFieldIndex[field._id] = currentField._id
+          })
+        )
+
+        // Create templates
+        await Promise.all(
+          model.templates.map(async (template) => {
+            const frontSideWithUpdatedEntities = updateEntitiesIds(
+              helperMap.updateFieldIndex,
+              template.frontSide
+            )
+            const backSideWithUpdatedEntities = updateEntitiesIds(
+              helperMap.updateFieldIndex,
+              template.backSide
+            )
+
+            await TemplateModel.create({
+              name: template.name,
+              modelId: newModel._id,
+              ownerId: user?._id,
+              frontSide: frontSideWithUpdatedEntities,
+              backSide: backSideWithUpdatedEntities,
+            })
+          })
+        )
+      })
+    )
 
     // Create notes
-    for await (const note of deckNotes) {
-      const currentNoteModelId = helperMap.updateModelIndex.find(
-        (v) => `${v.oldId}` === `${note.modelId}`
-      )?.newId
+    await Promise.all(
+      deckNotes.map(async (note) => {
+        const currentNoteModelId =
+          helperMap.updateModelIndex[note.modelId.toString()]
 
-      const fieldValues = note.values.map((noteValue) => {
-        const newFieldId = helperMap.updateFieldIndex.find(
-          (v) => `${v.oldId}` === `${noteValue.fieldId}`
-        )?.newId
+        const fieldValues = note.values.map((noteValue) => {
+          const newFieldId =
+            helperMap.updateFieldIndex[noteValue.fieldId.toString()]
 
-        return {
-          data: removeContentStateDocumentIds(noteValue.data),
-          fieldId: newFieldId,
-        }
+          return {
+            data: removeContentStateDocumentIds(noteValue.data),
+            fieldId: newFieldId,
+          }
+        })
+
+        const newNote = await NoteModel.create({
+          modelId: currentNoteModelId,
+          deckId: newDeck._id,
+          ownerId: user!._id,
+          values: fieldValues,
+          flashCards: [],
+        })
+
+        // Create flashcards
+        const modelTemplates = await TemplateModel.find({
+          modelId: currentNoteModelId,
+        })
+
+        newNote.set(
+          'flashCards',
+          modelTemplates.map(({ _id: templateId }) => ({
+            templateId,
+            noteId: note._id,
+          }))
+        )
+
+        await newNote.save()
       })
-
-      const newNote = await NoteModel.create({
-        modelId: currentNoteModelId,
-        deckId: newDeck._id,
-        ownerId: user!._id,
-        values: fieldValues,
-        flashCards: [],
-      })
-
-      // Create flashcards
-      const modelTemplates = await TemplateModel.find({
-        modelId: currentNoteModelId,
-      })
-
-      newNote.set(
-        'flashCards',
-        modelTemplates.map(({ _id: templateId }) => ({
-          templateId,
-          noteId: note._id,
-        }))
-      )
-
-      await newNote.save()
-    }
+    )
     return { deck: newDeck }
   },
 })
@@ -200,7 +206,7 @@ const removeContentStateDocumentIds = (
 }
 
 const updateEntitiesIds = (
-  updateFieldIndex: { oldId: string; newId: string }[],
+  updateFieldIndex: Record<string, string>,
   contentState: ContentState | null
 ): ContentState | null => {
   if (!contentState) return null
@@ -210,9 +216,7 @@ const updateEntitiesIds = (
     const entityObject = newEntityMap[i]
     if (entityObject.type == 'TAG') {
       const oldId = entityObject.data.id
-      const newId =
-        updateFieldIndex.find((v) => `${v.oldId}` === `${oldId}`)?.newId ??
-        oldId
+      const newId = updateFieldIndex[oldId]
       newEntityMap[i] = { ...entityObject, data: { id: newId } }
     }
   }

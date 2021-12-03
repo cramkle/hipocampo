@@ -19,7 +19,7 @@ export const deck: GraphQLFieldConfig<void, Context, DeckArgs> = {
 }
 export const publishedDeck: GraphQLFieldConfig<void, Context, DeckArgs> = {
   type: DeckType,
-  description: "Get single published deck by it's slug",
+  description: 'Get single published deck by its slug',
   args: {
     slug: { type: GraphQLNonNull(GraphQLString) },
   },
