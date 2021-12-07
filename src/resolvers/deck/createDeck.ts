@@ -8,8 +8,12 @@ import {
   NoteModel,
   TemplateModel,
 } from '../../mongo'
-import type { ContentState } from '../../mongo/ContentState'
+import type {
+  ContentState,
+  ContentStateDocument,
+} from '../../mongo/ContentState'
 import { defaultDeckConfig } from '../../mongo/Deck'
+import type { TemplateDocument } from '../../mongo/Template'
 import { DeckType } from './types'
 
 export const createDeck = mutationWithClientMutationId({
@@ -52,15 +56,17 @@ export const importDeck = mutationWithClientMutationId({
     const helperMap: {
       updateModelIndex: Record<string, string>
       updateFieldIndex: Record<string, string>
+      modelTemplates: Record<string, TemplateDocument[]>
     } = {
       updateModelIndex: {},
       updateFieldIndex: {},
+      modelTemplates: {},
     }
     const { id: deckId } = fromGlobalId(id)
     const publishedDeck = await publishedDeckLoader.load(deckId)
 
     if (!publishedDeck) {
-      return
+      return { deck: null }
     }
 
     const deckNotes = await NoteModel.find({ deckId: publishedDeck?._id })
@@ -104,6 +110,7 @@ export const importDeck = mutationWithClientMutationId({
           ownerId: user?._id,
         })
         helperMap.updateModelIndex[model.model?._id] = newModel._id
+        helperMap.modelTemplates[newModel._id] = []
 
         // Create fields
         await Promise.all(
@@ -128,13 +135,16 @@ export const importDeck = mutationWithClientMutationId({
               template.backSide
             )
 
-            await TemplateModel.create({
+            const newTemplate = await TemplateModel.create({
               name: template.name,
               modelId: newModel._id,
               ownerId: user?._id,
               frontSide: frontSideWithUpdatedEntities,
               backSide: backSideWithUpdatedEntities,
             })
+
+            // Save templates to create flashcards
+            helperMap.modelTemplates[newModel._id].push(newTemplate)
           })
         )
       })
@@ -164,14 +174,12 @@ export const importDeck = mutationWithClientMutationId({
           flashCards: [],
         })
 
-        // Create flashcards
-        const modelTemplates = await TemplateModel.find({
-          modelId: currentNoteModelId,
-        })
+        const currentModelTemplates =
+          helperMap.modelTemplates[currentNoteModelId]
 
         newNote.set(
           'flashCards',
-          modelTemplates.map(({ _id: templateId }) => ({
+          currentModelTemplates.map(({ _id: templateId }) => ({
             templateId,
             noteId: note._id,
           }))
@@ -185,19 +193,14 @@ export const importDeck = mutationWithClientMutationId({
 })
 
 const removeContentStateDocumentIds = (
-  contentState: ContentStateInput | undefined
+  contentState: ContentStateDocument | undefined
 ): ContentStateInput | undefined => {
   if (!contentState) return undefined
-  const cleanBlocks = contentState.blocks.map((b) => {
-    return {
-      key: b.key,
-      type: b.type,
-      text: b.text,
-      inlineStyleRanges: b.inlineStyleRanges,
-      entityRanges: b.entityRanges,
-      depth: b.depth,
-      data: b.data,
-    }
+
+  const cleanBlocks = contentState.blocks.map((blockDocument) => {
+    const { _id, ...block } = blockDocument.toJSON()
+
+    return block
   })
 
   return {

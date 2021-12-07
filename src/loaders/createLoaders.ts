@@ -124,6 +124,7 @@ export function createLoaders(user?: UserDocument): Loaders {
           modelIds,
           ModelModel.find({
             _id: { $in: Array.from(modelIds) },
+            // TODO: FIXME: Find a better way
             // ownerId: user?._id,
             // In order to get data for the Deck at the marketplace
             // it is necessary get the model without being the model owner
@@ -155,6 +156,7 @@ export function createLoaders(user?: UserDocument): Loaders {
           templateIds,
           TemplateModel.find({
             _id: { $in: Array.from(templateIds) },
+            // TODO: FIXME: Find a better way
             //ownerId: user?._id,
             // In order to get data for the Deck at the marketplace
             // it is necessary to get the template without being the model owner
