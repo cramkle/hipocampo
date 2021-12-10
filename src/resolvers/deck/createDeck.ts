@@ -40,9 +40,9 @@ export const createDeck = mutationWithClientMutationId({
   },
 })
 
-export const importDeck = mutationWithClientMutationId({
-  name: 'ImportDeck',
-  description: 'Import/Duplicate a deck entity',
+export const installDeck = mutationWithClientMutationId({
+  name: 'InstallDeck',
+  description: 'Install/Duplicate a deck entity',
   inputFields: {
     id: { type: GraphQLNonNull(GraphQLID), description: 'Public deck id' },
   },
