@@ -15,8 +15,9 @@ export const publishDeck = mutationWithClientMutationId({
   },
   outputFields: { deck: { type: DeckType } },
   mutateAndGetPayload: ({ id }, { user }: Context) => {
-    const { id: deckId } = fromGlobalId(id)
+    if (user?.anonymous) throw new Error('An anonymous can not publish a deck.')
 
+    const { id: deckId } = fromGlobalId(id)
     return {
       deck: DeckModel.findOneAndUpdate(
         { _id: deckId, ownerId: user?._id },

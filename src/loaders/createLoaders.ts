@@ -21,8 +21,10 @@ import { mongoIdCacheKeyFn } from './mongoIdCacheKeyFn'
 import { normalizeResults } from './normalizeResults'
 
 export interface Loaders {
+  publishedDeckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckLoader: DataLoader<Types.ObjectId | string, DeckDocument>
   deckBySlugLoader: DataLoader<string, DeckDocument>
+  publishedDeckBySlugLoader: DataLoader<string, DeckDocument>
   modelLoader: DataLoader<Types.ObjectId | string, ModelDocument>
   templateLoader: DataLoader<Types.ObjectId, TemplateDocument>
   templatesByModelLoader: DataLoader<Types.ObjectId, TemplateDocument[]>
@@ -43,6 +45,20 @@ export interface Loaders {
 
 export function createLoaders(user?: UserDocument): Loaders {
   return {
+    publishedDeckLoader: new DataLoader(
+      (deckIds) => {
+        return normalizeResults(
+          deckIds,
+          DeckModel.find({
+            _id: { $in: Array.from(deckIds) },
+            published: true,
+          }),
+          '_id',
+          mongoIdCacheKeyFn
+        )
+      },
+      { cacheKeyFn: mongoIdCacheKeyFn }
+    ),
     deckLoader: new DataLoader(
       (deckIds) => {
         return normalizeResults(
@@ -63,6 +79,16 @@ export function createLoaders(user?: UserDocument): Loaders {
         DeckModel.find({
           slug: { $in: Array.from(slugs) },
           ownerId: user?._id,
+        }),
+        'slug'
+      )
+    }),
+    publishedDeckBySlugLoader: new DataLoader((slugs) => {
+      return normalizeResults(
+        slugs,
+        DeckModel.find({
+          slug: { $in: Array.from(slugs) },
+          published: true,
         }),
         'slug'
       )
@@ -98,7 +124,10 @@ export function createLoaders(user?: UserDocument): Loaders {
           modelIds,
           ModelModel.find({
             _id: { $in: Array.from(modelIds) },
-            ownerId: user?._id,
+            // TODO: FIXME: Find a better way
+            // ownerId: user?._id,
+            // In order to get data for the Deck at the marketplace
+            // it is necessary get the model without being the model owner
           }),
           '_id',
           mongoIdCacheKeyFn
@@ -127,7 +156,10 @@ export function createLoaders(user?: UserDocument): Loaders {
           templateIds,
           TemplateModel.find({
             _id: { $in: Array.from(templateIds) },
-            ownerId: user?._id,
+            // TODO: FIXME: Find a better way
+            //ownerId: user?._id,
+            // In order to get data for the Deck at the marketplace
+            // it is necessary to get the template without being the model owner
           }),
           '_id',
           mongoIdCacheKeyFn

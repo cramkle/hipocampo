@@ -12,26 +12,31 @@ export type EntityMapValue =
     }
   | { type: 'LINK'; mutability: DraftEntityMutability; data: { url: string } }
 
-export interface ContentState {
-  blocks: {
-    key: string
-    type: string
-    text: string
-    depth: number
-    inlineStyleRanges: RawDraftInlineStyleRange[]
-    entityRanges: {
-      key: number
-      length: number
-      offset: number
-    }[]
-    data: BlockData
+interface Block {
+  key: string
+  type: string
+  text: string
+  depth: number
+  inlineStyleRanges: RawDraftInlineStyleRange[]
+  entityRanges: {
+    key: number
+    length: number
+    offset: number
   }[]
+  data: BlockData
+}
+
+export interface ContentState {
+  blocks: Block[]
   entityMap: {
     [key: string]: EntityMapValue
   }
 }
+interface BlockDocument extends Block, Document {}
 
-export interface ContentStateDocument extends ContentState, Document {}
+export interface ContentStateDocument extends ContentState, Document {
+  blocks: BlockDocument[]
+}
 
 export const ContentStateSchema = new Schema<ContentStateDocument>({
   blocks: [
