@@ -9,7 +9,7 @@ import {
 import { connectionFromArraySlice } from 'graphql-relay'
 
 import { studyFlashcardsByDeck } from '../../modules/study/studySession'
-import { NoteModel, UserModel } from '../../mongo'
+import { DeckModel, NoteModel, UserModel } from '../../mongo'
 import type { DeckDocument } from '../../mongo/Deck'
 import type { NoteDocument } from '../../mongo/Note'
 import { FlashcardStatus } from '../../mongo/Note'
@@ -95,7 +95,10 @@ const deckNoteConnection = connectionWithCursorInfo({
   },
 })
 
-export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
+export const DeckType: GraphQLObjectType = new GraphQLObjectType<
+  DeckDocument,
+  Context
+>({
   name: 'Deck',
   description: 'Collection of notes',
   interfaces: [nodeInterface],
@@ -117,6 +120,11 @@ export const DeckType = new GraphQLObjectType<DeckDocument, Context>({
       type: UserType,
       description: 'Owner of the deck',
       resolve: (root) => UserModel.findById(root.ownerId),
+    },
+    originalDeck: {
+      type: DeckType,
+      description: 'Original deck',
+      resolve: (root) => DeckModel.findById(root.originalDeckId),
     },
     published: {
       type: GraphQLNonNull(GraphQLBoolean),

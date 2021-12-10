@@ -99,6 +99,7 @@ export const installDeck = mutationWithClientMutationId({
       slug: '',
       published: false,
       configuration: defaultDeckConfig,
+      originalDeckId: publishedDeck?._id,
     })
 
     // Create models/fields & templates

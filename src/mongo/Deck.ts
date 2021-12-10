@@ -96,6 +96,7 @@ export interface Deck {
   ownerId: Types.ObjectId
   createdAt: Date
   updatedAt: Date
+  originalDeckId?: Types.ObjectId
 }
 
 export interface DeckDocument extends Deck, Document, SchemaMethods {}
@@ -159,6 +160,10 @@ const DeckSchema = createSchema<DeckDocument>(
     ownerId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+    },
+    originalDeckId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Deck',
     },
     published: Boolean,
     createdAt: {
