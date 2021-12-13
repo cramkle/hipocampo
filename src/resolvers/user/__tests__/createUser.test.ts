@@ -25,7 +25,7 @@ describe('CreateUser mutation', () => {
 
     expect(result.createUser.user.id).toStrictEqual(expect.any(String))
     expect(result.createUser.user.username).toBe('lucas')
-    expect(result.createUser.user.email).toBe('lucas@email.com')
+    expect(result.createUser.user.email).toBeNull()
   })
 
   it('createUser errors on duplicated usernames', async () => {
@@ -59,7 +59,7 @@ describe('CreateUser mutation', () => {
 
     expect(result.createUser.user.id).toStrictEqual(expect.any(String))
     expect(result.createUser.user.username).toBe('myuser')
-    expect(result.createUser.user.email).toBe('user_email@email.com')
+    expect(result.createUser.user.email).toBeNull()
 
     const secondResult = await runQuery(query)
 
