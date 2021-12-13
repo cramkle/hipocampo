@@ -50,15 +50,37 @@ export const UserType = new GraphQLObjectType<UserDocument>({
       description: "User's username",
     },
     email: {
-      type: GraphQLNonNull(GraphQLString),
+      type: GraphQLString,
       description: "User's email",
+      resolve: (root, _, { user }) => {
+        if (root._id !== user?._id) {
+          return null
+        }
+
+        return root.email
+      },
     },
     roles: {
-      type: GraphQLNonNull(GraphQLList(GraphQLNonNull(UserRolesEnumType))),
+      type: GraphQLList(GraphQLNonNull(UserRolesEnumType)),
+      resolve: (root, _, { user }) => {
+        if (root._id !== user?._id) {
+          return null
+        }
+
+        return root.email
+      },
     },
     preferences: {
-      type: GraphQLNonNull(UserPreferencesType),
-      resolve: (user) => user.preferences ?? {},
+      type: UserPreferencesType,
+      resolve: (root, _, user) => {
+        if (root._id !== user?._id) {
+          return null
+        }
+
+        const preferences = root.preferences ?? {}
+
+        return preferences
+      },
     },
     anonymous: {
       type: GraphQLNonNull(GraphQLBoolean),
