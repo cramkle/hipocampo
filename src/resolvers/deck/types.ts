@@ -126,6 +126,16 @@ export const DeckType: GraphQLObjectType = new GraphQLObjectType<
       description: 'Original deck',
       resolve: (root) => DeckModel.findById(root.originalDeckId),
     },
+    isDeckInstalled: {
+      type: GraphQLNonNull(GraphQLBoolean),
+      description: 'Whether this deck is already installed for current user',
+      resolve: (root, _, { user }) =>
+        root.published &&
+        DeckModel.findOne({
+          originalDeckId: root._id,
+          ownerId: user!._id,
+        }).then((deck) => deck != null),
+    },
     published: {
       type: GraphQLNonNull(GraphQLBoolean),
       description: 'Whether this deck is published to the marketplace',
