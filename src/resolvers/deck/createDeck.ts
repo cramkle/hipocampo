@@ -65,11 +65,21 @@ export const installDeck = mutationWithClientMutationId({
     const { id: deckId } = fromGlobalId(id)
     const publishedDeck = await publishedDeckLoader.load(deckId)
 
-    if (!publishedDeck) {
+    if (!publishedDeck || !user) {
       return { deck: null }
     }
 
-    const deckNotes = await NoteModel.find({ deckId: publishedDeck?._id })
+    const isAlreadyInstalled =
+      (await DeckModel.findOne({
+        originalDeckId: publishedDeck._id,
+        ownerId: user._id,
+      })) != null
+
+    if (isAlreadyInstalled) {
+      return { deck: null }
+    }
+
+    const deckNotes = await NoteModel.find({ deckId: publishedDeck._id })
 
     // Find requires models/fields & templates
     const modelIds = deckNotes.map((note) => note.modelId.toString())
@@ -93,13 +103,13 @@ export const installDeck = mutationWithClientMutationId({
 
     // Create deck
     const newDeck = await DeckModel.create({
-      title: publishedDeck?.title,
-      description: publishedDeck?.description,
-      ownerId: user?._id,
+      title: publishedDeck.title,
+      description: publishedDeck.description,
+      ownerId: user._id,
       slug: '',
       published: false,
       configuration: defaultDeckConfig,
-      originalDeckId: publishedDeck?._id,
+      originalDeckId: publishedDeck._id,
     })
 
     // Create models/fields & templates
@@ -108,7 +118,7 @@ export const installDeck = mutationWithClientMutationId({
         // Create model
         const newModel = await ModelModel.create({
           name: model.model?.name,
-          ownerId: user?._id,
+          ownerId: user._id,
         })
         helperMap.updateModelIndex[model.model?._id] = newModel._id
         helperMap.modelTemplates[newModel._id] = []
@@ -139,7 +149,7 @@ export const installDeck = mutationWithClientMutationId({
             const newTemplate = await TemplateModel.create({
               name: template.name,
               modelId: newModel._id,
-              ownerId: user?._id,
+              ownerId: user._id,
               frontSide: frontSideWithUpdatedEntities,
               backSide: backSideWithUpdatedEntities,
             })
@@ -170,7 +180,7 @@ export const installDeck = mutationWithClientMutationId({
         const newNote = await NoteModel.create({
           modelId: currentNoteModelId,
           deckId: newDeck._id,
-          ownerId: user!._id,
+          ownerId: user._id,
           values: fieldValues,
           flashCards: [],
         })

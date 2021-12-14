@@ -60,7 +60,7 @@ export const publishedDecks: GraphQLFieldConfig<
   Context,
   PageConnectionArgs
 > = {
-  type: deckConnection.connectionType,
+  type: GraphQLNonNull(deckConnection.connectionType),
   description: 'Retrieve all published decks',
   args: {
     page: { type: GraphQLNonNull(GraphQLInt), defaultValue: 1 },

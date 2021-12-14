@@ -14,16 +14,31 @@ export const publishDeck = mutationWithClientMutationId({
     },
   },
   outputFields: { deck: { type: DeckType } },
-  mutateAndGetPayload: ({ id }, { user }: Context) => {
-    if (user?.anonymous) throw new Error('An anonymous can not publish a deck.')
+  mutateAndGetPayload: async ({ id }, { user }: Context) => {
+    if (!user || user.anonymous)
+      throw new Error('An anonymous can not publish a deck.')
 
     const { id: deckId } = fromGlobalId(id)
+
+    const deck = await DeckModel.findOne({
+      _id: deckId,
+      ownerId: user._id,
+    })
+
+    if (!deck) {
+      return { deck: null }
+    }
+
+    if (deck.originalDeckId != null) {
+      throw new Error('Cannot re-publish deck from marketplace')
+    }
+
+    deck.published = true
+
+    await deck.save()
+
     return {
-      deck: DeckModel.findOneAndUpdate(
-        { _id: deckId, ownerId: user?._id },
-        { published: true },
-        { new: true }
-      ),
+      deck,
     }
   },
 })
