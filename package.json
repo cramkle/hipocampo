@@ -16,6 +16,9 @@
     "download-schema": "apollo service:download --endpoint=http://localhost:5000/graphql -k",
     "gen-types": "apollo client:codegen __generated__ --target=typescript --localSchemaFile=schema.json --globalTypesFile=src/globalTypes.ts"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
