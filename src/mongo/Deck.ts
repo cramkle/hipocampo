@@ -165,7 +165,7 @@ const DeckSchema = createSchema<DeckDocument>(
       type: Schema.Types.ObjectId,
       ref: 'Deck',
     },
-    published: Boolean,
+    published: { type: Boolean, default: false },
     createdAt: {
       type: Schema.Types.Date,
     },

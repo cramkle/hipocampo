@@ -139,6 +139,7 @@ export const DeckType: GraphQLObjectType = new GraphQLObjectType<
     published: {
       type: GraphQLNonNull(GraphQLBoolean),
       description: 'Whether this deck is published to the marketplace',
+      resolve: (root) => root.published ?? false,
     },
     studySessionDetails: {
       type: GraphQLNonNull(StudySessionDetailsType),
