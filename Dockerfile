@@ -3,7 +3,7 @@ FROM node:12-alpine AS build-env
 WORKDIR /usr/src/app
 
 ## Install build toolchain, install node deps and compile native add-ons
-RUN apk add --no-cache --virtual .gyp python make g++
+RUN apk add --no-cache --virtual .gyp python3 make g++
 
 COPY . .
 
