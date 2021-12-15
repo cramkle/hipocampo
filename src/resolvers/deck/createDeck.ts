@@ -192,7 +192,7 @@ export const installDeck = mutationWithClientMutationId({
           'flashCards',
           currentModelTemplates.map(({ _id: templateId }) => ({
             templateId,
-            noteId: note._id,
+            noteId: newNote._id,
           }))
         )
 
