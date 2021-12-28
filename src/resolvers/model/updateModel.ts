@@ -23,11 +23,15 @@ export const updateModel: GraphQLFieldConfig<void, Context, UpdateModelInput> =
       { id, name }: UpdateModelInput,
       { user }: Context
     ) => {
+      if (!user) {
+        return { model: null }
+      }
+
       const { id: modelId } = fromGlobalId(id)
 
       return {
         model: ModelModel.findOneAndUpdate(
-          { _id: modelId, ownerId: user?._id },
+          { _id: modelId, ownerId: user._id },
           { name },
           { new: true }
         ),

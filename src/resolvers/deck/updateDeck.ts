@@ -16,11 +16,15 @@ export const updateDeck = mutationWithClientMutationId({
     deck: { type: DeckType, description: 'Updated deck' },
   },
   mutateAndGetPayload: ({ id, title, description }, { user }: Context) => {
+    if (!user) {
+      return { deck: null }
+    }
+
     const { id: deckId } = fromGlobalId(id)
 
     return {
       deck: DeckModel.findOneAndUpdate(
-        { _id: deckId, ownerId: user?._id },
+        { _id: deckId, ownerId: user._id },
         { title, description },
         { new: true }
       ),

@@ -12,11 +12,15 @@ export const deleteNote = mutationWithClientMutationId({
   },
   outputFields: { note: { type: NoteType } },
   mutateAndGetPayload: async (args: { noteId: string }, ctx) => {
+    if (!ctx.user) {
+      return { note: null }
+    }
+
     const { id: noteId } = fromGlobalId(args.noteId)
 
     const note = await NoteModel.findOne({
       _id: noteId,
-      ownerId: ctx.user?._id,
+      ownerId: ctx.user._id,
     })
 
     if (!note) {

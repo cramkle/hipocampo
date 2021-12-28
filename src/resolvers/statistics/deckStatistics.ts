@@ -20,13 +20,17 @@ export const deckStatistics: GraphQLFieldConfig<
     deckId: { type: GraphQLID },
   },
   resolve: async (_, args, ctx) => {
+    if (!ctx.user) {
+      return null
+    }
+
     let deck
 
     if (args.deckId) {
       const { id: deckId } = fromGlobalId(args.deckId)
       deck = await ctx.deckLoader.load(deckId)
     } else {
-      deck = await DeckModel.findOne({ ownerId: ctx.user?._id })
+      deck = await DeckModel.findOne({ ownerId: ctx.user._id })
     }
 
     if (!deck) {

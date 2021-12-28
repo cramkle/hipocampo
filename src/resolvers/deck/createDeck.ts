@@ -27,10 +27,14 @@ export const createDeck = mutationWithClientMutationId({
     deck: { type: DeckType, description: 'Created deck' },
   },
   mutateAndGetPayload: async ({ title, description }, { user }: Context) => {
+    if (!user) {
+      return { deck: null }
+    }
+
     const deck = await DeckModel.create({
       title,
       description,
-      ownerId: user?._id,
+      ownerId: user._id,
       slug: '',
       published: false,
       configuration: defaultDeckConfig,

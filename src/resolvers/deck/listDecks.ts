@@ -32,7 +32,11 @@ export const decks: GraphQLFieldConfig<void, Context, DecksArgs> = {
     },
   },
   resolve: async (_, { studyOnly }, ctx) => {
-    let decks = await DeckModel.find({ ownerId: ctx.user?._id })
+    if (!ctx.user) {
+      return []
+    }
+
+    let decks = await DeckModel.find({ ownerId: ctx.user._id })
 
     if (studyOnly) {
       // eslint-disable-next-line require-atomic-updates

@@ -54,11 +54,15 @@ export const unpublishDeck = mutationWithClientMutationId({
   },
   outputFields: { deck: { type: DeckType } },
   mutateAndGetPayload: ({ id }, { user }: Context) => {
+    if (!user) {
+      return { deck: null }
+    }
+
     const { id: deckId } = fromGlobalId(id)
 
     return {
       deck: DeckModel.findOneAndUpdate(
-        { _id: deckId, ownerId: user?._id },
+        { _id: deckId, ownerId: user._id },
         { published: false },
         {
           new: true,

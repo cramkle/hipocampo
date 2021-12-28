@@ -22,11 +22,15 @@ export const addFieldToModel: GraphQLFieldConfig<void, Context, AddFieldInput> =
       field: { type: FieldType },
     },
     mutateAndGetPayload: async (args: AddFieldInput, { user }: Context) => {
+      if (!user) {
+        return { field: null }
+      }
+
       const { id: modelId } = fromGlobalId(args.modelId)
 
       const model = await ModelModel.findOne({
         _id: modelId,
-        ownerId: user?._id,
+        ownerId: user._id,
       })
 
       if (!model) {

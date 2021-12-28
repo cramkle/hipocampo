@@ -61,8 +61,12 @@ export const createUser = mutationWithClientMutationId({
   },
   mutateAndGetPayload: async (
     { username, email, password, locale, zoneInfo }: CreateUserArgs,
-    { t }: Context
+    { t, user: loggedInUser }: Context
   ) => {
+    if (loggedInUser) {
+      return { user: null }
+    }
+
     const user = new UserModel({
       username,
       email,
@@ -71,7 +75,7 @@ export const createUser = mutationWithClientMutationId({
     })
 
     try {
-      await user?.validate()
+      await user.validate()
     } catch (validation) {
       if (validation instanceof Error.ValidationError) {
         return {
@@ -93,7 +97,7 @@ export const createUser = mutationWithClientMutationId({
     }
 
     try {
-      await user?.hashifyAndSave()
+      await user.hashifyAndSave()
     } catch (err) {
       if (err instanceof MongoError) {
         // duplicate key error

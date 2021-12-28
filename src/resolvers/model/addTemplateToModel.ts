@@ -29,6 +29,10 @@ export const addTemplateToModel: GraphQLFieldConfig<
     args: AddTemplateInput,
     { user, modelLoader }: Context
   ) => {
+    if (!user) {
+      return { template: null }
+    }
+
     const { id: modelId } = fromGlobalId(args.modelId)
 
     const model = await modelLoader.load(modelId)
@@ -36,7 +40,7 @@ export const addTemplateToModel: GraphQLFieldConfig<
     const template = await TemplateModel.create({
       name: args.name,
       modelId: model._id,
-      ownerId: user?._id,
+      ownerId: user._id,
       frontSide: null,
       backSide: null,
     })

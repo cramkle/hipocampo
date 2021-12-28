@@ -17,11 +17,15 @@ export const deleteModel: GraphQLFieldConfig<void, Context, { id: string }> =
       model: { type: ModelType },
     },
     mutateAndGetPayload: async ({ id }, { user }: Context) => {
+      if (!user) {
+        return { model: null }
+      }
+
       const { id: modelId } = fromGlobalId(id)
 
       const model = await ModelModel.findOne({
         _id: modelId,
-        ownerId: user?._id,
+        ownerId: user._id,
       })
 
       if (!model) {
