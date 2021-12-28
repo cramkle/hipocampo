@@ -40,7 +40,7 @@ export const UserPreferencesType =
     },
   })
 
-export const UserType = new GraphQLObjectType<UserDocument>({
+export const UserType = new GraphQLObjectType<UserDocument, Context>({
   name: 'User',
   description: 'User entity',
   fields: {
@@ -53,7 +53,7 @@ export const UserType = new GraphQLObjectType<UserDocument>({
       type: GraphQLString,
       description: "User's email",
       resolve: (root, _, { user }) => {
-        if (root._id !== user?._id) {
+        if (!(root._id?.equals(user?._id ?? '') ?? false)) {
           return null
         }
 
@@ -63,7 +63,7 @@ export const UserType = new GraphQLObjectType<UserDocument>({
     roles: {
       type: GraphQLList(GraphQLNonNull(UserRolesEnumType)),
       resolve: (root, _, { user }) => {
-        if (root._id !== user?._id) {
+        if (!(root._id?.equals(user?._id ?? '') ?? false)) {
           return null
         }
 
@@ -72,8 +72,8 @@ export const UserType = new GraphQLObjectType<UserDocument>({
     },
     preferences: {
       type: UserPreferencesType,
-      resolve: (root, _, user) => {
-        if (root._id !== user?._id) {
+      resolve: (root, _, { user }) => {
+        if (!(root._id?.equals(user?._id ?? '') ?? false)) {
           return null
         }
 
