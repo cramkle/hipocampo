@@ -1,5 +1,6 @@
 import type { Request } from 'express'
 import { graphqlHTTP } from 'express-graphql'
+import { formatError } from 'graphql'
 
 import config from '../config'
 import { createLoaders } from '../loaders/createLoaders'
@@ -13,6 +14,11 @@ export function graphql() {
     return {
       schema,
       graphiql: config.NODE_ENV !== 'production',
+      customFormatErrorFn: (error) => {
+        console.error(error)
+
+        return formatError(error)
+      },
       context: {
         ...createLoaders(user),
         user,
