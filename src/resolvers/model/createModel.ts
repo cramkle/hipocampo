@@ -37,9 +37,13 @@ export const createModel: GraphQLFieldConfig<void, Context, CreateModelInput> =
       { name, fields, templates }: CreateModelInput,
       { user }: Context
     ) => {
+      if (!user) {
+        return { model: null }
+      }
+
       const model = await ModelModel.create({
         name,
-        ownerId: user?._id,
+        ownerId: user._id,
       })
 
       await FieldModel.create(

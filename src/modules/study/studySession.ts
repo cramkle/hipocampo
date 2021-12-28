@@ -13,7 +13,7 @@ const sumByStatus = (logs: RevisionLogDocument[], status: FlashcardStatus) => {
 }
 
 export const studyFlashcardsByDeck = async (deckId: string, ctx: Context) => {
-  const userTimeZone = ctx.user?.preferences?.zoneInfo ?? 'UTC'
+  const userTimeZone = ctx.user!.preferences?.zoneInfo ?? 'UTC'
 
   const deck = await ctx.deckLoader.load(deckId)
 

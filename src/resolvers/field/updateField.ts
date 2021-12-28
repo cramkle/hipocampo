@@ -23,16 +23,24 @@ export const updateField = mutationWithClientMutationId({
     { id, name }: UpdateFieldInput,
     { user }: Context
   ) => {
+    if (!user) {
+      return { field: null }
+    }
+
     const { id: fieldId } = fromGlobalId(id)
 
     const field = await FieldModel.findById(fieldId)
 
+    if (!field) {
+      return { field: null }
+    }
+
     const fieldModel = await ModelModel.findOne({
-      _id: field?.modelId,
-      ownerId: user?._id,
+      _id: field.modelId,
+      ownerId: user._id,
     })
 
-    if (!fieldModel || !field) {
+    if (!fieldModel) {
       throw new GraphQLError('User is not authorized')
     }
 

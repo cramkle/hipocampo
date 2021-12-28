@@ -23,13 +23,21 @@ export const removeFieldFromModel: GraphQLFieldConfig<
     field: { type: FieldType },
   },
   mutateAndGetPayload: async (args: RemoveFieldInput, { user }: Context) => {
+    if (!user) {
+      return { field: null }
+    }
+
     const { id: fieldId } = fromGlobalId(args.fieldId)
 
     const field = await FieldModel.findById(fieldId)
 
+    if (!field) {
+      return { field: null }
+    }
+
     const fieldModel = await ModelModel.findOne({
-      _id: field?.modelId,
-      ownerId: user?._id,
+      _id: field.modelId,
+      ownerId: user._id,
     })
 
     if (!field || !fieldModel) {

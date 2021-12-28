@@ -10,8 +10,12 @@ export const note: GraphQLFieldConfig<void, Context, { id: string }> = {
   description: "Get single note by it's id",
   args: { id: { type: GraphQLNonNull(GraphQLID) } },
   resolve: async (_, args, { user }) => {
+    if (!user) {
+      return null
+    }
+
     const { id: noteId } = fromGlobalId(args.id)
-    const userDecks = await DeckModel.find({ ownerId: user?._id })
+    const userDecks = await DeckModel.find({ ownerId: user._id })
 
     const note = await NoteModel.findOne({
       _id: noteId,

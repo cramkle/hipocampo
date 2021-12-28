@@ -37,13 +37,17 @@ export const createNote = mutationWithClientMutationId({
   },
   outputFields: { note: { type: NoteType } },
   mutateAndGetPayload: async (args: CreateNoteMutationInput, { user }) => {
+    if (!user) {
+      return { note: null }
+    }
+
     const { id: deckId } = fromGlobalId(args.deckId)
     const { id: modelId } = fromGlobalId(args.modelId)
 
-    const deck = await DeckModel.findOne({ _id: deckId, ownerId: user?._id })
+    const deck = await DeckModel.findOne({ _id: deckId, ownerId: user._id })
     const model = await ModelModel.findOne({
       _id: modelId,
-      ownerId: user?._id,
+      ownerId: user._id,
     })
 
     if (!deck || !model) {
@@ -63,7 +67,7 @@ export const createNote = mutationWithClientMutationId({
     const note = await NoteModel.create({
       modelId: model._id,
       deckId: deck._id,
-      ownerId: user!._id,
+      ownerId: user._id,
       values: modelFields.map((field) => {
         const modelFieldId = field._id as Types.ObjectId
 
