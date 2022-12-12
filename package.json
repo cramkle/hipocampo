@@ -29,7 +29,7 @@
     "date-fns-tz": "^1.1.6",
     "dotenv": "^8.2.0",
     "draft-js": "^0.11.7",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-graphql": "^0.12.0",
     "express-prom-bundle": "^6.4.1",
     "express-session": "^1.17.0",
