@@ -5,7 +5,7 @@ import config from './config'
 
 let redisClient: Redis | null = null
 
-export function getRedisInstance(): Redis {
+export async function getRedisInstance(): Promise<Redis> {
   if (redisClient !== null) {
     return redisClient
   }
@@ -17,6 +17,14 @@ export function getRedisInstance(): Redis {
   }
 
   const redisInstance = new RedisImpl({
+    ...(config.HAS_SENTINEL
+      ? {
+          sentinels: [
+            { host: config.REDIS_HOST, port: config.REDIS_SENTINEL_PORT },
+          ],
+          sentinelPassword: config.REDIS_PASSWORD,
+        }
+      : null),
     ...redisOptions,
   })
 
