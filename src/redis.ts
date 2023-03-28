@@ -23,6 +23,7 @@ export async function getRedisInstance(): Promise<Redis> {
             { host: config.REDIS_HOST, port: config.REDIS_SENTINEL_PORT },
           ],
           sentinelPassword: config.REDIS_PASSWORD,
+          name: config.REDIS_SENTINEL_NAME,
         }
       : null),
     ...redisOptions,
