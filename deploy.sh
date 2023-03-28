@@ -1,13 +1,6 @@
 #!/bin/bash
 
-unparsed_version=$(git describe --exact-match)
-
-if [[ ! $? -eq 0 ]]; then
-  echo "Nothing to publish, exiting.."
-  exit 0;
-fi
-
-version=${unparsed_version//v}
+version=0.15.8
 
 if [[ -z "$REGISTRY_SERVER" ]]; then
   echo "No registry server, exiting.."
