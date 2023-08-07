@@ -13,7 +13,7 @@ git clone https://github.com/cramkle/hipocampo
 cd hipocampo
 
 # Install dependencies
-yarn
+npm install
 
 # Copy example env file to .env
 cp .env.example .env
@@ -34,7 +34,7 @@ brew install mongodb-community redis
 Now that you've setup all the project dependencies, you can start developing by running:
 
 ```sh
-yarn dev
+npm run dev
 ```
 
 This will start the API on [http://localhost:5000/](http://localhost:5000). You can access

@@ -7,9 +7,9 @@ RUN apk add --no-cache --virtual .gyp python3 make g++
 
 COPY . .
 
-RUN yarn --frozen-lockfile
+RUN npm install
 
-RUN yarn build
+RUN npm run build
 
 FROM node:16-alpine
 
@@ -17,9 +17,9 @@ WORKDIR /usr/src/app
 
 COPY --from=build-env /usr/src/app/ .
 
-RUN yarn --prod
+RUN npm install --omit dev
 
 ENV TZ UTC
 
 EXPOSE 5000
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
