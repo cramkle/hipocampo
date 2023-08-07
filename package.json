@@ -10,7 +10,7 @@
     "lint": "eslint --ext ts,js .",
     "lint:ts": "tsc --noEmit --pretty",
     "start": "node --icu-data-dir=node_modules/full-icu dist/src/index.js",
-    "dev": "tsc-watch --onSuccess \"yarn start\"",
+    "dev": "tsc-watch --onSuccess \"npm start\"",
     "test": "jest",
     "release": "release-it",
     "download-schema": "apollo service:download --endpoint=http://localhost:5000/graphql -k",

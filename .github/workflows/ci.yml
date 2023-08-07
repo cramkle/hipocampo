@@ -20,11 +20,11 @@ jobs:
       with:
         node-version: 16.x
     - name: Install dependencies
-      run: yarn
+      run: npm ci
     - name: Lint
       run: |
-        yarn lint
-        yarn lint:ts
+        npm run lint
+        npm run lint:ts
       env:
         CI: true
 
@@ -38,11 +38,11 @@ jobs:
         with:
           node-version: 16.x
       - name: Install dependencies
-        run: yarn
+        run: npm ci
       - name: Test
         run: |
           cp .env.example .env
-          yarn test
+          npm run test
         env:
           CI: true
 
@@ -56,9 +56,9 @@ jobs:
       with:
         node-version: 16.x
     - name: Install dependencies
-      run: yarn
+      run: npm ci
     - name: Build
-      run: yarn build
+      run: npm run build
       env:
         CI: true
 
